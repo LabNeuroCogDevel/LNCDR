@@ -7,17 +7,29 @@ require(colorspace) # for hex and RGB
 
 
 #' AFNI color spectrum -> R object
-#' @param coloreddata vector of data the spectrum has been applied to (can be just a range)
-#' @param img the jpeg exported afni spectrum. Right click 'OLay' -> export ppm
+#' @param coloreddata 1) the single autoRange or manual range value provided to the AFNI "Define Overlay" gui.  OR 2) the vector of data the spectrum has been applied to. This can be just the range in lieu of the actual data. Use this option if "Pos?" is checked like colordata=c(0,4.44). N.B.  colordata=4.44 is the same as coloreddata=c(-4.44,4.44).
+#' @param img the jpeg exported afni spectrum. Right click 'OLay' -> export ppm. Use this when using discrete or customized color scales.
 #' @export
 #' @examples 
-#' 
-#' 
+#'  # range value set to 5 in afni
+#'  colorvals <- afni.spectrum(  5 )
+#'  # same as
+#'  colorvals <- afni.spectrum( -5:5 )
+#'  # same as
+#'  colorvals <- afni.spectrum( c(-5,5)  )
+#'  
+#'  
+#'  colorvals <- afni.spectrum(  c(0,2.75)  )
+#'  colorvals <- afni.spectrum(  c(-1,1) * 2.75  )
 
 # read in a vector (colreddata) and the image that colors it (img)
 # output a list with $invals and $clrs.hex
 # the color of any invals is clrs.hex
 afni.spectrum <- function(coloreddata,img=NULL) {
+   # if we are only given one value, assume we want from negative to positive
+   if(length(coloreddata)==1L){
+     coloreddata<-c(-1,1)*coloreddata
+   }
    # 512 (colors in spectrum) x 64 (width, all same vlue) x 3 (r,g,b)
    if(!is.null(img)){
       spct <- readJPEG(img)
@@ -58,35 +70,71 @@ afni.color_at_value <- function(colorval,val){
 
 
 ### TEST/VIEW
-plot.singlecolor <- function(i,colorspec,width=1,height=1,ybs=1) {
+plot.singlecolor <- function(i,colorspec,interval=1,init=1,side=2) {
  color <-  colorspec[i]
- yb <- ybs + (i-1)*height
+ boxstart <- init + (i-1)*interval
+ boxstop  <- boxstart + interval
  # xl,yb,xr,yt
- rect(0,yb,width,yb+height,
+ if(side==2) {
+ rect(0,boxstop,1,boxstart,
      col=color,border=color)
+ } else{
+ rect(boxstop,0,boxstart,1,
+     col=color,border=color)
+ }
 }
 
 ## PLOT the spectrum
 #' plot a color spectrum read in by afni.spectrum
 #' @param colorval the list output of afni.spectrum
+#' @param lab label for the relevant axis, defaults to useless 'val'
+#' @param side which direction to draw the graph 1 horz, 2 vertical. matches par's meaning of side
 #' @export
 #' @examples 
 #'  colorval <- afni.spectrum(-5:5)
-#'  plot.colorspectrum() 
-plot.colorspectrum <-function(colorval,ylab='val') {
+#'  svg('colorbar.svg')
+#'  plot.colorspectrum(colorval) 
+#'  dev.off()
+plot.colorspectrum <-function(colorval,lab='val',side=2) {
 
+ rr<-range(colorval$inval)
+ if(side==1) {
+   xlim<-rr
+   ylim<-c(0,1)
+   xlab<-lab
+   ylab<-""
+ } else {
+   xlim<-c(0,1)
+   ylim<-rr
+   xlab<-""
+   ylab<-lab
+ }
  # open an empty plot with no x axis ticks
  # set lables
  plot(x=NULL,y=NULL,
-   xlim=c(0,1),
-   ylim=range(colorval$invals),
-   ylab=ylab,
-   xlab="",
-   xaxt='n',bty='n',las=1)
+   xlim=xlim, ylim=ylim, ylab=ylab, xlab=xlab,
+   # 150% of the normal size for the labels
+   cex.lab=1.5,
+   # no xaxis,no yaxis,no box
+   xaxt='n',yaxt='n',bty='n')
  
- 
- height <- mean(diff(colorval$inval))
- for (i in 1:512) { plot.singlecolor(i,colorval$clrs.hex,ybs=min(colorval$inval),height=height) }
+ ## rr will be our axis/labels, add zero if zero is the middle
+ #if(sum(rr)==0) rr <- sort(c(0,rr))   # maybe 0 is just in the range: if(findInterval(0,rr)==1)
+
+ # give or axis a middle value
+ rr<-sort(c(mean(rr),rr))
+
+ # set our own y axis
+ par(xaxt="s",yaxt="s") # turn the axis back on
+ axis(side=side, at=rr, labels=as.character(rr),las=side)
+
+ # vertical plot
+ interval <- mean(diff(colorval$inval))
+ for (i in 1:512) { 
+    plot.singlecolor(i,colorval$clrs.hex,
+                     side=side,
+                     init=min(colorval$inval),
+                     interval=interval) }
 }
 
 

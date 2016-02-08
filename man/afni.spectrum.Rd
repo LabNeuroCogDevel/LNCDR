@@ -7,15 +7,23 @@
 afni.spectrum(coloreddata, img = NULL)
 }
 \arguments{
-\item{coloreddata}{vector of data the spectrum has been applied to (can be just a range)}
+\item{coloreddata}{1) the single autoRange or manual range value provided to the AFNI "Define Overlay" gui.  OR 2) the vector of data the spectrum has been applied to. This can be just the range in lieu of the actual data. Use this option if "Pos?" is checked like colordata=c(0,4.44). N.B.  colordata=4.44 is the same as coloreddata=c(-4.44,4.44).}
 
-\item{img}{the jpeg exported afni spectrum. Right click 'OLay' -> export ppm}
+\item{img}{the jpeg exported afni spectrum. Right click 'OLay' -> export ppm. Use this when using discrete or customized color scales.}
 }
 \description{
 AFNI color spectrum -> R object
 }
 \examples{
-
-
+ # range value set to 5 in afni
+ colorvals <- afni.spectrum(  5 )
+ # same as
+ colorvals <- afni.spectrum( -5:5 )
+ # same as
+ colorvals <- afni.spectrum( c(-5,5)  )
+ 
+ 
+ colorvals <- afni.spectrum(  c(0,2.75)  )
+ colorvals <- afni.spectrum(  c(-1,1) * 2.75  )
 }
 

@@ -4,16 +4,22 @@
 \alias{plot.colorspectrum}
 \title{plot a color spectrum read in by afni.spectrum}
 \usage{
-plot.colorspectrum(colorval)
+plot.colorspectrum(colorval, lab = "val", side = 2)
 }
 \arguments{
 \item{colorval}{the list output of afni.spectrum}
+
+\item{lab}{label for the relevant axis, defaults to useless 'val'}
+
+\item{side}{which direction to draw the graph 1 horz, 2 vertical. matches par's meaning of side}
 }
 \description{
 plot a color spectrum read in by afni.spectrum
 }
 \examples{
  colorval <- afni.spectrum(-5:5)
- plot.colorspectrum() 
+ svg('colorbar.svg')
+ plot.colorspectrum(colorval) 
+ dev.off()
 }
 
