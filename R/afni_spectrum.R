@@ -73,16 +73,16 @@ plot.singlecolor <- function(i,colorspec,width=1,height=1,ybs=1) {
 #' @examples 
 #'  colorval <- afni.spectrum(-5:5)
 #'  plot.colorspectrum() 
-plot.colorspectrum <-function(colorval) {
+plot.colorspectrum <-function(colorval,ylab='val') {
 
  # open an empty plot with no x axis ticks
  # set lables
  plot(x=NULL,y=NULL,
    xlim=c(0,1),
    ylim=range(colorval$invals),
-   ylab="val",
+   ylab=ylab,
    xlab="",
-   xaxt='n',bty='n')
+   xaxt='n',bty='n',las=1)
  
  
  height <- mean(diff(colorval$inval))
@@ -95,7 +95,7 @@ plot.colorspectrum <-function(colorval) {
 ##### default color spectrum
 afni.default_color_spectrum <- function(){
 
-c("#D0002A", "#ED4F73", "#FB2A6A", "#FF0060", "#FD1C5F", "#FE265A", 
+rev(c("#D0002A", "#ED4F73", "#FB2A6A", "#FF0060", "#FD1C5F", "#FE265A", 
 "#FE004B", "#FF0D49", "#FF1649", "#FE1C3B", "#FF352A", "#FF451C", 
 "#FF4D1C", "#FF550D", "#FF5A16", "#FF5F0D", "#FF630D", "#FF6600", 
 "#FF6A0D", "#FF6E0D", "#FF7100", "#FE7500", "#FF7800", "#FF7A0D", 
@@ -180,5 +180,5 @@ c("#D0002A", "#ED4F73", "#FB2A6A", "#FF0060", "#FD1C5F", "#FE265A",
 "#0D71FF", "#0D6EFF", "#0D6AFF", "#0D66FE", "#1663FF", "#0D5FFE", 
 "#165CFF", "#0056FF", "#0051FF", "#0D47FF", "#2A32FE", "#3516FE", 
 "#420DFF", "#4B0DFF", "#510DFF", "#5516FF", "#5D0DFF", "#630DFF", 
-"#6516FF", "#6516FF")
+"#6516FF", "#6516FF"))
 }
