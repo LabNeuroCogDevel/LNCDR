@@ -9,7 +9,7 @@ require(grid) #unit
 #' This function stylizes a ggplot2 plot to match the aesthetic of Dr. Luna
 #'  * Removes grid lines and borders
 #'  * Increases font size 
-#'  * Increases gap between x and y axis titles (by adding "\n" to the labels)
+#'  * Increases gap between x and y axis titles (by adding "\\n" to the labels)
 #' @param p plot to retheme
 #' @param ajust vjust and hjust values for axis text Defauts to .05
 #' @export

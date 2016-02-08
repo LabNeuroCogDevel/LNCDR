@@ -6,7 +6,7 @@
 This function stylizes a ggplot2 plot to match the aesthetic of Dr. Luna
  * Removes grid lines and borders
  * Increases font size 
- * Increases gap between x and y axis titles (by adding "\n" to the labels)}
+ * Increases gap between x and y axis titles (by adding "\\n" to the labels)}
 \usage{
 lunaize(p, ajust = 0.05)
 }
@@ -20,7 +20,7 @@ Re-theme plot a la Luna
 This function stylizes a ggplot2 plot to match the aesthetic of Dr. Luna
  * Removes grid lines and borders
  * Increases font size 
- * Increases gap between x and y axis titles (by adding "\n" to the labels)
+ * Increases gap between x and y axis titles (by adding "\\n" to the labels)
 }
 \examples{
 p <- ggplot(iris,aes(x=Sepal.Length,y=Petal.Width))+geom_point()
