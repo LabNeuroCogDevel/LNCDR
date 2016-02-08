@@ -16,14 +16,12 @@ AFNI color spectrum -> R object
 }
 \examples{
  # range value set to 5 in afni
- colorvals <- afni.spectrum(  5 )
+ colorvals <- afni.spectrum(5)
  # same as
- colorvals <- afni.spectrum( -5:5 )
+ colorvals <- afni.spectrum(-5:5)
  # same as
- colorvals <- afni.spectrum( c(-5,5)  )
- 
- 
- colorvals <- afni.spectrum(  c(0,2.75)  )
- colorvals <- afni.spectrum(  c(-1,1) * 2.75  )
+ colorvals <- afni.spectrum(c(-5,5))
+ # if Pos? is checked 
+ colorvals <- afni.spectrum(c(0,5)) 
 }
 

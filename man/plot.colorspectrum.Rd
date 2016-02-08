@@ -18,8 +18,9 @@ plot a color spectrum read in by afni.spectrum
 }
 \examples{
  colorval <- afni.spectrum(-5:5)
- svg('colorbar.svg')
+ #svg('colorbar.svg')
+ par(cex.lab=1.5) # 150\% of the normal size for the labels
  plot.colorspectrum(colorval) 
- dev.off()
+ #dev.off()
 }
 

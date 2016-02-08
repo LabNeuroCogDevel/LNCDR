@@ -2,8 +2,6 @@
 # Author: Will Foran
 # 
 
-require(jpeg) # for readJPEG
-require(colorspace) # for hex and RGB
 
 
 #' AFNI color spectrum -> R object
@@ -12,15 +10,13 @@ require(colorspace) # for hex and RGB
 #' @export
 #' @examples 
 #'  # range value set to 5 in afni
-#'  colorvals <- afni.spectrum(  5 )
+#'  colorvals <- afni.spectrum(5)
 #'  # same as
-#'  colorvals <- afni.spectrum( -5:5 )
+#'  colorvals <- afni.spectrum(-5:5)
 #'  # same as
-#'  colorvals <- afni.spectrum( c(-5,5)  )
-#'  
-#'  
-#'  colorvals <- afni.spectrum(  c(0,2.75)  )
-#'  colorvals <- afni.spectrum(  c(-1,1) * 2.75  )
+#'  colorvals <- afni.spectrum(c(-5,5))
+#'  # if Pos? is checked 
+#'  colorvals <- afni.spectrum(c(0,5)) 
 
 # read in a vector (colreddata) and the image that colors it (img)
 # output a list with $invals and $clrs.hex
@@ -32,14 +28,28 @@ afni.spectrum <- function(coloreddata,img=NULL) {
    }
    # 512 (colors in spectrum) x 64 (width, all same vlue) x 3 (r,g,b)
    if(!is.null(img)){
+
+      require(jpeg)         # for readJPEG
+      require(colorspace)   # for hex and RGB
+
       spct <- readJPEG(img)
 
+      # THIS IS BAD: hex(RGB()) is broken?
       # convert to hex, use 32 width pixel to avoid tick marks
-      clrs.img <- spct[,32,]
+      #clrs.img <- spct[,32,]
+      #clrs.hex <- rev(hex(RGB(clrs.img)))
+
+      # second attempt
+      # take the mean of all the good voxels (no scale bar)
+      clrs.img <- apply(spct[,6:27,],c(1,3),mean)
+
       # rev so hotest (highest val) color is on top (@ idx 512)
-      clrs.hex <- rev(hex(RGB(clrs.img)))
-      # same as
-      # rev(hex(RGB(clrs.img[,1],clrs.img[,2],clrs.img[,3])))
+      #crls.hex <- paste0("#",apply(matrix(sprintf("%02X",round(clrs.img*255)),nrow=512),
+      #                             1,paste0,collapse=""))
+      clrs.hexmat <- matrix( sprintf("%02X",round(clrs.img*255)), nrow=512)
+      clrs.hexcat <- apply(clrs.hexmat,1,paste0,collapse="") 
+      clrs.hex    <- paste0("#",clrs.hexcat)
+      clrs.hex    <- rev(clrs.hex)  # hot on top
   } else {
       clrs.hex <- afni.default_color_spectrum()
   }
@@ -76,11 +86,11 @@ plot.singlecolor <- function(i,colorspec,interval=1,init=1,side=2) {
  boxstop  <- boxstart + interval
  # xl,yb,xr,yt
  if(side==2) {
- rect(0,boxstop,1,boxstart,
-     col=color,border=color)
+   rect(0,boxstop,1,boxstart,
+        col=color,border=color)
  } else{
- rect(boxstop,0,boxstart,1,
-     col=color,border=color)
+   rect(boxstop,0,boxstart,1,
+        col=color,border=color)
  }
 }
 
@@ -92,36 +102,29 @@ plot.singlecolor <- function(i,colorspec,interval=1,init=1,side=2) {
 #' @export
 #' @examples 
 #'  colorval <- afni.spectrum(-5:5)
-#'  svg('colorbar.svg')
+#'  #svg('colorbar.svg')
+#'  par(cex.lab=1.5) # 150% of the normal size for the labels
 #'  plot.colorspectrum(colorval) 
-#'  dev.off()
+#'  #dev.off()
 plot.colorspectrum <-function(colorval,lab='val',side=2) {
 
  rr<-range(colorval$inval)
  if(side==1) {
-   xlim<-rr
-   ylim<-c(0,1)
-   xlab<-lab
-   ylab<-""
+   xlim<-rr;     ylim<-c(0,1); xlab<-lab; ylab<-""
  } else {
-   xlim<-c(0,1)
-   ylim<-rr
-   xlab<-""
-   ylab<-lab
+   xlim<-c(0,1); ylim<-rr;     xlab<-"";  ylab<-lab
  }
  # open an empty plot with no x axis ticks
  # set lables
  plot(x=NULL,y=NULL,
    xlim=xlim, ylim=ylim, ylab=ylab, xlab=xlab,
-   # 150% of the normal size for the labels
-   cex.lab=1.5,
    # no xaxis,no yaxis,no box
    xaxt='n',yaxt='n',bty='n')
  
  ## rr will be our axis/labels, add zero if zero is the middle
  #if(sum(rr)==0) rr <- sort(c(0,rr))   # maybe 0 is just in the range: if(findInterval(0,rr)==1)
 
- # give or axis a middle value
+ # give our axis a middle value
  rr<-sort(c(mean(rr),rr))
 
  # set our own y axis
@@ -142,91 +145,91 @@ plot.colorspectrum <-function(colorval,lab='val',side=2) {
 
 ##### default color spectrum
 afni.default_color_spectrum <- function(){
+c("#A10006", "#D8142C", "#F50625", "#FF001E", "#FB031D", "#FC051A", 
+"#FD0012", "#FF0111", "#FE0211", "#FC030B", "#FE0906", "#FF0F03", 
+"#FF1303", "#FF1701", "#FF1A02", "#FE1D01", "#FF2001", "#FE2201", 
+"#FF2502", "#FF2802", "#FF2A01", "#FE2C00", "#FE3000", "#FF3201", 
+"#FF3401", "#FF3602", "#FF3801", "#FF3B02", "#FF3C01", "#FF4002", 
+"#FF4201", "#FF4400", "#FE4600", "#FF4900", "#FF4C02", "#FF4E02", 
+"#FE4E01", "#FE5102", "#FE5301", "#FF5602", "#FE5801", "#FE5A00", 
+"#FE5C00", "#FF5F01", "#FF6100", "#FF6201", "#FF6400", "#FF6501", 
+"#FE6801", "#FE6B02", "#FF6C01", "#FF6E01", "#FF6F01", "#FF7101", 
+"#FE7400", "#FE7701", "#FE7902", "#FE7A02", "#FF7B02", "#FF7C02", 
+"#FF7F02", "#FF8202", "#FF8502", "#FF8601", "#FE8800", "#FF8901", 
+"#FF8B00", "#FF8C01", "#FF8E01", "#FF9002", "#FF9202", "#FF9402", 
+"#FF9601", "#FE9801", "#FE9A00", "#FF9C01", "#FF9F02", "#FF9F02", 
+"#FFA101", "#FFA302", "#FEA400", "#FEA600", "#FFAA01", "#FEAC01", 
+"#FEAC00", "#FEAE00", "#FEB100", "#FFB200", "#FEB300", "#FFB502", 
+"#FFB701", "#FFB802", "#FFBA01", "#FFBC01", "#FFBE00", "#FFC001", 
+"#FFC101", "#FFC302", "#FFC502", "#FFC602", "#FEC802", "#FECA02", 
+"#FFCC01", "#FECE01", "#FED001", "#FFD102", "#FFD302", "#FFD402", 
+"#FFD601", "#FFD701", "#FFD902", "#FFDB02", "#FFDD01", "#FFDE01", 
+"#FEE001", "#FEE202", "#FEE401", "#FEE502", "#FEE801", "#FFE902", 
+"#FFEB01", "#FFEC02", "#FFEE01", "#FFF001", "#FEF200", "#FFF301", 
+"#FFF402", "#FFF602", "#FFF700", "#FFFA01", "#FEFA01", "#FEFC02", 
+"#FEFE02", "#FEFF03", "#FCFF02", "#FCFF02", "#F9FF01", "#F8FF01", 
+"#F6FE01", "#F4FF01", "#F2FE00", "#F2FF00", "#EFFE01", "#EEFE01", 
+"#ECFE02", "#EBFE02", "#E9FE01", "#E8FF01", "#E5FF01", "#E4FF01", 
+"#E1FF02", "#E1FF02", "#DFFE02", "#DFFE02", "#DCFE01", "#DAFF01", 
+"#D8FE01", "#D7FF02", "#D4FE01", "#D3FF01", "#D0FF01", "#D0FF01", 
+"#CDFF00", "#CCFF00", "#CAFE01", "#C9FF01", "#C6FF00", "#C6FF00", 
+"#C3FF01", "#C2FF01", "#C0FE01", "#BFFF01", "#BCFE00", "#BCFF00", 
+"#B9FF00", "#B8FF00", "#B6FF00", "#B4FF00", "#B2FF01", "#B2FF01", 
+"#AFFF00", "#AEFF00", "#ACFE01", "#A9FF00", "#A8FF02", "#A4FF01", 
+"#A3FF02", "#A2FF01", "#A0FF01", "#9FFE00", "#9EFF02", "#9BFF01", 
+"#9AFF02", "#97FF02", "#94FF01", "#93FF01", "#93FF03", "#90FE02", 
+"#8EFF01", "#8CFF01", "#89FF01", "#88FE01", "#86FF01", "#85FE02", 
+"#83FE03", "#80FE02", "#80FF02", "#7DFF01", "#7CFF03", "#7AFF02", 
+"#77FE01", "#76FF01", "#73FE01", "#71FF01", "#6EFF00", "#6DFF00", 
+"#6CFF01", "#6AFE00", "#68FE02", "#65FF01", "#63FE02", "#62FF02", 
+"#5FFF01", "#5EFF01", "#5BFF02", "#58FE01", "#56FE00", "#54FF00", 
+"#51FF00", "#50FF00", "#4DFF01", "#4BFF00", "#49FE01", "#47FF01", 
+"#45FE02", "#42FF02", "#40FF02", "#3CFF01", "#3BFE00", "#3AFF00", 
+"#38FE01", "#36FF02", "#32FF02", "#2FFF01", "#2CFF00", "#2AFF00", 
+"#29FF01", "#26FF01", "#24FE02", "#20FE02", "#1CFE01", "#1AFF01", 
+"#18FF01", "#15FE01", "#12FE02", "#0DFE04", "#06FE07", "#03FF0C", 
+"#02FF10", "#02FE13", "#01FF18", "#00FF1B", "#00FF1D", "#01FF21", 
+"#01FF23", "#01FF24", "#02FF27", "#02FF2A", "#01FF2D", "#01FE30", 
+"#00FF33", "#00FF34", "#00FF36", "#01FF39", "#01FF3B", "#01FF3D", 
+"#01FF3F", "#02FF43", "#01FF44", "#01FF46", "#01FF48", "#02FF4B", 
+"#01FF4C", "#01FF4F", "#01FF51", "#02FF54", "#02FF56", "#02FF57", 
+"#00FF59", "#01FF5D", "#01FF5E", "#01FF61", "#01FE63", "#01FE66", 
+"#01FF68", "#01FF69", "#01FF6B", "#01FE6C", "#00FF6F", "#00FF71", 
+"#00FF73", "#00FE76", "#01FF78", "#01FF79", "#02FE7C", "#01FE7D", 
+"#00FF7F", "#01FF81", "#02FF81", "#02FF83", "#01FF86", "#01FE88", 
+"#01FF89", "#01FF8A", "#02FF8D", "#02FE90", "#02FF92", "#02FF94", 
+"#00FF95", "#00FF97", "#00FF99", "#01FF9B", "#01FF9C", "#01FF9E", 
+"#01FEA0", "#01FEA2", "#01FFA4", "#01FFA5", "#01FFA7", "#01FFA8", 
+"#01FEAA", "#02FFAD", "#00FFAE", "#00FFB0", "#00FFB2", "#01FFB5", 
+"#01FFB6", "#01FFB8", "#01FEBA", "#01FEBC", "#02FFBE", "#02FFBF", 
+"#01FFC1", "#01FFC1", "#01FFC3", "#02FFC5", "#01FFC7", "#01FFC8", 
+"#01FFCA", "#01FFCC", "#01FECE", "#02FFD0", "#01FFD2", "#01FFD3", 
+"#00FFD5", "#00FFD6", "#01FFD9", "#01FFDA", "#02FFDC", "#01FFDD", 
+"#01FEDF", "#02FFE1", "#01FFE2", "#01FFE3", "#02FEE6", "#02FEE8", 
+"#02FFEA", "#01FFEA", "#00FFEC", "#00FFED", "#00FFEF", "#00FFF0", 
+"#03FFF3", "#03FEF4", "#01FFF6", "#01FFF7", "#00FFF9", "#01FFFB", 
+"#01FFFC", "#01FFFE", "#01FDFE", "#00FCFF", "#01FAFF", "#02FAFF", 
+"#01F6FF", "#02F6FF", "#02F4FF", "#02F2FF", "#02F0FF", "#02EFFF", 
+"#01ECFF", "#01ECFF", "#02EAFF", "#01E9FF", "#01E7FF", "#00E6FE", 
+"#01E3FF", "#01E2FE", "#01E0FF", "#00DFFF", "#01DDFF", "#01DBFF", 
+"#01DAFE", "#01D8FD", "#02D6FE", "#01D4FE", "#01D2FE", "#01D1FF", 
+"#02CFFE", "#01CEFE", "#01CCFE", "#01CBFE", "#01C9FE", "#01C7FE", 
+"#02C5FF", "#02C3FE", "#01C1FF", "#00C0FE", "#01BEFE", "#00BCFE", 
+"#01BAFE", "#02B9FF", "#02B6FF", "#01B5FF", "#01B2FE", "#01B2FE", 
+"#02B1FF", "#01AEFE", "#00ACFE", "#02ABFF", "#02A8FF", "#01A6FF", 
+"#01A4FF", "#01A4FF", "#01A1FF", "#00A0FE", "#009EFF", "#009CFF", 
+"#019AFF", "#0099FF", "#0097FF", "#0096FF", "#0093FF", "#0091FE", 
+"#008FFF", "#008EFE", "#018BFF", "#0189FF", "#0188FE", "#0086FE", 
+"#0184FF", "#0182FF", "#0280FF", "#017EFE", "#007AFE", "#017AFE", 
+"#0178FE", "#0177FF", "#0074FF", "#0172FF", "#0270FE", "#026EFE", 
+"#026CFF", "#016BFF", "#0068FF", "#0066FE", "#0064FF", "#0062FF", 
+"#0160FF", "#025EFF", "#015BFF", "#015AFF", "#0158FF", "#0056FE", 
+"#0054FE", "#0050FD", "#004EFE", "#024EFE", "#004AFE", "#0049FF", 
+"#0046FE", "#0044FE", "#0042FE", "#0140FF", "#013DFF", "#023BFF", 
+"#0138FF", "#0136FE", "#0134FF", "#0133FE", "#0030FE", "#012DFE", 
+"#012AFE", "#0228FF", "#0224FF", "#0122FE", "#0220FE", "#011CFE", 
+"#021AFE", "#0018FF", "#0015FF", "#0110FF", "#0608FE", "#0A02FD", 
+"#0F00FF", "#1201FF", "#1501FF", "#1802FF", "#1D00FE", "#2001FF", 
+"#2102FE", "#2102FE")
 
-rev(c("#D0002A", "#ED4F73", "#FB2A6A", "#FF0060", "#FD1C5F", "#FE265A", 
-"#FE004B", "#FF0D49", "#FF1649", "#FE1C3B", "#FF352A", "#FF451C", 
-"#FF4D1C", "#FF550D", "#FF5A16", "#FF5F0D", "#FF630D", "#FF6600", 
-"#FF6A0D", "#FF6E0D", "#FF7100", "#FE7500", "#FF7800", "#FF7A0D", 
-"#FF7D0D", "#FF7F16", "#FF810D", "#FF840D", "#FF8600", "#FF890D", 
-"#FF8B00", "#FF8D00", "#FF8F00", "#FF9200", "#FF9416", "#FF9616", 
-"#FF9700", "#FF9916", "#FF9B0D", "#FF9D0D", "#FF9F00", "#FFA100", 
-"#FEA300", "#FFA40D", "#FFA600", "#FFA70D", "#FFA800", "#FFA90D", 
-"#FFAB0D", "#FFAD0D", "#FFAF00", "#FFAF0D", "#FFB100", "#FFB200", 
-"#FEB400", "#FFB60D", "#FFB616", "#FFB71C", "#FFB916", "#FFBA0D", 
-"#FFBB00", "#FFBD0D", "#FFC00D", "#FFC00D", "#FFC100", "#FFC20D", 
-"#FFC300", "#FFC40D", "#FFC50D", "#FFC616", "#FFC816", "#FFC90D", 
-"#FFCA00", "#FFCB0D", "#FFCD00", "#FFCD0D", "#FFCF16", "#FFCF16", 
-"#FFD00D", "#FFD20D", "#FFD200", "#FFD400", "#FFD50D", "#FFD600", 
-"#FED700", "#FFD700", "#FFD900", "#FFDA00", "#FFDA00", "#FFDB16", 
-"#FFDC0D", "#FFDD0D", "#FFDE00", "#FFDF0D", "#FFE000", "#FFE10D", 
-"#FFE200", "#FFE30D", "#FFE40D", "#FFE416", "#FFE50D", "#FFE616", 
-"#FFE70D", "#FFE800", "#FFE900", "#FFEA0D", "#FFEB00", "#FFEB0D", 
-"#FFEC00", "#FFED0D", "#FFEE16", "#FFEE0D", "#FFEF00", "#FFF00D", 
-"#FFF10D", "#FFF216", "#FEF30D", "#FFF316", "#FFF50D", "#FFF516", 
-"#FFF60D", "#FFF60D", "#FFF700", "#FFF80D", "#FFF900", "#FFFA0D", 
-"#FFFA16", "#FFFB0D", "#FFFB00", "#FFFD0D", "#FFFD0D", "#FEFE16", 
-"#FEFF16", "#FFFF1C", "#FEFF16", "#FEFF16", "#FCFF0D", "#FCFF0D", 
-"#FBFF0D", "#FAFF0D", "#F9FF00", "#F9FF00", "#F8FF0D", "#F7FF0D", 
-"#F6FF16", "#F6FF16", "#F5FF0D", "#F5FF0D", "#F3FF00", "#F3FF00", 
-"#F1FF0D", "#F1FF0D", "#F0FF16", "#F0FF16", "#EEFF0D", "#EEFF0D", 
-"#EDFF0D", "#ECFF0D", "#EBFF00", "#EAFF00", "#E9FF0D", "#E9FF0D", 
-"#E8FF00", "#E7FF00", "#E6FF0D", "#E5FF0D", "#E4FF00", "#E4FF00", 
-"#E3FF0D", "#E2FF0D", "#E1FF0D", "#E0FF0D", "#DFFF00", "#DFFF00", 
-"#DDFF00", "#DDFF00", "#DCFF00", "#DBFF00", "#DAFF0D", "#DAFF0D", 
-"#D8FF00", "#D7FF00", "#D6FF0D", "#D5FF00", "#D4FF16", "#D2FF0D", 
-"#D1FF16", "#D1FF0D", "#D0FF0D", "#CFFF00", "#CEFF16", "#CDFF0D", 
-"#CCFF1C", "#CAFF16", "#C8FF0D", "#C7FF0D", "#C7FF1C", "#C5FF16", 
-"#C4FF0D", "#C4FF0D", "#C2FF0D", "#C0FF00", "#C0FF16", "#BEFF0D", 
-"#BDFF1C", "#BCFF16", "#BBFF16", "#B9FF0D", "#B9FF1C", "#B8FF16", 
-"#B6FF0D", "#B5FF0D", "#B3FF0D", "#B1FF0D", "#AFFF00", "#AFFF00", 
-"#AEFF0D", "#ACFF00", "#ABFF16", "#A9FF0D", "#A7FF16", "#A7FF16", 
-"#A4FF0D", "#A3FF0D", "#A1FF16", "#9FFF0D", "#9CFF00", "#9BFF00", 
-"#99FF00", "#97FF00", "#94FF0D", "#94FF00", "#92FF0D", "#90FF0D", 
-"#8EFF16", "#8BFF16", "#89FF16", "#85FF0D", "#83FF00", "#81FF00", 
-"#7FFF0D", "#7DFF0D", "#7AFF16", "#78FF0D", "#75FF00", "#71FF00", 
-"#6EFF0D", "#6CFF00", "#68FF0D", "#62FF0D", "#5FFF16", "#5AFF16", 
-"#56FF0D", "#4FFF00", "#4BFF0D", "#3DFF1C", "#2AFF2E", "#1CFF3D", 
-"#16FF47", "#0DFF4D", "#00FF56", "#00FF5C", "#00FF5F", "#0DFF63", 
-"#0DFF66", "#0DFF68", "#16FF6C", "#16FF71", "#0DFF75", "#0DFF77", 
-"#00FF7A", "#00FF7C", "#00FF7E", "#0DFF81", "#0DFF83", "#0DFF86", 
-"#0DFF88", "#16FF8B", "#0DFF8D", "#0DFF8E", "#0DFF90", "#16FF93", 
-"#0DFF94", "#0DFF97", "#0DFF99", "#16FF9B", "#16FF9D", "#16FF9E", 
-"#00FF9F", "#0DFFA2", "#0DFFA3", "#0DFFA6", "#0DFFA7", "#0DFFA9", 
-"#0DFFAB", "#0DFFAC", "#0DFFAD", "#0DFFAD", "#00FFAF", "#00FFB2", 
-"#00FFB3", "#00FFB4", "#0DFFB6", "#0DFFB7", "#0DFFB9", "#0DFFB9", 
-"#00FFBA", "#0DFFBC", "#0DFFBD", "#0DFFBE", "#0DFFBF", "#0DFFC0", 
-"#0DFFC2", "#0DFFC2", "#0DFFC3", "#0DFFC5", "#16FFC7", "#16FFC8", 
-"#00FFC9", "#00FFCA", "#00FFCB", "#0DFFCC", "#0DFFCD", "#0DFFCE", 
-"#0DFFCF", "#0DFFD0", "#0DFFD2", "#0DFFD2", "#0DFFD4", "#0DFFD4", 
-"#0DFFD5", "#16FFD6", "#00FFD7", "#00FFD8", "#00FFD9", "#0DFFDB", 
-"#0DFFDC", "#0DFFDC", "#0DFFDD", "#0DFFDE", "#16FFE0", "#16FFE0", 
-"#0DFFE2", "#0DFFE2", "#0DFFE3", "#16FFE3", "#0DFFE4", "#0DFFE5", 
-"#0DFFE6", "#0DFFE7", "#0DFFE8", "#16FFE9", "#00FFEA", "#00FFEB", 
-"#00FFEC", "#00FFEC", "#0DFFED", "#0DFFEE", "#0DFFEE", "#0DFFEF", 
-"#0DFFF0", "#16FFF1", "#0DFFF2", "#0DFFF2", "#0DFFF3", "#0DFFF4", 
-"#16FFF6", "#16FFF6", "#00FFF6", "#00FFF7", "#00FFF8", "#00FFF8", 
-"#1CFFF9", "#1CFFFA", "#0DFFFB", "#0DFFFB", "#00FFFC", "#0DFFFD", 
-"#0DFFFE", "#0DFFFE", "#0DFEFF", "#00FEFF", "#0DFDFF", "#0DFDFF", 
-"#00FBFF", "#16FBFF", "#16FAFF", "#0DFAFF", "#0DF9FF", "#16F8FF", 
-"#0DF6FF", "#0DF6FF", "#16F6FF", "#0DF5FF", "#0DF4FF", "#00F4FF", 
-"#00F3FF", "#0DF2FF", "#0DF1FF", "#00F0FF", "#0DEFFF", "#00EFFF", 
-"#00EEFF", "#00EDFE", "#0DECFF", "#0DECFE", "#16EBFF", "#0DEAFF", 
-"#0DE9FF", "#00E8FF", "#00E7FF", "#00E7FF", "#00E6FF", "#00E5FF", 
-"#0DE4FF", "#0DE3FF", "#0DE2FF", "#00E1FF", "#0DE0FF", "#00DFFE", 
-"#00DEFF", "#0DDDFF", "#0DDCFF", "#0DDBFF", "#0DDAFF", "#0DDAFF", 
-"#16D9FF", "#00D8FF", "#00D6FF", "#0DD6FF", "#0DD5FF", "#0DD3FF", 
-"#0DD2FF", "#0DD2FF", "#0DD0FF", "#00D0FF", "#00CEFF", "#00CDFF", 
-"#0DCCFF", "#00CBFF", "#00CAFF", "#00CAFF", "#00C8FF", "#00C7FF", 
-"#00C5FF", "#00C5FF", "#00C4FF", "#0DC2FF", "#0DC1FF", "#00C0FE", 
-"#00BFFF", "#0DBEFF", "#0DBDFF", "#0DBBFF", "#00B8FF", "#00B8FF", 
-"#00B6FF", "#0DB6FF", "#00B4FF", "#0DB2FF", "#0DB1FF", "#0DAFFF", 
-"#16AEFF", "#0DADFF", "#00ABFF", "#00AAFF", "#00A9FF", "#00A7FF", 
-"#00A6FF", "#0DA3FF", "#00A1FF", "#0DA0FF", "#0D9FFF", "#009EFF", 
-"#009BFE", "#0099FE", "#0097FF", "#0D96FF", "#0094FF", "#0092FF", 
-"#008FFF", "#008EFE", "#008CFF", "#0D89FF", "#0D86FF", "#0D84FF", 
-"#0081FF", "#0D7FFF", "#0D7DFF", "#007CFF", "#0078FF", "#0D75FF", 
-"#0D71FF", "#0D6EFF", "#0D6AFF", "#0D66FE", "#1663FF", "#0D5FFE", 
-"#165CFF", "#0056FF", "#0051FF", "#0D47FF", "#2A32FE", "#3516FE", 
-"#420DFF", "#4B0DFF", "#510DFF", "#5516FF", "#5D0DFF", "#630DFF", 
-"#6516FF", "#6516FF"))
 }
