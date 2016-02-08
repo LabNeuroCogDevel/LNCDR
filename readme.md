@@ -6,7 +6,7 @@ Convenience functions for the LNCD
 # install devtools if needed
 if (!'devtools' %in% installed.packages()) install.packages('devtools')
 # install with devtools
-devtools::install('LabNeuroCogDevel/LNCDR')
+devtools::install_github('LabNeuroCogDevel/LNCDR')
 ```
 
 ## Functions
