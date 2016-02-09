@@ -3,5 +3,5 @@
 export(afni.color_at_value)
 export(afni.spectrum)
 export(lunaize)
-export(plot.colorspectrum)
+export(plot_colorspectrum)
 export(tick_seq)

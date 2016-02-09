@@ -49,7 +49,7 @@ afni.spectrum <- function(coloreddata,img=NULL) {
       clrs.hexmat <- matrix( sprintf("%02X",round(clrs.img*255)), nrow=512)
       clrs.hexcat <- apply(clrs.hexmat,1,paste0,collapse="") 
       clrs.hex    <- paste0("#",clrs.hexcat)
-      clrs.hex    <- rev(clrs.hex)  # hot on top
+      #clrs.hex    <- rev(clrs.hex)  # hot on top
   } else {
       clrs.hex <- afni.default_color_spectrum()
   }
@@ -59,9 +59,8 @@ afni.spectrum <- function(coloreddata,img=NULL) {
    invals <- seq(minmax[1],minmax[2],length.out=length(clrs.hex))
 
    # retrun "colorval"
-   return(list(
-     invals=invals,clrs.hex=clrs.hex
-   ))
+   colorval <- within( data.frame(invals=invals,clrs.hex=clrs.hex), clrs.hex <- as.character(clrs.hex))
+   return(colorval)
 }
 
 #' the hex color value of any point on the spectrum read from afni.spectrum
@@ -99,16 +98,26 @@ plot.singlecolor <- function(i,colorspec,interval=1,init=1,side=2) {
 #' @param colorval the list output of afni.spectrum
 #' @param lab label for the relevant axis, defaults to useless 'val'
 #' @param side which direction to draw the graph 1 horz, 2 vertical. matches par's meaning of side
+#' @param ax T/F weither or not this function should draw an axis. Default T;label for max,middle, and min
 #' @export
 #' @examples 
+#'  # Simple
 #'  colorval <- afni.spectrum(-5:5)
-#'  #svg('colorbar.svg')
-#'  par(cex.lab=1.5) # 150% of the normal size for the labels
-#'  plot.colorspectrum(colorval) 
-#'  #dev.off()
-plot.colorspectrum <-function(colorval,lab='val',side=2) {
+#'  plot_colorspectrum(colorval,'F') 
+#' 
+#'  # Threshold, provide on axis
+#'  # limit to a threshold
+#'  cv  <- colorval[colorval$invals>=2.68,]
+#'  cv$invals[1]<- 2.68 # accurate for data, misleading for scale
+#'  # make text 150% of the normal size for the labels
+#'  par(cex.lab=1.5)
+#'  # plot
+#'  plot_colorspectrum(cv,'F',ax=F) 
+#'  # add our own axis
+#'  axis(side=2,at=c(3,4,5),labels=c("3","","5"),las=2)
+plot_colorspectrum <-function(colorval,lab='val',side=2,ax=T) {
 
- rr<-range(colorval$inval)
+ rr<-range(colorval$invals)
  if(side==1) {
    xlim<-rr;     ylim<-c(0,1); xlab<-lab; ylab<-""
  } else {
@@ -125,18 +134,18 @@ plot.colorspectrum <-function(colorval,lab='val',side=2) {
  #if(sum(rr)==0) rr <- sort(c(0,rr))   # maybe 0 is just in the range: if(findInterval(0,rr)==1)
 
  # give our axis a middle value
- rr<-sort(c(mean(rr),rr))
+ rr<-round(sort(c(mean(rr),rr)),2)
 
- # set our own y axis
+ # set our own axis if ax is passed in as true
  par(xaxt="s",yaxt="s") # turn the axis back on
- axis(side=side, at=rr, labels=as.character(rr),las=side)
+ if(ax) axis(side=side, at=rr, labels=as.character(rr),las=side)
 
  # vertical plot
- interval <- mean(diff(colorval$inval))
- for (i in 1:512) { 
+ interval <- mean(diff(colorval$invals))
+ for (i in 1:length(colorval$clrs.hex)) { 
     plot.singlecolor(i,colorval$clrs.hex,
                      side=side,
-                     init=min(colorval$inval),
+                     init=min(colorval$invals),
                      interval=interval) }
 }
 
@@ -145,7 +154,7 @@ plot.colorspectrum <-function(colorval,lab='val',side=2) {
 
 ##### default color spectrum
 afni.default_color_spectrum <- function(){
-c("#A10006", "#D8142C", "#F50625", "#FF001E", "#FB031D", "#FC051A", 
+rev(c("#A10006", "#D8142C", "#F50625", "#FF001E", "#FB031D", "#FC051A", 
 "#FD0012", "#FF0111", "#FE0211", "#FC030B", "#FE0906", "#FF0F03", 
 "#FF1303", "#FF1701", "#FF1A02", "#FE1D01", "#FF2001", "#FE2201", 
 "#FF2502", "#FF2802", "#FF2A01", "#FE2C00", "#FE3000", "#FF3201", 
@@ -230,6 +239,6 @@ c("#A10006", "#D8142C", "#F50625", "#FF001E", "#FB031D", "#FC051A",
 "#012AFE", "#0228FF", "#0224FF", "#0122FE", "#0220FE", "#011CFE", 
 "#021AFE", "#0018FF", "#0015FF", "#0110FF", "#0608FE", "#0A02FD", 
 "#0F00FF", "#1201FF", "#1501FF", "#1802FF", "#1D00FE", "#2001FF", 
-"#2102FE", "#2102FE")
+"#2102FE", "#2102FE"))
 
 }
