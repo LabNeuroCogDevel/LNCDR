@@ -10,17 +10,19 @@ devtools::install_github('LabNeuroCogDevel/LNCDR')
 ```
 
 ## Functions
+
+For help on all functions, in an R console, see `?LNCDR::`<kbd>tab</kbd>
+
 ### spectrum functions
-![spect1](spectrum_example.png?raw=true)
 
 ```R
 # Simple
 colorval <- afni.spectrum(5)
-plot_colorspectrum(colorval,'F') 
+plot_colorspectrum(colorval) 
 ```
+![spect1](spectrum_example.png?raw=true)
 
 
-![spect2](spectrum_thres_example.png?raw=true)
 ```R
 png('spectrum_thres_example.png',width=512,height=200);
 
@@ -40,6 +42,7 @@ axis(side=1,at=c(2.68,3,4,5),labels=c("2.68","","","5"),las=1)
 
 dev.off()
 ```
+![spect2](spectrum_thres_example.png?raw=true)
 
 ### lunaize
 apply Dr. Luna's style to a ggplot. See `?lunaize` for usage.
