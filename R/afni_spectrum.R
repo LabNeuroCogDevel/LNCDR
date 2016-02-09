@@ -49,7 +49,7 @@ afni.spectrum <- function(coloreddata,img=NULL) {
       clrs.hexmat <- matrix( sprintf("%02X",round(clrs.img*255)), nrow=512)
       clrs.hexcat <- apply(clrs.hexmat,1,paste0,collapse="") 
       clrs.hex    <- paste0("#",clrs.hexcat)
-      #clrs.hex    <- rev(clrs.hex)  # hot on top
+      clrs.hex    <- rev(clrs.hex)  # hot on top
   } else {
       clrs.hex <- afni.default_color_spectrum()
   }

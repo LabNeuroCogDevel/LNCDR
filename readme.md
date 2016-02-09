@@ -48,6 +48,17 @@ axis(side=1,at=c(2.68,3,4,5),labels=c("2.68","","","5"),las=1)
 dev.off()
 ```
 
+You can also load a custom spectrum by right clicking Olay and saving the spectrum as a jpeg
+
+![getFromAfni](img/afni_shot_savespect.png)
+![custumnSpec](img/custom_color.png)
+
+```R
+#### custumn color scale
+cv <- afni.spectrum(0:5,img='custom_spec.jpg')
+plot_colorspectrum(cv,'',side=1)
+```
+
 ### lunaize
 apply Dr. Luna's style to a ggplot. See `?lunaize` for usage.
 

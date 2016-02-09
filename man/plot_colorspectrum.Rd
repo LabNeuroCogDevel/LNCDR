@@ -20,7 +20,7 @@ plot a color spectrum read in by afni.spectrum
 }
 \examples{
  # Simple
- colorval <- afni.spectrum(-5:5)
+ colorval <- afni.spectrum(5)
  plot_colorspectrum(colorval,'F') 
 
  # Threshold, provide on axis
