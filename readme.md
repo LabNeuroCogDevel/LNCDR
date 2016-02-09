@@ -15,15 +15,20 @@ For help on all functions, in an R console, see `?LNCDR::`<kbd>tab</kbd>
 
 ### spectrum functions
 
+
+![afni](img/afni_shot.png?raw=true)
+![spect1](img/spectrum_example.png?raw=true)
+![spect2](img/spectrum_thres_example.png?raw=true)
+
 ```R
-# Simple
+## Simple
 colorval <- afni.spectrum(5)
 plot_colorspectrum(colorval) 
-```
-![spect1](spectrum_example.png?raw=true)
 
+######################################
 
-```R
+## Thresholded and custom axis
+
 png('spectrum_thres_example.png',width=512,height=200);
 
 # Threshold, provide on axis
@@ -42,9 +47,8 @@ axis(side=1,at=c(2.68,3,4,5),labels=c("2.68","","","5"),las=1)
 
 dev.off()
 ```
-![spect2](spectrum_thres_example.png?raw=true)
 
 ### lunaize
 apply Dr. Luna's style to a ggplot. See `?lunaize` for usage.
 
-![lunastyle](lunaize-plotcomp.png?raw=true)
+![lunastyle](img/lunaize-plotcomp.png?raw=true)
