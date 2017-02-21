@@ -70,7 +70,7 @@ plot_colorspectrum(cv,'',side=1)
 ## Notes on build the package
 Hilary Parker's package [writeup](https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/) was used as a template.
 ```
-devtools::document()
-setwd('..')
-install('LNCDR')
+Rscript -e "devtools::document(); setwd('..'); devtools::install('LNCDR')"
 ```
+
+Tests follow Hadley Wickham's testthat [description](http://r-pkgs.had.co.nz/tests.html).
