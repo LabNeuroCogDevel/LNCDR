@@ -35,6 +35,10 @@ save1D <- function(d,colname=1,fname=NULL,dur=NULL,amp=NULL,nblocks=NULL){
    if(!is.null(amp)) { badidx <- badidx | is.na(d[,amp]) | d[,amp]<0 } # amplitude if specified
    d <- d[!badidx,]
 
+
+   # arrange by block and onset
+   d <- d[order(d$block,d[,colname]),]
+
    # where to write stimetimes (filename or stdout)
    if(!is.null(fname)) sink(fname)
 
