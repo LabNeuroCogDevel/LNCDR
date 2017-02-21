@@ -26,4 +26,3 @@ generate a sequence and minor/major tick labs for a ggplot axis
  p <- ggplot()
  p + scale_x_continuous(breaks=ts$breaks,labels=ts$labels)
 }
-

@@ -13,6 +13,14 @@ devtools::install_github('LabNeuroCogDevel/LNCDR')
 
 For help on all functions, in an R console, see `?LNCDR::`<kbd>tab</kbd>
 
+### save1D
+given a dataframe with a `block` column and a specified onset column, generate a 1D file for use in afni's `3dDeconvolve`.
+
+### lunaize
+apply Dr. Luna's style to a ggplot. See `?lunaize` for usage.
+
+![lunastyle](img/lunaize-plotcomp.png?raw=true)
+
 ### spectrum functions
 
 
@@ -59,7 +67,10 @@ cv <- afni.spectrum(0:5,img='custom_spec.jpg')
 plot_colorspectrum(cv,'',side=1)
 ```
 
-### lunaize
-apply Dr. Luna's style to a ggplot. See `?lunaize` for usage.
-
-![lunastyle](img/lunaize-plotcomp.png?raw=true)
+## Notes on build the package
+Hilary Parker's package [writeup](https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/) was used as a template.
+```
+devtools::document()
+setwd('..')
+install('LNCDR')
+```

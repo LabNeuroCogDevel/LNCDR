@@ -24,4 +24,3 @@ AFNI color spectrum -> R object
  # if Pos? is checked 
  colorvals <- afni.spectrum(c(0,5)) 
 }
-

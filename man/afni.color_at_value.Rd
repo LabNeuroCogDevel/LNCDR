@@ -19,4 +19,3 @@ the hex color value of any point on the spectrum read from afni.spectrum
  afni.color_at_value(colorval,6) # out of range, so highest value 
  afni.color_at_value(colorval,0) # middle value is 
 }
-

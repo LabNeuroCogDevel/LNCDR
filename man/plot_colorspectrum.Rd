@@ -34,4 +34,3 @@ plot a color spectrum read in by afni.spectrum
  # add our own axis
  axis(side=2,at=c(3,4,5),labels=c("3","","5"),las=2)
 }
-

@@ -15,7 +15,7 @@ require(grid) #unit
 #' @export
 #' @examples 
 #' p <- ggplot(iris,aes(x=Sepal.Length,y=Petal.Width))+geom_point()
-#' lunaize(p) # or with dplyr: p %>% lunaize
+#' lunaize(p) # or with magrittr/dplyr: p %>% lunaize
 
 lunaize <- function(p,ajust=.05){
   p$labels$y <- paste0(p$labels$y,"\n")

@@ -24,6 +24,5 @@ This function stylizes a ggplot2 plot to match the aesthetic of Dr. Luna
 }
 \examples{
 p <- ggplot(iris,aes(x=Sepal.Length,y=Petal.Width))+geom_point()
-lunaize(p) # or with dplyr: p \%>\% lunaize
+lunaize(p) # or with magrittr/dplyr: p \%>\% lunaize
 }
-
