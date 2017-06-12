@@ -1,9 +1,12 @@
 Package: LNCDR
 Title: Laboratory of Neuro-Cognitive Development R Functions
-Version: 1.1
+Version: 1.2
 Authors@R: person("Will", "Foran", email = "willforan+R@gmail.com", role = c("aut", "cre"))
-Description: Exposes functions useful in creating and displaying neuroimaging data, with a focus on interfacing with AFNI tools.
+Description: Exposes functions useful in creating and displaying neuroimaging data, with a focus on interfacing with AFNI tools. Stats and database helpers are included too.
 Depends:
+    dplyr (>=0.5.0)
+    DBI (>=0.6.1)
+    RPostgreSQL (>=0.4)
     R (>= 3.0)
 License: GPL3
 LazyData: true
