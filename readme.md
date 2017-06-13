@@ -67,7 +67,7 @@ cv <- afni.spectrum(0:5,img='custom_spec.jpg')
 plot_colorspectrum(cv,'',side=1)
 ```
 
-## Notes on build the package
+## Notes on building the package
 Hilary Parker's package [writeup](https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/) was used as a template.
 ```
 Rscript -e "devtools::document(); setwd('..'); devtools::install('LNCDR')"

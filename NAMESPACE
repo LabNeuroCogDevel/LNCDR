@@ -2,7 +2,11 @@
 
 export(afni.color_at_value)
 export(afni.spectrum)
+export(db_query)
+export(lmer_extract)
 export(lunaize)
 export(plot_colorspectrum)
 export(save1D)
 export(tick_seq)
+export(unnestjson)
+import(dplyr)

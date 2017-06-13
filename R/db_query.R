@@ -27,7 +27,6 @@
 #require(RPostgreSQL)
 #require(jsonlite)
 #require(tidyr) 
-#require(readr)
 
 
 
@@ -39,7 +38,8 @@ pgpassread <- function(passfile="~/.pgpass") {
  # TODO: there is no check to make sure passfile matches spec
  info <- 
    # read file in as one string
-   readr::read_file(passfile) %>%
+   # readr::read_file(passfile) %>%
+   paste0(collapse='\n',scan('~/.pgpass','character')) %>%
    # assume firstline
    gsub(pattern='\\n.*',replacement='') %>%
    # split from host:port:db:user:pass
@@ -51,7 +51,6 @@ pgpassread <- function(passfile="~/.pgpass") {
 }
 
 pgconn <- function(info=pgpassread()) {
-  if(!file.exists(passfile)) stop(sprintf('cannot read pass file %s',passfile))
   conn<-DBI::dbConnect(
          #dbDriver(RPostgreSQL::PostgreSQL), 
          RPostgreSQL::PostgreSQL(), 
@@ -68,7 +67,7 @@ pgconn <- function(info=pgpassread()) {
 #' @examples 
 #'  v   <- db_query('select * from visit limit 2')
 #'  meg <- db_query(readr::read_file('/Volumes/Zeus/DB_SQL/queries/allMEG2016.sql'))
-db_query <-function(query,conn=pgconn())  d<-dbGetQuery(conn, query) 
+db_query <-function(query,conn=pgconn())  d<-DBI::dbGetQuery(conn, query) 
 
 ### unnest jsonb
 # some table have jsonb objects
@@ -84,4 +83,9 @@ json2df  <- function(x) lapply(x,FUN=json2df.idv)
 #' @export
 #' @examples 
 #'  v  <- db_query('select * from visit_tasks where task like 'Sen%' limit 2') %>% unnestjson
-unnestjson <- function(d,column='measures')  d %>% mutate(!!column = json2df(!!column) %>% tidyr::unnset
+unnestjson <- function(d,column='measures')   d %>% mutate_(column = sprintf('json2df(%s)',column)) %>% tidyr::unnest()
+#unnestjson <- function(d,column='measures') { 
+#    d[,column] <- json2df(d[,column])
+#    tidyr::unnest(d)
+#}
+
