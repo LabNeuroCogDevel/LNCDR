@@ -75,7 +75,10 @@ db_query <-function(query,conn=pgconn())  d<-DBI::dbGetQuery(conn, query)
 #   {"wbdT": 44.0, "wmrT": 41.0, "Notes": null, "wbdrw": 38.0, ...}
 # this is essentally a nested table -- and R has tools for this
 #
-json2df.idv <- function(x)  jsonlite::fromJSON(x) %>% unlist %>% t %>% data.frame
+#json2df.idv <- function(x)  jsonlite::fromJSON(x) %>% unlist %>% t %>% data.frame
+# updated 2017-08-25. unlist causes value to be null, so remove unlist
+json2df.idv <- function(x)   jsonlite::fromJSON(x) %>% t %>% data.frame  
+
 json2df  <- function(x) lapply(x,FUN=json2df.idv)
 #' unnest json(b) object
 #' @param  d the dataframe contianing a column to unnest
