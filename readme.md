@@ -13,10 +13,13 @@ devtools::install_github('LabNeuroCogDevel/LNCDR')
 
 For help on all functions, in an R console, see `?LNCDR::`<kbd>tab</kbd>
 
-### save1D
+### `save1D`
 given a dataframe with a `block` column and a specified onset column, generate a 1D file for use in afni's `3dDeconvolve`.
 
-### lunaize
+### `date_match`
+Given two dataframes, both with a column of near matching dates, find the best match between the two.
+
+### `lunaize`
 apply Dr. Luna's style to a ggplot. See `?lunaize` for usage.
 
 ![lunastyle](img/lunaize-plotcomp.png?raw=true)
