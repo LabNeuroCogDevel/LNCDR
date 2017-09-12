@@ -2,6 +2,7 @@
 
 export(afni.color_at_value)
 export(afni.spectrum)
+export(date_match)
 export(db_query)
 export(lmer_extract)
 export(lunaize)
