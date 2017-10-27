@@ -26,10 +26,12 @@ zscorewithinfactor<-function(fact,score){
 #' @param ignorecolnames is column vector of strings with column names to ignore
 #' @export
 #' @examples 
+#'   d <- data.frame(a=1:10, b=seq(10,100,by=10), c=rep('a',10) )
+#'   LNCDR::zscorecols( d, 'c' )
 
 zscorecols<-function(df,ignorecolnames){
    for (c in 1:ncol(df)){
-    if(names(df)[c] %in% ignorecols){next}
+    if(names(df)[c] %in% ignorecolnames){next}
      print(c)
      df[,c]<-(df[,c]-(mean(df[,c],na.rm=TRUE)))/sd(df[,c],na.rm=TRUE)
    }
