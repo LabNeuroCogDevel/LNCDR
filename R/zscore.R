@@ -43,7 +43,9 @@ zscorewithinfactor<-function(fact,score,VERBOSE=T){
 #' @export
 #' @examples 
 #'   d <- data.frame(a=1:10, b=seq(10,100,by=10), c=rep('a',10) )
-#'   LNCDR::zscorecols( d, 'c' )
+#'   d.z1 <- LNCDR::zscorecols( d, 'c' )
+#'   library(dplyr)
+#'   d.z2 -> df %>% mutate_at( vars( matches('a|b') ) ,LNCDR::zscore)
 
 zscorecols<-function(df,ignorecolnames,VERBOSE=T){
    for (ci in 1:ncol(df)){
