@@ -4,12 +4,14 @@
 \alias{zscorewithinfactor}
 \title{zscores within factor for long format/nested data}
 \usage{
-zscorewithinfactor(fact, score)
+zscorewithinfactor(fact, score, VERBOSE = T)
 }
 \arguments{
 \item{fact}{is grouping factor}
 
 \item{score}{is variable}
+
+\item{VERBOSE}{flag for printing factor during loop iteration}
 }
 \description{
 zscores within factor for long format/nested data

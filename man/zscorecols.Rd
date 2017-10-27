@@ -4,12 +4,14 @@
 \alias{zscorecols}
 \title{zscores all columns in a df except those whose names are passed as "ignorecolnames"}
 \usage{
-zscorecols(df, ignorecolnames)
+zscorecols(df, ignorecolnames, VERBOSE = T)
 }
 \arguments{
 \item{df}{is dataframe which columns to zscore}
 
 \item{ignorecolnames}{is column vector of strings with column names to ignore}
+
+\item{VERBOSE}{flag for printing factor during loop iteration}
 }
 \description{
 zscores all columns in a df except those whose names are passed as "ignorecolnames"
