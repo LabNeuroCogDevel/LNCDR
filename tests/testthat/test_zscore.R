@@ -10,7 +10,7 @@ test_that("zscorecols", {
  z <- zscorecols(d,'c')
 
  expect_true(all(  z$c == 'a' ) )
- expect_true(all(  abs(z$a - z$b) < 10^-15 ) )
+ expect_equal(z$a, z$b,tolerance=1e-15 )
  expect_true(z$a[1]    != z$a[2])
  expect_true(mean(z$a) == 0     )
 })
