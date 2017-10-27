@@ -18,5 +18,9 @@ zscores all columns in a df except those whose names are passed as "ignorecolnam
 }
 \examples{
   d <- data.frame(a=1:10, b=seq(10,100,by=10), c=rep('a',10) )
-  LNCDR::zscorecols( d, 'c' )
+  d.z1 <- LNCDR::zscorecols( d, 'c' )
+\dontrun{
+  library(dplyr)
+  d.z2 -> df \%>\% mutate_at( vars( matches('a|b') ) ,LNCDR::zscore)
+}
 }

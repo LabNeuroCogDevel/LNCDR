@@ -16,3 +16,8 @@ zscorewithinfactor(fact, score, VERBOSE = T)
 \description{
 zscores within factor for long format/nested data
 }
+\examples{
+  x <- 1:10; f <- sample(c(rep('x',5),rep('y',5)))
+  z.vec  <- zscorewithinfactor(f, x)
+  z.list <- tapply(x,f,zscore)
+}

@@ -9,8 +9,8 @@
 #' @param x is the numeric vector to zscore
 #' @export
 #' @examples 
-#    z<-zscore(1:10)
-#    mean(z) == 0
+#'    z<-zscore(1:10)
+#'    mean(z) == 0
 
 zscore <- function(x) (x - mean(x,na.rm=T) )/sd(x,na.rm=T)
 
@@ -20,9 +20,9 @@ zscore <- function(x) (x - mean(x,na.rm=T) )/sd(x,na.rm=T)
 #' @param VERBOSE flag for printing factor during loop iteration
 #' @export
 #' @examples 
-#   x <- 1:10; f <- sample(c(rep('x',5),rep('y',5)))
-#   z.vec  <- zscorewithinfactor(f, x)
-#   z.list <- tapply(x,f,zscore)
+#'   x <- 1:10; f <- sample(c(rep('x',5),rep('y',5)))
+#'   z.vec  <- zscorewithinfactor(f, x)
+#'   z.list <- tapply(x,f,zscore)
 zscorewithinfactor<-function(fact,score,VERBOSE=T){
   factors<-unique(fact)
   fzscore<-score*0
@@ -44,8 +44,10 @@ zscorewithinfactor<-function(fact,score,VERBOSE=T){
 #' @examples 
 #'   d <- data.frame(a=1:10, b=seq(10,100,by=10), c=rep('a',10) )
 #'   d.z1 <- LNCDR::zscorecols( d, 'c' )
+#' \dontrun{
 #'   library(dplyr)
 #'   d.z2 -> df %>% mutate_at( vars( matches('a|b') ) ,LNCDR::zscore)
+#' }
 
 zscorecols<-function(df,ignorecolnames,VERBOSE=T){
    for (ci in 1:ncol(df)){
