@@ -21,10 +21,10 @@ col_ungroup: pull unique bits out of redudant column names to make dataframe lon
 \examples{
    # as prefix
    d2   <- data.frame(x=1:3,Contact1Phone=4:6,Contact2Phone=7:9,Contact1Address=2:4)
-   d2.ug<- col_ungroup(d,'Contact[12]')
+   d2.ug<- col_ungroup(d2,'Contact[12]')
    # with suffixe
    d1   <- data.frame(x=1:3,measure.a=4:6,measure.b=7:9,m2.a=2:4,m2.b=5:7)
-   d1.ug<- col_ungroup(d,'\\\\.(a|b)$')
+   d1.ug<- col_ungroup(d1,'\\\\.(a|b)$')
    # watch out for patterns that match multiple parts of the same string
    # e.g. 'a|b' will be removed from 'measure.a' to make 'mesure'
 
