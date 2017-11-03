@@ -23,7 +23,9 @@ to_nii <- function(examplenii,d,fileout,valcol=4,icol='i',jcol='j',kcol='k') {
 
  #md <- examplenii@.Data
  #md[,,] <- 0
- md <- rep(0,dim(examplenii@.Data))
+ dm <- dim(examplenii@.Data)
+ md <- rep(0,prod(dm))
+ dim(md) <- dm
 
  for(idx in 1:nrow(d) ){
    md[ d[idx,icol],d[idx,jcol],d[idx,kcol] ] <- d[idx,valcol]
