@@ -13,6 +13,24 @@ devtools::install_github('LabNeuroCogDevel/LNCDR')
 
 For help on all functions, in an R console, see `?LNCDR::`<kbd>tab</kbd>
 
+### `to_nii`
+write a nifti file from a voxelwise dataframe
+### `zscore` `zscorecols` `zscorewithinfactor`
+zscore dataframes
+### `col_ungroup`
+extract variable grouped columns into rows
+```
+a.mean b.mean c.mean a.std b.std c.std
+     1      2      3    .6    .5   .4
+
+TO
+
+grp  mean  std
+a    1     .6
+b    2     .5
+c    3     .4
+
+```
 ### `save1D`
 given a dataframe with a `block` column and a specified onset column, generate a 1D file for use in afni's `3dDeconvolve`.
 
