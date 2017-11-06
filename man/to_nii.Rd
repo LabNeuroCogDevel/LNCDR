@@ -8,13 +8,13 @@ to_nii(examplenii, d, fileout, valcol = 4, icol = "i", jcol = "j",
   kcol = "k")
 }
 \arguments{
-\item{icol, jcol, kcol:}{columns to use for indexing}
+\item{examplenii}{an oro.nifti object with the header (orientation, pixdim, etc) representing voxel data}
 
-\item{examplenii:}{an oro.nifti object with the header (orientation, pixdim, etc) representing voxel data}
+\item{d}{voxelwise dataframe: row with i j k and voxel value}
 
-\item{d:}{voxelwise dataframe: row with i j k and voxel value}
+\item{valcol}{column in d to use as voxel value}
 
-\item{valcol:}{column in d to use as voxel value}
+\item{icol, jcol, kcol}{columns to use for indexing}
 }
 \description{
 to_nii: give a mask and a dataframe (row per voxel: i j k value), write out a nifti file

@@ -7,6 +7,7 @@ Depends:
   dplyr (>= 0.7.0),
   DBI (>= 0.6.1),
   RPostgreSQL (>= 0.4),
+  oro.nifti (>= 0.9.0),
   R (>= 3.0)
 License: GPL3
 LazyData: true
