@@ -42,6 +42,18 @@ apply Dr. Luna's style to a ggplot. See `?lunaize` for usage.
 
 ![lunastyle](img/lunaize-plotcomp.png?raw=true)
 
+### ijk functions
+convert ijk indexes between afni and oro MNI(LPI) data matrix.
+
+![afni_ijk](img/afni_ijk.png?raw=true)
+
+```R
+x <- oro.nifti::readNIfTI('betas.nii.gz')
+dm <- dim(x)
+mx <- arrayind(which.max(d),dm)
+ijk.oro2afni(mx[1:3], dm )
+```
+
 ### spectrum functions
 
 
