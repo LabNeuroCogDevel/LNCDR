@@ -2,28 +2,28 @@
 # Author:  Brenden Tervo-Clemmens
 # Packager: Will Foran
 # 
-# TODO: test. get car (nloptr) installed on local musl install
-#' get pvalues from a model
+#' lmer_extract
+#'  get (t, chisq, p) values from a single variable in a model
 #' @param model is a lm model
-#' @param var is the variable of interest (string)
+#' @param varname is the variable of interest (string)
 #' @param factorname is optional factor of var
 #' @export
-#' @examples 
-#' m <- lm(model=
-#' lmer_extract(m
+#' @examples
+#'   m <- lme4::lmer(uptake ~ conc + Type + (1 | Treatment), CO2)
+#'   lmer_extract(m, "conc")
 
-lmer_extract<-function(model,var,factorname=NULL){
-  if(is.null(factorname)){factorname=var}
+lmer_extract <- function(model, varname, factorname=NULL){
+  if (is.null(factorname)) factorname <- varname
 
-  m_s<-summary(model)
-  tall<-m_s$coefficients[,3]
-  t.at.name<-tall[names(tall)==factorname]
+  m_s <- summary(model)
+  tall <- m_s$coefficients[, 3]
+  t_at_name <- tall[names(tall) == factorname]
 
-  m_ca<-as.data.frame(car::Anova(model))
-  cs<-m_ca$Chisq[row.names(m_ca)==var]
-  p<-m_ca$'Pr(>Chisq)'[row.names(m_ca)==var]
+  m_ca <- as.data.frame(car::Anova(model))
+  cs   <- m_ca$Chisq[row.names(m_ca) == varname]
+  p    <- m_ca$"Pr(>Chisq)"[row.names(m_ca) == varname]
 
-  return(c(t.at.name,cs,p))
-
+  r <- c(tval = unname(t_at_name), chisq = cs, p = p)
+  names(r) <- paste(sep = ".", varname, names(r))
+  return(r)
 }
-

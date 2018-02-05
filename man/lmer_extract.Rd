@@ -2,21 +2,23 @@
 % Please edit documentation in R/lmer_extract.R
 \name{lmer_extract}
 \alias{lmer_extract}
-\title{get pvalues from a model}
+\title{lmer_extract
+ get (t, chisq, p) values from a single variable in a model}
 \usage{
-lmer_extract(model, var, factorname = NULL)
+lmer_extract(model, varname, factorname = NULL)
 }
 \arguments{
 \item{model}{is a lm model}
 
-\item{var}{is the variable of interest (string)}
+\item{varname}{is the variable of interest (string)}
 
 \item{factorname}{is optional factor of var}
 }
 \description{
-get pvalues from a model
+lmer_extract
+ get (t, chisq, p) values from a single variable in a model
 }
 \examples{
-m <- lm(model=
-lmer_extract(m
+  m <- lme4::lmer(uptake ~ conc + Type + (1 | Treatment), CO2)
+  lmer_extract(m, "conc")
 }
