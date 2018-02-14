@@ -12,7 +12,7 @@ lmer_extract(model, varname, factorname = NULL)
 
 \item{varname}{is the variable of interest (string)}
 
-\item{factorname}{is optional factor of var}
+\item{factorname}{is optional factor of var (string) as named by summary(model), e.g. 'Female01female'}
 }
 \description{
 lmer_extract
@@ -21,4 +21,5 @@ lmer_extract
 \examples{
   m <- lme4::lmer(uptake ~ conc + Type + (1 | Treatment), CO2)
   lmer_extract(m, "conc")
+  lmer_extract(m, "Type", "TypeMississippi")
 }
