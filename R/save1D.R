@@ -69,6 +69,8 @@ linePerblock <- function(d,colname=1,nblocks=NULL,dur=NULL,amp=NULL) {
               return(p0fmt('%0.2f',bd[,colname]))
             else if(!is.null(dur)&&is.null(amp))
               return(p0fmt('%0.2f:%0.2f',bd[,colname],bd[,dur]))
+            else if(is.null(dur)&&!is.null(amp))
+              return(p0fmt('%0.2f*%0.2f',bd[,colname],bd[,amp]))
             else
               return(p0fmt('%0.2f:%0.2f*%0.2f',bd[,colname],bd[,dur],bd[,amp]))
           } else {
