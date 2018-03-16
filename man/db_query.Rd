@@ -4,7 +4,7 @@
 \alias{db_query}
 \title{db_qeury -- query database}
 \usage{
-db_query(query, conn = pgconn())
+db_query(query, conn = lncd_pgconn())
 }
 \arguments{
 \item{query}{is the sql string to run}

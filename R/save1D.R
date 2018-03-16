@@ -27,7 +27,7 @@ save1D <- function(d,colname=1,fname=NULL,dur=NULL,amp=NULL,nblocks=NULL){
    # TODO: allow numeric column name?
    if( ! colname %in% names(d)) stop('cannot find ',colname, ' in dataframe')
    if(!is.null(dur) && ! dur %in% names(d)) stop('cannot find ', dur, ' in dataframe')
-   if(!is.null(amp) && ! dur %in% names(d)) stop('cannot find ', amp, ' in dataframe')
+   if(!is.null(amp) && ! amp %in% names(d)) stop('cannot find ', amp, ' in dataframe')
 
    ## remove NA and -1
    badidx <- is.na(d[,colname]) | d[,colname]<0                        # colname (onsettime)

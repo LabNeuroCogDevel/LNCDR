@@ -18,7 +18,7 @@
 # see `db_example.R` for correct connection managemnet 
 # *OR*
 #  add 2 steps to your query calls  like:
-#    conn <- pgconn()
+#    conn <- lncd_pgconn()
 #    p <- db_query('select * from person', conn)
 #    v <- db_query('select * from visits', conn)
 #    dbDisconnect(conn)
@@ -50,14 +50,23 @@ pgpassread <- function(passfile="~/.pgpass") {
    `names<-`(c('host','port','db','user','pass'))
 }
 
-pgconn <- function(info=pgpassread()) {
+#' lncd_pgconn -- create connection to lncd postgres database
+#' @param  info is a named list with db, host, user, and pass. will be created from ~/.pgpass is left empty
+#' @export
+#' conn <- lncd_pgconn()
+#' # lapply(dbListConnections(RPostgreSQL::PostgreSQL()),dbDisconnect)
+lncd_pgconn <- function(info=pgpassread()) {
   conn<-DBI::dbConnect(
-         #dbDriver(RPostgreSQL::PostgreSQL), 
-         RPostgreSQL::PostgreSQL(), 
+         #dbDriver(RPostgreSQL::PostgreSQL),
+         RPostgreSQL::PostgreSQL(),
          dbname   = info$db,
-         host     = info$host, 
+         host     = info$host,
          user     = info$user,
          password = info$pass)
+  # TODO:
+  #  reuse old connections
+  #  dbListConnections(RPostgreSQL::PostgreSQL())
+  return(conn)
 }
 
 #' db_qeury -- query database 
@@ -67,7 +76,7 @@ pgconn <- function(info=pgpassread()) {
 #' @examples 
 #'  v   <- db_query('select * from visit limit 2')
 #'  meg <- db_query(readr::read_file('/Volumes/Zeus/DB_SQL/queries/allMEG2016.sql'))
-db_query <-function(query,conn=pgconn())  d<-DBI::dbGetQuery(conn, query) 
+db_query <-function(query, conn=lncd_pgconn())  d<-DBI::dbGetQuery(conn, query)
 
 ### unnest jsonb
 # some table have jsonb objects

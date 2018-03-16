@@ -12,7 +12,7 @@
 #'    z<-zscore(1:10)
 #'    mean(z) == 0
 
-zscore <- function(x) (x - mean(x,na.rm=T) )/sd(x,na.rm=T)
+zscore <- function(x) (x - mean(x, na.rm=T) )/sd(x, na.rm=T)
 
 #' zscores within factor for long format/nested data
 #' @param fact is grouping factor
@@ -23,7 +23,7 @@ zscore <- function(x) (x - mean(x,na.rm=T) )/sd(x,na.rm=T)
 #'   x <- 1:10; f <- sample(c(rep('x',5),rep('y',5)))
 #'   z.vec  <- zscorewithinfactor(f, x)
 #'   z.list <- tapply(x,f,zscore)
-zscorewithinfactor<-function(fact,score,VERBOSE=T){
+zscorewithinfactor<-function(fact, score, VERBOSE=T){
   factors<-unique(fact)
   fzscore<-score*0
   for (f in factors){
