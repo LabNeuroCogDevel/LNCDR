@@ -5,8 +5,8 @@
 #' lmer_extract
 #'  get (t, chisq, p) values from a single variable in a model
 #' @param model is a lm model
-#' @param varname is the variable of interest (string)
-#' @param factorname is optional factor of var (string) as named by summary(model), e.g. 'Female01female'
+#' @param varname is the variable of interest (string). ie. rowname in car::Anova to extract Chisq and Pr>Chisq
+#' @param factorname is optional. factor of var (string) as named by summary(model), e.g. 'Female01female'.  ie. rowname in summary to extract tvalue
 #' @export
 #' @examples
 #'   m <- lme4::lmer(uptake ~ conc + Type + (1 | Treatment), CO2)

@@ -10,9 +10,9 @@ lmer_extract(model, varname, factorname = NULL)
 \arguments{
 \item{model}{is a lm model}
 
-\item{varname}{is the variable of interest (string)}
+\item{varname}{is the variable of interest (string). ie. rowname in car::Anova to extract Chisq and Pr>Chisq}
 
-\item{factorname}{is optional factor of var (string) as named by summary(model), e.g. 'Female01female'}
+\item{factorname}{is optional. factor of var (string) as named by summary(model), e.g. 'Female01female'.  ie. rowname in summary to extract tvalue}
 }
 \description{
 lmer_extract
