@@ -4,6 +4,65 @@
 
 
 
+#' NIFTI range using afni's 3dBrickStat
+#' @param nifti file
+#' @export
+#' @examples 
+#'  nii_range('myfile.nii.gz')
+#'  nii_range('myfile.nii.gz[0]')
+nii_range <- function(nii) {
+  nii_no_subbrick <- gsub("\\[.*\\]$", "", nii)
+  if (!file.exists(nii_no_subbrick)) stop("file %s DNE", nii_no_subbrick)
+  cmd <- '3dBrickStat -non-zero -min -max "%s"'
+  minmaxstr <- system(sprintf(cmd, nii), intern= T)
+  inrange <- as.numeric(strsplit(minmaxstr, "\\s+")[[1]])
+  return(inrange)
+}
+
+#' wrapper for optionally creating a pdf of plot_colorspectrum(afni.spectrum(...)))
+#' @param maxvalue
+#' @param pdf name
+#' @param threshold - where to cut off data
+#' @param ispos - only postiive values?
+#' @param ... other options for plot_colorspectrum (lab="val", side=2, ax=T)
+#' @export
+#' @examples 
+#'  # minmax <- nii_range('myfile.nii.gz[0]')
+#'  minmax <- c(5,10)
+#'  afni_save_spectrum(minmax[1],threshold=minmax[0],ispos=T,lab="F",ax=F)
+#'  # thresholded w/neg postive and better axis labels
+#'  afni_save_spectrum(10,threshold=5,ispos=F,lab="F",ax=F) 
+#'  axis(side=2,at=c(-10,-5,5,10),labels=c("-10","-5","5","10"),las=2)
+#'  # with image saved from afni color bar
+#'  afni_save_spectrum(10,img="saved_spectrum.png") 
+# given range save a pdf with colorscale
+afni_save_spectrum<-function(volumemax, savename=NA,
+                             threshold=NA, ispos=F, img=NULL, ...){
+   # spectrum ranges -max,max unless we have only positive (then 0 to max)
+   posmax <- abs(volumemax)
+   plotrange <- c(-posmax, posmax)
+   if (ispos) plotrange <- c(0, posmax)
+
+   # if we are applying a threshold, dont show colors below the thres
+   # -- only applicable when ispos
+   colorvals <- LNCDR::afni.spectrum(plotrange, img)
+   if (!is.na(threshold) && ispos) {
+      colorvals<-colorvals[colorvals$invals >= threshold, ]
+      colorvals$invals[1] <- threshold # fix e.g thres is 5, but scale shows 4.9
+      threshold <- NA # plot_colorspectrum doesn't need to know
+   }
+
+   # plot
+   p <- plot_colorspectrum(colorvals, thres=threshold, ...)
+   if (!is.na(savename)) {
+      pdf(savename, height=10, width=3)
+      print(p)
+      dev.off()
+   }
+   return(p)
+}
+
+
 #' AFNI color spectrum -> R object
 #' @param coloreddata 1) the single autoRange or manual range value provided to the AFNI "Define Overlay" gui.  OR 2) the vector of data the spectrum has been applied to. This can be just the range in lieu of the actual data. Use this option if "Pos?" is checked like colordata=c(0,4.44). N.B.  colordata=4.44 is the same as coloreddata=c(-4.44,4.44).
 #' @param img the jpeg exported afni spectrum. Right click 'OLay' -> export ppm. Use this when using discrete or customized color scales.
@@ -21,13 +80,13 @@
 # read in a vector (colreddata) and the image that colors it (img)
 # output a list with $invals and $clrs.hex
 # the color of any invals is clrs.hex
-afni.spectrum <- function(coloreddata,img=NULL) {
+afni.spectrum <- function(coloreddata, img=NULL) {
    # if we are only given one value, assume we want from negative to positive
    if(length(coloreddata)==1L){
-     coloreddata<-c(-1,1)*coloreddata
+     coloreddata < -c(-1, 1)*coloreddata
    }
    # 512 (colors in spectrum) x 64 (width, all same vlue) x 3 (r,g,b)
-   if(!is.null(img)){
+   if (!is.null(img)){
 
       require(jpeg)         # for readJPEG
       require(colorspace)   # for hex and RGB
@@ -107,46 +166,56 @@ plot.singlecolor <- function(i,colorspec,interval=1,init=1,side=2) {
 #' 
 #'  # Threshold, provide on axis
 #'  # limit to a threshold
-#'  cv  <- colorval[colorval$invals>=2.68,]
-#'  cv$invals[1]<- 2.68 # accurate for data, misleading for scale
+#'  plot_colorspectrum(colorval,'F',thres=2.68) 
+#'  # only  positive
+#'  cv <- afni.spectrum(c(0,5))
+#'  plot_colorspectrum(cv,'F') 
+#'  # start at threshold
+#'  cv <- cv[cv$invals>2.68,]
+#'  plot_colorspectrum(cv,'F') 
 #'  # make text 150% of the normal size for the labels
 #'  par(cex.lab=1.5)
 #'  # plot
 #'  plot_colorspectrum(cv,'F',ax=F) 
 #'  # add our own axis
 #'  axis(side=2,at=c(3,4,5),labels=c("3","","5"),las=2)
-plot_colorspectrum <-function(colorval,lab='val',side=2,ax=T) {
+plot_colorspectrum <-function(colorval, lab="val", side=2, ax=T, thres=NA) {
 
  rr<-range(colorval$invals)
- if(side==1) {
-   xlim<-rr;     ylim<-c(0,1); xlab<-lab; ylab<-""
+ if (side==1) {
+   xlim<-rr;     ylim<-c(0, 1); xlab<-lab; ylab<-""
  } else {
-   xlim<-c(0,1); ylim<-rr;     xlab<-"";  ylab<-lab
+   xlim<-c(0, 1); ylim<-rr;     xlab<-"";  ylab<-lab
  }
  # open an empty plot with no x axis ticks
  # set lables
- plot(x=NULL,y=NULL,
+ plot(x=NULL, y=NULL,
    xlim=xlim, ylim=ylim, ylab=ylab, xlab=xlab,
    # no xaxis,no yaxis,no box
-   xaxt='n',yaxt='n',bty='n')
+   xaxt="n", yaxt="n", bty="n")
  
  ## rr will be our axis/labels, add zero if zero is the middle
  #if(sum(rr)==0) rr <- sort(c(0,rr))   # maybe 0 is just in the range: if(findInterval(0,rr)==1)
 
  # give our axis a middle value
- rr<-round(sort(c(mean(rr),rr)),2)
+ rr <- round(sort(c(mean(rr), rr)), 2)
 
  # set our own axis if ax is passed in as true
- par(xaxt="s",yaxt="s") # turn the axis back on
- if(ax) axis(side=side, at=rr, labels=as.character(rr),las=side)
+ par(xaxt="s", yaxt="s") # turn the axis back on
+ if (ax) axis(side=side, at=rr, labels=as.character(rr), las=side)
 
  # vertical plot
  interval <- mean(diff(colorval$invals))
- for (i in 1:length(colorval$clrs.hex)) { 
-    plot.singlecolor(i,colorval$clrs.hex,
+ for (i in 1:length(colorval$clrs.hex)) {
+    # skip values outside of threshold
+    if (!is.na(thres) && abs(colorval$invals[i]) < thres) next
+    # plot this color
+    plot.singlecolor(i,
+                     colorval$clrs.hex,
                      side=side,
                      init=min(colorval$invals),
-                     interval=interval) }
+                     interval=interval)
+ }
 }
 
 

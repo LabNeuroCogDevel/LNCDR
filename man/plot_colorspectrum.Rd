@@ -4,7 +4,7 @@
 \alias{plot_colorspectrum}
 \title{plot a color spectrum read in by afni.spectrum}
 \usage{
-plot_colorspectrum(colorval, lab = "val", side = 2, ax = T)
+plot_colorspectrum(colorval, lab = "val", side = 2, ax = T, thres = NA)
 }
 \arguments{
 \item{colorval}{the list output of afni.spectrum}
@@ -25,8 +25,13 @@ plot a color spectrum read in by afni.spectrum
 
  # Threshold, provide on axis
  # limit to a threshold
- cv  <- colorval[colorval$invals>=2.68,]
- cv$invals[1]<- 2.68 # accurate for data, misleading for scale
+ plot_colorspectrum(colorval,'F',thres=2.68) 
+ # only  positive
+ cv <- afni.spectrum(c(0,5))
+ plot_colorspectrum(cv,'F') 
+ # start at threshold
+ cv <- cv[cv$invals>2.68,]
+ plot_colorspectrum(cv,'F') 
  # make text 150\% of the normal size for the labels
  par(cex.lab=1.5)
  # plot
