@@ -1,6 +1,6 @@
 #
 # Author:  Will Foran
-# 
+#   
 #' match dates in a data frame by one-to-many merge and rank. Useful to match behavioral to brain over multiple timepoints.
 #' @param d1 -- main dataframe (has the "true" date. one part of one-to-many)
 #' @param d2 -- supplimental dataframe with dates to match (many part of one-to-many)
@@ -28,7 +28,7 @@ date_match <-function(d1, d2, idcol, datecol1, datecol2=datecol1, all.x=F,
    # change name if datecolumns are the same
    # changing now saves us from having .x and .y
    if (datecol1==datecol2) {
-      datecol2 <- paste0(datecol1, ".y")
+      datecol2 <- paste0(datecol1, suffix.y)
       names(d2)[ which(names(d2)==datecol1) ] <- datecol2
    }
 
