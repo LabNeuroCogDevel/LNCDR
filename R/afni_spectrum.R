@@ -20,7 +20,7 @@ nii_range <- function(nii) {
 }
 
 #' wrapper for optionally creating a pdf of plot_colorspectrum(afni.spectrum(...)))
-#' @param maxvalue
+#' @param volumemax - maximum value for spectrum
 #' @param pdf name
 #' @param threshold - where to cut off data
 #' @param ispos - only postiive values?

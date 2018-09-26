@@ -2,7 +2,11 @@
 % Please edit documentation in R/uppsp_score.R
 \name{uppsp_scoring}
 \alias{uppsp_scoring}
-\title{upps_scoring: score upps}
+\title{Author: BTC
+upps_scoring - scores uppsp 59-item version
+  * wide format data only
+  * items must start with column number
+  * returns five factor scores and total}
 \usage{
 uppsp_scoring(uppspdf)
 }
@@ -10,5 +14,14 @@ uppsp_scoring(uppspdf)
 \item{uppspdf}{- dataframe of recorded uppsp responses}
 }
 \description{
-upps_scoring: score upps
+Author: BTC
+upps_scoring - scores uppsp 59-item version
+  * wide format data only
+  * items must start with column number
+  * returns five factor scores and total
+}
+\examples{
+  uppsp<-readxl::read_excel("/Volumes/Phillips/mMR_PETDA/scripts/txt/PET_Sheets.xlsx",sheet="UPPS-P")
+  uppsp<-uppsp[!is.na(uppsp$ID),]
+  uppsp_scoring(uppsp)
 }

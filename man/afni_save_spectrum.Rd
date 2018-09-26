@@ -8,6 +8,8 @@ afni_save_spectrum(volumemax, savename = NA, threshold = NA, ispos = F,
   img = NULL, ...)
 }
 \arguments{
+\item{volumemax}{- maximum value for spectrum}
+
 \item{threshold}{- where to cut off data}
 
 \item{ispos}{- only postiive values?}

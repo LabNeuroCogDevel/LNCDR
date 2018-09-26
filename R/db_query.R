@@ -53,6 +53,7 @@ pgpassread <- function(passfile="~/.pgpass") {
 #' lncd_pgconn -- create connection to lncd postgres database
 #' @param  info is a named list with db, host, user, and pass. will be created from ~/.pgpass is left empty
 #' @export
+#' @examples
 #' conn <- lncd_pgconn()
 #' # lapply(dbListConnections(RPostgreSQL::PostgreSQL()),dbDisconnect)
 lncd_pgconn <- function(info=pgpassread()) {
@@ -90,6 +91,7 @@ json2df.idv <- function(x)   jsonlite::fromJSON(x) %>% t %>% data.frame
 
 json2df  <- function(x) lapply(x,FUN=json2df.idv)
 unnestWithNull <- function(x) unlist(sapply(x,function(y) ifelse(is.null(y),NA,y)))
+
 #' unnest json(b) object
 #' @param  d the dataframe contianing a column to unnest
 #' @param  column the column (string, in quotes) containing the json string to be unnested. defaults to 'measures'

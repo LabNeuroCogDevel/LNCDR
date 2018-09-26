@@ -1,14 +1,16 @@
-#' upps_scoring: score upps 
+#' Author: BTC
+#' upps_scoring - scores uppsp 59-item version
+#'   * wide format data only
+#'   * items must start with column number
+#'   * returns five factor scores and total
 #' @param uppspdf - dataframe of recorded uppsp responses
 #' @export
-#' @example
+#' @examples
 #'   uppsp<-readxl::read_excel("/Volumes/Phillips/mMR_PETDA/scripts/txt/PET_Sheets.xlsx",sheet="UPPS-P")
 #'   uppsp<-uppsp[!is.na(uppsp$ID),]
 #'   uppsp_scoring(uppsp)
 uppsp_scoring<-function(uppspdf){
    ######BTC & WF#########
-   ####scores uppsp 59-item version ####wide format data only ###items must start with column number######
-   ####returns five factor scores and total#########
    ##last updated 11202017########
 
    uppscols<-grep("([0-9]+).*$",names(uppspdf),value=TRUE)

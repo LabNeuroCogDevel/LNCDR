@@ -12,3 +12,7 @@ lncd_pgconn(info = pgpassread())
 \description{
 lncd_pgconn -- create connection to lncd postgres database
 }
+\examples{
+conn <- lncd_pgconn()
+# lapply(dbListConnections(RPostgreSQL::PostgreSQL()),dbDisconnect)
+}
