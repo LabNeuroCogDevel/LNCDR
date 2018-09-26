@@ -112,3 +112,35 @@ unnestjson <- function(d,column='measures')  {
 #    tidyr::unnest(d)
 #}
 
+
+#' task_query - return all rows for a given task from psql database
+#' @param  task -- like "DrugUse", "Demographics", etc
+#' @param  columns -- sql list of columns (default "measures")
+#' @export
+#' @examples 
+#'  rist  <- task_query("RIST", "measures->'rist_ristindex' as ristindex")
+#'  demo  <- task_query("Demographics")
+task_query <- function(task, columns="measures"){
+ d <-
+  sprintf("
+  select id,
+    to_char(vtimestamp,'YYYYMMDD') as ymd,
+    vtype, vscore, age,
+    %s
+  from  visit
+  natural join  visit_task
+  natural join enroll
+  where
+    task like '%s' and
+    enroll.etype like 'LunaID'
+    and measures is not null
+  ", columns, task) %>%
+  db_query %>%
+  mutate(ymd=lubridate::ymd(ymd))
+
+  # get all columns from measures
+  if (columns=="measures")
+     d <- unnestjson(d) %>% select(-measures.x, -measures.y)
+
+  return(d)
+}
