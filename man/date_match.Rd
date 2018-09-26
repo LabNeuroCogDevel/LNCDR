@@ -4,21 +4,27 @@
 \alias{date_match}
 \title{match dates in a data frame by one-to-many merge and rank. Useful to match behavioral to brain over multiple timepoints.}
 \usage{
-date_match(d1, d2, idcol, datecol1, datecol2 = datecol1, maxdatediff = 180,
-  maxrank = 2 - 0.001)
+date_match(d1, d2, idcol, datecol1, datecol2 = datecol1, all.x = F,
+  suffix.y = ".y", maxdatediff = 180, maxrank = 2 - 0.001)
 }
 \arguments{
-\item{d1}{is the main dataframe}
+\item{d1}{-- main dataframe (has the "true" date. one part of one-to-many)}
 
-\item{d2}{is the supplimental dataframe with dates to match}
+\item{d2}{-- supplimental dataframe with dates to match (many part of one-to-many)}
 
-\item{datecol1}{is date column one, this will be the id column}
+\item{datecol1}{-- date column one, this will be the id column}
 
-\item{maxdatediff}{is the maximum time between matches (default 180 days)}
+\item{all.x}{-- weather or not to keep NAs (b/c match is over maxdatediff or does not existed)}
 
-\item{maxrank}{is highest index value of datediff ranked. set to 1 to ingore ties (deafult is 1.999)}
+\item{suffix.y}{-- what to call the d2 columns that match d1 names}
 
-\item{datecal2}{is date column two. this will be the many in one-to-many merge. defaults to same name as datacol1}
+\item{maxdatediff}{-- maximum time between matches (default 180 days)}
+
+\item{maxrank}{-- highest index value of datediff ranked. set to 1 to ingore ties (deafult is 1.999)}
+
+\item{id}{-- column in both d1 and d2 (lunaid)}
+
+\item{datecal2}{-- date column two. this will be the many in one-to-many merge. defaults to same name as datacol1}
 }
 \description{
 match dates in a data frame by one-to-many merge and rank. Useful to match behavioral to brain over multiple timepoints.
