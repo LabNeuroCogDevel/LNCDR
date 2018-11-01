@@ -37,6 +37,16 @@ given a dataframe with a `block` column and a specified onset column, generate a
 ### `date_match`
 Given two dataframes, both with a column of near matching dates, find the best match between the two.
 
+### `vox_cor`
+given a seed region (mask) and target region (mask), give voxelwise correlations from a 4d nifti.
+
+```R
+seed <- read_mask("striatum_mask.nii.gz")
+target <- read_mask("gm_mask.nii.gz")
+target <- target & ! seed
+allcors <- vox_cor("subj_ts.nii.gz",seed,target)
+```
+
 ### `lunaize`
 apply Dr. Luna's style to a ggplot. See `?lunaize` for usage.
 

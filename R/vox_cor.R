@@ -41,7 +41,7 @@ mask_nii <- function(fname_or_oro, mask) {
 }
 
 
-#' vox_cor: voxelwise correlation for timeseries between two masks
+#' vox_cor: voxelwise correlation of 4d nifti from seed roi to target 
 #' @param tsnii  4d timeseries as file name, oronifti object, or 4d timeseries matrix
 #' @param seed   1d numeric matrix or "logi" boolean matrix (seed_mask@.Data==1, see \code{\link{read_mask}}) 
 #' @param trgmsk "logi" boolean matrix (trg_mask@.Data==1, see \code{\link{read_mask}})
@@ -54,7 +54,7 @@ mask_nii <- function(fname_or_oro, mask) {
 #'    target <- target & ! seed
 #'    allcors <- vox_cor("subj_ts.nii.gz",seed,target)
 #'    # passing seed as a vector
-#'    allcors_mean <- vox_cor("subj_ts.nii.gz",apply(seed,2,mean),target)
+#'    # allcors_mean <- vox_cor("subj_ts.nii.gz",apply(seed,2,mean),target)
 #'    }
 vox_cor <- function(tsnii, seed, trgmsk) {
     # what do do with ts nii
