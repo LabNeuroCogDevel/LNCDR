@@ -14,10 +14,20 @@
 #'   lmer_extract(m, "Type", "TypeMississippi")
 
 lmer_extract <- function(model, varname, factorname=NULL){
-  if (is.null(factorname)) factorname <- varname
 
   m_s <- summary(model)
-  tall <- m_s$coefficients[, 3]
+
+  # make sure we have t value -- otherwise we'd spit out incorrect info
+  tcolname = dimnames(m_s$coefficients)[[2]][3]
+  # maybe should test class(model) %in% c("lm", "lmerMod")
+  if(tcolname != "t value")
+      stop("lmer_extract expects summary coefficents column 3 to be 't value' but have ", tcolname,
+           ". Your model should be built with lme4::lmer")
+
+  if (is.null(factorname)) factorname <- varname
+
+  # [,3] == [,"t value"]
+  tall <- m_s$coefficients[, "t value"]
   t_at_name <- tall[names(tall) == factorname]
 
   # warn if t_at_name does not exist
