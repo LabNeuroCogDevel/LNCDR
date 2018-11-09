@@ -13,6 +13,19 @@ devtools::install_github('LabNeuroCogDevel/LNCDR')
 
 For help on all functions, in an R console, see `?LNCDR::`<kbd>tab</kbd>
 
+### `pubmed_search`
+For meta analysis, get a dataframe of pubmed search results (doi, title, authors, journal, year, abstract)
+```R
+  btc_papers <- pubmed_search("Tervo-Clemmens[Author]", "tmp_xml/authsearch")
+
+  #  journal  title   year  abstract                                doi   authors
+  #  Biologi… Early … 2018  Retrospective neuroimaging studies hav… 10.1… Tervo-C…
+  #  NeuroIm… Adoles… 2018  Given prior reports of adverse effects… 10.1… Tervo-C…
+  #  Frontie… Neural… 2017  Risk for substance use disorder (SUD) … 10.3… Tervo-C…
+  #  Annual … An int… 2015  "Brains systems undergo unique and spe… 10.1… Luna, B…
+  #  Journal… Explor… 2013  Comorbid depression and anxiety disord… 10.4… Boyd, R…
+```
+
 ### `to_nii`
 write a nifti file from a voxelwise dataframe
 ### `zscore` `zscorecols` `zscorewithinfactor`
