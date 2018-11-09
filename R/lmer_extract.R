@@ -4,6 +4,7 @@
 # 
 #' lmer_extract
 #'  get (t, chisq, p) values from a single variable in a model
+#'  ONLY USE WHERE FACTOR has more than two levels -- chisq will report without any factor instead of without the specified factor
 #' @param model is a lm model
 #' @param varname is the variable of interest (string). ie. rowname in car::Anova to extract Chisq and Pr>Chisq
 #' @param factorname is optional. factor of var (string) as named by summary(model), e.g. 'Female01female'.  ie. rowname in summary to extract tvalue
@@ -42,6 +43,8 @@ lmer_extract <- function(model, varname, factorname=NULL){
   cs   <- m_ca$Chisq[row.names(m_ca) == varname]
   p    <- m_ca$"Pr(>Chisq)"[row.names(m_ca) == varname]
 
+  # todo: error out if factorname and more than two catagories
+  #       or warn and drop tvalue
   r <- c(tval = unname(t_at_name), chisq = cs, p = p)
   names(r) <- paste(sep = ".", varname, names(r))
   return(r)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/vox_cor.R
 \name{vox_cor}
 \alias{vox_cor}
-\title{vox_cor: voxelwise correlation for timeseries between two masks}
+\title{vox_cor: voxelwise correlation of 4d nifti from seed roi to target}
 \usage{
 vox_cor(tsnii, seed, trgmsk)
 }
@@ -14,7 +14,7 @@ vox_cor(tsnii, seed, trgmsk)
 \item{trgmsk}{"logi" boolean matrix (trg_mask@.Data==1, see \code{\link{read_mask}})}
 }
 \description{
-vox_cor: voxelwise correlation for timeseries between two masks
+vox_cor: voxelwise correlation of 4d nifti from seed roi to target
 }
 \examples{
    # usage
@@ -24,6 +24,6 @@ vox_cor: voxelwise correlation for timeseries between two masks
    target <- target & ! seed
    allcors <- vox_cor("subj_ts.nii.gz",seed,target)
    # passing seed as a vector
-   allcors_mean <- vox_cor("subj_ts.nii.gz",apply(seed,2,mean),target)
+   # allcors_mean <- vox_cor("subj_ts.nii.gz",apply(seed,2,mean),target)
    }
 }

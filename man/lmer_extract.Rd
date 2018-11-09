@@ -3,7 +3,8 @@
 \name{lmer_extract}
 \alias{lmer_extract}
 \title{lmer_extract
- get (t, chisq, p) values from a single variable in a model}
+ get (t, chisq, p) values from a single variable in a model
+ ONLY USE WHERE FACTOR has more than two levels -- chisq will report without any factor instead of without the specified factor}
 \usage{
 lmer_extract(model, varname, factorname = NULL)
 }
@@ -17,6 +18,7 @@ lmer_extract(model, varname, factorname = NULL)
 \description{
 lmer_extract
  get (t, chisq, p) values from a single variable in a model
+ ONLY USE WHERE FACTOR has more than two levels -- chisq will report without any factor instead of without the specified factor
 }
 \examples{
   m <- lme4::lmer(uptake ~ conc + Type + (1 | Treatment), CO2)
