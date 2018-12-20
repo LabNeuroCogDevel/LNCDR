@@ -146,3 +146,41 @@ task_query <- function(task, columns="measures"){
 
   return(d)
 }
+
+#' ld8_age - merge input dataframe with ages calc from db
+#' @param  d -- dataframe with an lunaid_yyyymmdd column
+#' @param  colname -- column containing ld8
+#' @export
+#' @examples 
+#'  rist  <- ld8_age(data.frame(ld8=c("11654_20180602","11671_20180723")),"ld8")
+ld8_age <- function(d, colname="ld8") {
+   if (any(names(d) %in% c("id", "ymd")))
+      warning("id or ymd column will be changed")
+
+   # if colname is not "ld8", make new column and remove it later
+   keepld8<-T
+   if (colname != "ld8") {
+      d[, "ld8"] <- as.character(d[, colname])
+      keepld8<-F
+   }
+
+   d <- d %>%
+      tidyr::separate(sep="_", ld8, c("id", "ymd"), remove=keepld8) %>%
+      mutate(ymd=lubridate::ymd(ymd))
+   # input into sql approprate string. eg " '11523','10931' "
+   l_in <-
+      d$id %>%
+      gsub("[^0-9A-Za-z]", "", .) %>% # sanatize
+      gsub("^", "'", .) %>%           # add begin quote
+      gsub("$", "'", .) %>%           # add ending quote
+      paste(collapse=",")             # commas between ids
+   query <- sprintf("
+            select *
+            from person
+            natural join enroll
+            where id in (%s)", l_in)
+  r <- LNCDR::db_query(query)
+  f <-
+     merge(r, d, by="id", all=T) %>%
+     mutate(age=round(as.numeric(ymd-dob)/365.25, 2))
+}
