@@ -82,35 +82,11 @@ ijk.oro2afni(mx[1:3], dm )
 
 ![afni](img/afni_shot.png?raw=true)
 ![spect1](img/spectrum_example.png?raw=true)
-![spect2](img/spectrum_thres_example.png?raw=true)
-
 ```R
-## Simple
-colorval <- afni.spectrum(5)
-plot_colorspectrum(colorval) 
-
-######################################
-
-## Thresholded and custom axis
-
-png('spectrum_thres_example.png',width=512,height=200);
-
-# Threshold, provide on axis
-# limit to a threshold
-cv  <- colorval[colorval$invals>=2.68,]
-cv$invals[1]<- 2.68 # accurate for data, misleading for scale
-
-# make text 150% of the normal size for the labels
-par(cex.lab=1.5)
-
-# plot
-plot_colorspectrum(cv,'F',ax=F,side=1) 
-
-# add our own axis
-axis(side=1,at=c(2.68,3,4,5),labels=c("2.68","","","5"),las=1)
-
-dev.off()
+afni_save_spectrum(5, thres=2.68, posonly=T, lab="F")
 ```
+
+![spect2](img/spectrum_thres_example.png?raw=true)
 
 You can also load a custom spectrum by right clicking Olay and saving the spectrum as a jpeg
 

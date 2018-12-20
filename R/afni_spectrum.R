@@ -23,13 +23,15 @@ nii_range <- function(nii) {
 #' @param volumemax - maximum value for spectrum
 #' @param pdf name
 #' @param threshold - where to cut off data
-#' @param ispos - only postiive values?
+#' @param ispos - spectrum starts at 0 instead of -volumemax
+#' @param posonly - only show spectrum for >0 values (ispos=F, posonly=T == BTC)
 #' @param ... other options for plot_colorspectrum (lab="val", side=2, ax=T)
 #' @export
 #' @examples 
-#'  # minmax <- nii_range('myfile.nii.gz[0]')
-#'  minmax <- c(5,10)
-#'  afni_save_spectrum(minmax[1],threshold=minmax[0],ispos=T,lab="F",ax=F)
+#'  # spectrum goes from -10 to 10, show only 2 to 10
+#'  afni_save_spectrum(10, thres=2, onlypos=T, lab="F stat")
+#'  # spectrum goes from 0 to 10, show only 2 to 10
+#'  afni_save_spectrum(10, thres=2, ispos=T, lab="F stat")
 #'  # thresholded w/neg postive and better axis labels
 #'  afni_save_spectrum(10,threshold=5,ispos=F,lab="F",ax=F) 
 #'  axis(side=2,at=c(-10,-5,5,10),labels=c("-10","-5","5","10"),las=2)
@@ -37,7 +39,9 @@ nii_range <- function(nii) {
 #'  afni_save_spectrum(10,img="saved_spectrum.png") 
 # given range save a pdf with colorscale
 afni_save_spectrum<-function(volumemax, savename=NA,
-                             threshold=NA, ispos=F, img=NULL, ...){
+                             threshold=NA, ispos=F,
+                             posonly=F,
+                             img=NULL, ...){
    # spectrum ranges -max,max unless we have only positive (then 0 to max)
    posmax <- abs(volumemax)
    plotrange <- c(-posmax, posmax)
@@ -46,7 +50,7 @@ afni_save_spectrum<-function(volumemax, savename=NA,
    # if we are applying a threshold, dont show colors below the thres
    # -- only applicable when ispos
    colorvals <- LNCDR::afni.spectrum(plotrange, img)
-   if (!is.na(threshold) && ispos) {
+   if (!is.na(threshold) && (ispos || posonly) ) {
       colorvals<-colorvals[colorvals$invals >= threshold, ]
       colorvals$invals[1] <- threshold # fix e.g thres is 5, but scale shows 4.9
       threshold <- NA # plot_colorspectrum doesn't need to know

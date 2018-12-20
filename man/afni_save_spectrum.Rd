@@ -5,14 +5,16 @@
 \title{wrapper for optionally creating a pdf of plot_colorspectrum(afni.spectrum(...)))}
 \usage{
 afni_save_spectrum(volumemax, savename = NA, threshold = NA, ispos = F,
-  img = NULL, ...)
+  posonly = F, img = NULL, ...)
 }
 \arguments{
 \item{volumemax}{- maximum value for spectrum}
 
 \item{threshold}{- where to cut off data}
 
-\item{ispos}{- only postiive values?}
+\item{ispos}{- spectrum starts at 0 instead of -volumemax}
+
+\item{posonly}{- only show spectrum for >0 values (ispos=F, posonly=T == BTC)}
 
 \item{...}{other options for plot_colorspectrum (lab="val", side=2, ax=T)}
 
@@ -22,9 +24,10 @@ afni_save_spectrum(volumemax, savename = NA, threshold = NA, ispos = F,
 wrapper for optionally creating a pdf of plot_colorspectrum(afni.spectrum(...)))
 }
 \examples{
- # minmax <- nii_range('myfile.nii.gz[0]')
- minmax <- c(5,10)
- afni_save_spectrum(minmax[1],threshold=minmax[0],ispos=T,lab="F",ax=F)
+ # spectrum goes from -10 to 10, show only 2 to 10
+ afni_save_spectrum(10, thres=2, onlypos=T, lab="F stat")
+ # spectrum goes from 0 to 10, show only 2 to 10
+ afni_save_spectrum(10, thres=2, ispos=T, lab="F stat")
  # thresholded w/neg postive and better axis labels
  afni_save_spectrum(10,threshold=5,ispos=F,lab="F",ax=F) 
  axis(side=2,at=c(-10,-5,5,10),labels=c("-10","-5","5","10"),las=2)
