@@ -160,7 +160,8 @@ ld8_age <- function(d, colname="ld8") {
    # if colname is not "ld8", make new column and remove it later
    keepld8<-T
    if (colname != "ld8") {
-      d[, "ld8"] <- as.character(d[, colname])
+      # unlist incase input is tbl_df
+      d[, "ld8"] <- as.character(unlist(d[, colname]))
       keepld8<-F
    }
 
@@ -169,7 +170,7 @@ ld8_age <- function(d, colname="ld8") {
       mutate(ymd=lubridate::ymd(ymd))
    # input into sql approprate string. eg " '11523','10931' "
    l_in <-
-      d$id %>%
+      unique(d$id) %>%
       gsub("[^0-9A-Za-z]", "", .) %>% # sanatize
       gsub("^", "'", .) %>%           # add begin quote
       gsub("$", "'", .) %>%           # add ending quote

@@ -1,6 +1,6 @@
 Package: LNCDR
 Title: Laboratory of Neuro-Cognitive Development R Functions
-Version: 1.2
+Version: 1.21
 Authors@R: c(person("Will", "Foran", email = "willforan+R@gmail.com", role = c("aut", "cre")), person("Brenden", "Tervo-Clemmens", email = "btc16@pitt.edu", role = c("aut", "cre")))
 Author: Will Foran [aut,cre],
    Brenden Tervo=Clemmens [aut,cre]
@@ -14,5 +14,5 @@ Depends:
   R (>= 3.0)
 License: GPL3
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 Suggests: testthat

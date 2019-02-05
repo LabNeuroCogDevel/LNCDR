@@ -4,7 +4,8 @@
 \alias{plot_colorspectrum}
 \title{plot a color spectrum read in by afni.spectrum}
 \usage{
-plot_colorspectrum(colorval, lab = "val", side = 2, ax = T, thres = NA)
+plot_colorspectrum(colorval, lab = "val", side = 2, ax = T,
+  thres = NA)
 }
 \arguments{
 \item{colorval}{the list output of afni.spectrum}

@@ -22,7 +22,7 @@ pubmed_search <- function(query, prefix){
   pdir <- dirname(prefix)
   if (!dir.exists(pdir)) dir.create(pdir, recursive=T)
   if (length(xmls) == 0L){
-      cat("saving query results into ", prefix, "*.xml ...\n")
+      cat("saving query results into ", prefix, "*.txt ...\n")
       batch_pubmed_download(query,
                             format = "xml",
                             batch_size = 400,
@@ -33,12 +33,15 @@ pubmed_search <- function(query, prefix){
                       length(xmls),
                       prefix))
   }
+
+  if (length(xmls) == 0L)  warning("No results pulled from ", prefix)
+
   dplyr::bind_rows(lapply(xmls, xml2df))
 }
 
 ### supporting functions for extracting fields from xml
 #   particular attention for returning NA if tree is missing a field
-xqry <- function(tx, q) unlist(xpathApply(tx, q, xmlValue))
+xqry <- function(tx, q) unlist(XML::xpathApply(tx, q, xmlValue))
 l_xqry <- function(lx, q) {
     l <- lapply(lx, function(x) xqry(xmlParse(x), q))
     l[sapply(l, is.null)] <- NA
@@ -48,7 +51,7 @@ l_xqry <- function(lx, q) {
 ## authors are treated differently:
 #  need to collapse a list into one string
 parseAuthor <- function(x) {
-   l <- xpathApply(xmlParse(x), "//AuthorList", saveXML)
+   l <- XML::xpathApply(xmlParse(x), "//AuthorList", saveXML)
    if ( length(l)==0L ) return(NA)
    unlist(lapply(l, idvAuthor))
 }
@@ -60,7 +63,7 @@ idvAuthor<-function(s){
 
 ## how to take a pubmed xml output and turn it into a dataframe
 qxml2df <- function(xml_in){
- xl <- xpathApply(xml_in, "//PubmedArticle", saveXML)
+ xl <- XML::xpathApply(xml_in, "//PubmedArticle", saveXML)
  l <- list(
    journal     = l_xqry(xl, "//Journal/Title"),
    title       = l_xqry(xl, "//ArticleTitle"),
@@ -90,4 +93,4 @@ xml2df<-function(f) {
 }
 
 # find all xml files that look like prefix
-prefix_xml <- function(p) Sys.glob(sprintf("%s*.xml", p))
+prefix_xml <- function(p) Sys.glob(sprintf("%s*.txt", p))
