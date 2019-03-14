@@ -8,10 +8,13 @@ Maintainer: Will Foran <willforan+R@gmail.com>
 Description: Exposes functions useful in creating and displaying neuroimaging data, with a focus on interfacing with AFNI tools. Stats and database helpers are included too.
 Depends:
   dplyr (>= 0.7.0),
-  DBI (>= 0.6.1),
-  RPostgreSQL (>= 0.4),
-  oro.nifti (>= 0.9.0),
   R (>= 3.0)
+Imports:
+  XML,
+  easyPubMed,
+  RPostgreSQL,
+  DBI,
+  oro.nifti
 License: GPL3
 LazyData: true
 RoxygenNote: 6.1.1
