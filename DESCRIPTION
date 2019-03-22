@@ -14,7 +14,10 @@ Imports:
   easyPubMed,
   RPostgreSQL,
   DBI,
-  oro.nifti
+  oro.nifti,
+  itsadug,
+  ggplot2,
+  gridExtra
 License: GPL3
 LazyData: true
 RoxygenNote: 6.1.1

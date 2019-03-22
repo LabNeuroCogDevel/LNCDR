@@ -106,9 +106,7 @@ ci_from_simdiff1 <- function(pred, ages, qnt=c(.025,.975)) {
 #'
 #' @description plot output of growthrate_gam
 #' @export
-#' @import ggplot2
-#' @import grid
-#' @import gridExtra
+#' @importFrom itsadug get_predictions 
 #' @param d      -- dataframe model was built on (for actual points)
 #' @param model  -- gam model (for predicted line)
 #' @param ci     -- growthrate_gam output (confidence interval and derivitive)
@@ -130,27 +128,29 @@ plotgammfactorwithderiv <-
   require(ggplot2)
   require(grid)
   require(gridExtra)
+  require(itsadug)
 
   # TODO:
-  # remove or replace first row mean_dff (NA draws weird first color on spectrum)
+  # remove or replace first row mean_dff
+  # NA draws weird first color on spectrum
 
   ci$mean_dff_clip <- ci$mean_dff
   # when ci bounds include 0 (different sign), no longer signficant
   not_sig <- sign(ci$ci_low)!=sign(ci$ci_high) # with(ci,ci_high*ci_low < 0)
-  ci$mean_dff_clip[not_sig]<-0
-  
+  ci$mean_dff_clip[not_sig] <- 0
+
   ## setup derivitive raster plot
-  maturation_pnt <- min(ci$ages[ci$mean_dff_clip==0],na.rm=T)
-  deriv_range <- range(ci$mean_dff,na.rm=T)
-  tile <- 
+  maturation_pnt <- min(ci$ages[ci$mean_dff_clip==0], na.rm=T)
+  deriv_range <- range(ci$mean_dff, na.rm=T)
+  tile <-
      ggplot(ci) +
      aes(x=ages, y=1, fill=mean_dff_clip) +
      geom_raster(interpolate=TRUE) +
      scale_fill_gradient2(
-        low = "blue", mid = "white", high = "red", 
+        low = "blue", mid = "white", high = "red",
         midpoint = 0,
         space = "Lab",
-        breaks=sort(c(0,deriv_range)), # assumes range covers 0
+        breaks=sort(c(0, deriv_range)), # assumes range covers 0
         limits=deriv_range
       ) +
       # draw dotted line where maturation point is
@@ -163,20 +163,20 @@ plotgammfactorwithderiv <-
       theme(text = element_text(size=36))
 
   # predictions
-  modeldata<-data.frame(ydata=model$y,agevar=model$model[,agevar])
+  modeldata<-data.frame(ydata=model$y, agevar=model$model[, agevar])
   condlist <- list(a=ci$ages)
   names(condlist) <- agevar
-  agepred<-get_predictions(model,cond=condlist)
-  
+  agepred <- lmer4::get_predictions(model, cond=condlist)
+
   ageplot<-
      ggplot(agepred) +
-     aes_string(x=agevar, y='fit') + 
+     aes_string(x=agevar, y='fit') +
      # solid bold line for fitted model
      geom_line(colour="black", size=2)+
      # individual points for actual data
      geom_point(data=modeldata, aes(y=ydata, x=agevar), alpha=.2)+
-     # connect individual with opaque lines 
-     geom_line(data=d, aes_string(y=yvar,group=idvar), alpha=.2) +
+     # connect individual with opaque lines
+     geom_line(data=d, aes_string(y=yvar, group=idvar), alpha=.2) +
      # label plot
      ylab(yplotname)+
      xlab(xplotname)
