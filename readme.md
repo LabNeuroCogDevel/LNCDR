@@ -19,8 +19,8 @@ For help on all functions, in an R console, see `?LNCDR::`<kbd>tab</kbd>
 
 ```R
  m <- gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
- ci <- growthrate_gam(m, 'Ageatvisit')
- plotgammfactorwithderiv(d, m, ci, 'Ageatvisit','f1score','id')
+ ci <- gam_growthrate(m, 'Ageatvisit')
+ gam_growthrate_plot(d, m, ci, 'Ageatvisit','f1score','id')
 ```
 
 ### `pubmed_search`

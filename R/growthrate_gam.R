@@ -6,7 +6,7 @@
 #' https://people.maths.bris.ac.uk/~sw15190/mgcv/tampere/mgcv-advanced.pdf
 #' https://stats.stackexchange.com/questions/190348/can-i-use-bootstrapping-to-estimate-the-uncertainty-in-a-maximum-value-of-a-gam
 #' @description posterior simulation for confidence intervals of local slope/growth rate (deriv) of mgvc gam modeled variable (age) - random effects: intercepts only (not predicted) 
-#' @param mgcv         gam model object (only)
+#' @param m            mgcv gam model object (only)
 #' @param agevar       variable for growth rate
 #' @param nnumber      of iterations to run (quick)
 #' @param qntquantiles to use for confidence interval
@@ -18,7 +18,7 @@
 #'    mutate(visit=rank(d8))
 #'  f <- f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re")
 #'  m <- gam(f, data=d)
-#'  ci <- growthrate_gam(m, 'Ageatvisit')
+#'  ci <- gam_growthrate(m, 'Ageatvisit')
 gam_growthrate <- function(m, agevar, n=10000, qnt=c(.025,.975)) {
   simdiff <- sim_diff1_from_gam(m, agevar, n.iterations=n)
   ci <- ci_from_simdiff1(simdiff$pred, simdiff$ages, qnt=qnt)
@@ -117,8 +117,8 @@ ci_from_simdiff1 <- function(pred, ages, qnt=c(.025,.975)) {
 #' @examples
 #'  
 #'  m <- gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
-#'  ci <- growthrate_gam(m, 'Ageatvisit')
-#' plotgammfactorwithderiv(d, m, ci, 'Ageatvisit','f1score','id')
+#'  ci <- gam_growthrate(m, 'Ageatvisit')
+#'  gam_growthrate_plot(d, m, ci, 'Ageatvisit','f1score','id')
 gam_growthrate_plot <-
    function(d, model, ci, agevar, yvar, idvar,
             plotsavename=NULL, xplotname="Age", yplotname=yvar){
