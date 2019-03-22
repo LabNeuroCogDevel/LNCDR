@@ -13,6 +13,16 @@ devtools::install_github('LabNeuroCogDevel/LNCDR')
 
 For help on all functions, in an R console, see `?LNCDR::`<kbd>tab</kbd>
 
+### `gam_growthrate`
+
+![gam_growthrate_plot](img/gam_deriv_btc.png?raw=true)
+
+```R
+ m <- gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
+ ci <- growthrate_gam(m, 'Ageatvisit')
+ plotgammfactorwithderiv(d, m, ci, 'Ageatvisit','f1score','id')
+```
+
 ### `pubmed_search`
 For meta analysis, get a dataframe of pubmed search results (doi, title, authors, journal, year, abstract)
 ```R
