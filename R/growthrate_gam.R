@@ -1,5 +1,5 @@
-#!/usr/bin/env Rscript
-######################
+# Author:  Brenden Tervo-Clemmens
+# Packager: Will Foran
 
 #' growthrate_gam
 #'
