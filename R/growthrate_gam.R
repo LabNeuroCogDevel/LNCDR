@@ -3,12 +3,13 @@
 
 #' growthrate_gam
 #'
+#' https://people.maths.bris.ac.uk/~sw15190/mgcv/tampere/mgcv-advanced.pdf
 #' https://stats.stackexchange.com/questions/190348/can-i-use-bootstrapping-to-estimate-the-uncertainty-in-a-maximum-value-of-a-gam
-#' @description confidence intervals change of gam modeled variable (age)
-#' @param m -- gam model object
-#' @param agevar -- variable for growthrate
-#' @param n -- number of iterations to run (quick)
-#' @param qnt -- quantiles to use for confidence interval
+#' @description posterior simulation for confidence intervals of local slope/growth rate (deriv) of mgvc gam modeled variable (age) - random effects: intercepts only (not predicted) 
+#' @param mgcv         gam model object (only)
+#' @param agevar       variable for growth rate
+#' @param nnumber      of iterations to run (quick)
+#' @param qntquantiles to use for confidence interval
 #' @import stringr
 #' @export
 #' @examples
@@ -18,7 +19,7 @@
 #'  f <- f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re")
 #'  m <- gam(f, data=d)
 #'  ci <- growthrate_gam(m, 'Ageatvisit')
-growthrate_gam <- function(m, agevar, n=10000, qnt=c(.025,.975)) {
+gam_growthrate <- function(m, agevar, n=10000, qnt=c(.025,.975)) {
   simdiff <- sim_diff1_from_gam(m, agevar, n.iterations=n)
   ci <- ci_from_simdiff1(simdiff$pred, simdiff$ages, qnt=qnt)
 }
@@ -39,9 +40,6 @@ find_covars_gam <- function(fml, ...) {
 }
 
 sim_diff1_from_gam <- function(m, agevar, id='id', n.iterations=10000) {
-   ## From 
-   # https://stats.stackexchange.com/questions/190348/can-i-use-bootstrapping-to-estimate-the-uncertainty-in-a-maximum-value-of-a-gam
-
    v <- m$model[, agevar]
    cond_list <- list(seq(min(v), max(v), by=.1))
    pp <- data.frame(a=cond_list[[1]], b=Inf)
@@ -107,21 +105,21 @@ ci_from_simdiff1 <- function(pred, ages, qnt=c(.025,.975)) {
 #' @description plot output of growthrate_gam
 #' @export
 #' @importFrom itsadug get_predictions 
-#' @param d      -- dataframe model was built on (for actual points)
-#' @param model  -- gam model (for predicted line)
-#' @param ci     -- growthrate_gam output (confidence interval and derivitive)
-#' @param agevar -- column name of age var e.g. 'Ageatvisit'
-#' @param yvar   -- model yvar e.g. 'f1score'
-#' @param idvar  -- line grouping var e.g., 'lunaid'
-#' @param plotsavename -- pdf output name e.g. 'growth.pdf', not saved when NULL
-#' @param xplotname -- 'Age'
-#' @param yplotname -- 'f1score'
+#' @param d      dataframe model was built on (for actual points)
+#' @param model  gam model (for predicted line)
+#' @param ci     growthrate_gam output (confidence interval and derivitive)
+#' @param agevar column name of age var e.g. 'Ageatvisit'
+#' @param yvar   model yvar e.g. 'f1score'
+#' @param idvar  line grouping var e.g., 'lunaid'
+#' @param plotsavename pdf output name e.g. 'growth.pdf', not saved when NULL
+#' @param xplotname 'Age'
+#' @param yplotname  'f1score'
 #' @examples
 #'  
 #'  m <- gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
 #'  ci <- growthrate_gam(m, 'Ageatvisit')
 #' plotgammfactorwithderiv(d, m, ci, 'Ageatvisit','f1score','id')
-plotgammfactorwithderiv <-
+gam_growthrate_plot <-
    function(d, model, ci, agevar, yvar, idvar,
             plotsavename=NULL, xplotname="Age", yplotname=yvar){
 
@@ -133,6 +131,8 @@ plotgammfactorwithderiv <-
   # TODO:
   # remove or replace first row mean_dff
   # NA draws weird first color on spectrum
+  # TODO:
+  # get yvar from model
 
   ci$mean_dff_clip <- ci$mean_dff
   # when ci bounds include 0 (different sign), no longer signficant
@@ -166,7 +166,7 @@ plotgammfactorwithderiv <-
   modeldata<-data.frame(ydata=model$y, agevar=model$model[, agevar])
   condlist <- list(a=ci$ages)
   names(condlist) <- agevar
-  agepred <- lmer4::get_predictions(model, cond=condlist)
+  agepred <- get_predictions(model, cond=condlist)
 
   ageplot<-
      ggplot(agepred) +
