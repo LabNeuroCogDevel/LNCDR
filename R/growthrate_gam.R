@@ -101,147 +101,50 @@ ci_from_simdiff1 <- function(pred, ages, qnt=c(.025,.975)) {
    for(i in 1:10) lines(ages, pred[[i]])
 }
 
-#      #####factor 1############
-#      m1_factormodel<-gam(f1score~s(Ageatvisit)+s(id, bs="re"),data=coglongdf)
-#      derivsfactor1<-ci_from_simgam(m1_factormodel, 'Ageatvisit')
-#      
-#      
-#      plotgammfactorwithderiv<-function(df,model,derivs){
-#      ci<-data.frame(derivs$ci)
-#      derivages<-as.numeric(gsub("X","",names(ci)))
-#      names(ci)<-derivages
-#      
-#      cit<-as.data.frame(t(ci))
-#      names(cit)<-c("low","high")
-#      cit$ages<-row.names(cit)
-#      
-#      meanderivdf<-as.data.frame(derivs$mean_dff)
-#      names(meanderivdf)<-"deriv"
-#      meanderivdf$age<-derivages
-#      sigages<-
-#      
-#      
-#      ggplot(meanderivdf,aes(x=age,y=1,fill=deriv))+geom_tile()+scale_fill_gradient2(low = "blue", high = "red", mid = "white",midpoint = 0, space = "Lab",breaks=c(max(meanderivdf$deriv,na.rm=TRUE),0,min(meanderivdf$deriv,na.rm=TRUE)),limits=c(min(meanderivdf$deriv,na.rm=TRUE),max(meanderivdf$deriv,na.rm=TRUE)))
-#      
-#      
-#      
-#      
-#      }
-#      
-#      
-#      cifactor1<-derivsfactor1$ci
-#      
-#      derivsfactor1$mean_dff
-#      
-#      
-#      
-#      
-#      
-#      ######
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      ### NAIVE ATTEMPT 1
-#      periodofsagechange<-function(d, fml, idvar, outcomevar, agevar,
-#                                   covars=NULL, n.iterations=5000, outputtrajectories=FALSE,
-#                                   njobs=10){
-#      ####computes boot-strapped semi parametric age-trajectories with GAMM
-#      ###and finds points of growth and maturation based on derivate of age- effect
-#      #### based on Simmonds, D. J., Hallquist, M. N., & Luna, B. (2017).Neuroimage, 157, 695-704.
-#      ### for variable agevar predicting outcome var with GAMM######
-#      #### additional covar(s) passed as a list######
-#      
-#      ###bootstrapps across SUBJECTS (idvar), respecting nested data#######
-#      
-#      ####ouptuts include derivative and associated boostrapped p-value (uncorrected) per agebin
-#      ####optional output of overall bootsrapped age p-value
-#      #####optional output of all boostrapped trajectories (LARGE FILE ALERT!)
-#      
-#      
-#      # fml <- f1score~s(Ageatvisit)+s(id, bs="re")
-#      # agevar <- 'Ageatvisit'
-#      
-#      
-#         # RESAMPLE
-#         # get a list of indexes of rows to use for bootstrap
-#         # # TODO: maybe use more sophisticated method
-#         # all_idxs <- 1:nrow(d)
-#         # perm_idxs <- lapply(1:n.iterations,
-#         #                     function(i){sample(x=all_idxs, size=nrow(d), replace=T)})
-#      
-#         # # ALTERNATIVE: SHUFFLE -- reassign ages blindly
-#         # d[, agevar] <- sample(x=d[, agevar], size=nrow(d))
-#         # perm_idxs <- lapply(1:n.iterations, function(i) 1:nrow(d))
-#      
-#         # # ALTERNATIVE 2: SHUFFLE within subjects
-#         # d %>%
-#         #    group_by(!!id) %>% 
-#         #    mutate(!!agevar := sample(!!agevar, size=n(), n=n())
-#         # d[d$n==1, agevar] <- sample(d[d$n==1, agevar], size=length(which(d$n==1))) 
-#      
-#         # #  
-#      
-#         # # run model n times
-#          models <- mclapply(mc.cores = njobs, perm_idxs, function(i){ gam(fml, data=d[i,]) })
-#      
-#      
-#          ## use each models pred to get derivitive
-#          # use same range for all predictions
-#          v <- d[, agevar]
-#          cond_list <- list(seq(min(v), max(v), by=.1))
-#          names(cond_list) <- agevar
-#          # get diff of preds
-#          driv <- 
-#             lapply(models, function(m) {
-#                       p <- get_predictions(m, cond=cond_list,
-#                                            rm.ranef=TRUE, print.summary=FALSE)
-#                       d <- c(diff(p$fit),NA)
-#                    })
-#      
-#      
-#      }
 
-plotgammfactorwithderiv<-function(df,model,derivs,agevar,yvar,idvar,plotsavename, xplotname="Age",yplotname="fit",savename="growthrate"){
-  # plotsavename<-paste0("/Users/brendenclemmens/Desktop/Projects/R03_behavioral/Data/",paste0(savename,".pdf"))
-  ci<-data.frame(derivs$ci)
-  derivages<-as.numeric(gsub("X","",names(ci)))
-  names(ci)<-derivages
-  
-  cit<-as.data.frame(t(ci))
-  names(cit)<-c("low","high")
-  cit$age<-row.names(cit)
-  
-  meanderivdf<-as.data.frame(derivs$mean_dff)
-  names(meanderivdf)<-"deriv"
-  meanderivdf$age<-derivages
-  sigages<-merge(meanderivdf,cit,by="age")
-  sigages$derivthresh<-sigages$deriv
-  sigages$derivthresh[sign(sigages$low)!=sign(sigages$high)]<-0
+#' plot gam factor with deriv
+#'
+#' @description plot output of growthrate_gam
+#' @export
+#' @import ggplot2
+#' @import grid
+#' @import gridExtra
+#' @param d      -- dataframe model was built on (for actual points)
+#' @param model  -- gam model (for predicted line)
+#' @param ci     -- growthrate_gam output (confidence interval and derivitive)
+#' @param agevar -- column name of age var e.g. 'Ageatvisit'
+#' @param yvar   -- model yvar e.g. 'f1score'
+#' @param idvar  -- line grouping var e.g., 'lunaid'
+#' @param plotsavename -- pdf output name e.g. 'growth.pdf', not saved when NULL
+#' @param xplotname -- 'Age'
+#' @param yplotname -- 'f1score'
+#' @examples
+#'  
+#'  m <- gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
+#'  ci <- growthrate_gam(m, 'Ageatvisit')
+#' plotgammfactorwithderiv(d, m, ci, 'Ageatvisit','f1score','id')
+plotgammfactorwithderiv <-
+   function(d, model, ci, agevar, yvar, idvar,
+            plotsavename=NULL, xplotname="Age", yplotname=yvar){
+
+  require(ggplot2)
+  require(grid)
+  require(gridExtra)
+
+  # TODO:
+  # remove or replace first row mean_dff (NA draws weird first color on spectrum)
+
+  ci$mean_dff_clip <- ci$mean_dff
+  # when ci bounds include 0 (different sign), no longer signficant
+  not_sig <- sign(ci$ci_low)!=sign(ci$ci_high) # with(ci,ci_high*ci_low < 0)
+  ci$mean_dff_clip[not_sig]<-0
   
   ## setup derivitive raster plot
-  maturation_pnt <- min(sigages$age[sigages$derivthresh==0])
-  deriv_range <- range(meanderivdf$deriv,na.rm=T)
+  maturation_pnt <- min(ci$ages[ci$mean_dff_clip==0],na.rm=T)
+  deriv_range <- range(ci$mean_dff,na.rm=T)
   tile <- 
-     ggplot(sigages) +
-     aes(x=age, y=1, fill=derivthresh) +
+     ggplot(ci) +
+     aes(x=ages, y=1, fill=mean_dff_clip) +
      geom_raster(interpolate=TRUE) +
      scale_fill_gradient2(
         low = "blue", mid = "white", high = "red", 
@@ -252,18 +155,18 @@ plotgammfactorwithderiv<-function(df,model,derivs,agevar,yvar,idvar,plotsavename
       ) +
       # draw dotted line where maturation point is
       geom_segment(
-          aes(x=maturation_pnt ,
-              xend=maturation_pnt ,
-              y=.5, yend=1.5),
-          linetype=2,
-          colour="black") +
+          linetype=2, colour="black",
+          aes(x=maturation_pnt, xend=maturation_pnt, y=.5, yend=1.5)) +
        xlab("\nAge")
   # lunaize the figure
   tile_luna <- lunaize_geomraster(tile) +
       theme(text = element_text(size=36))
 
+  # predictions
   modeldata<-data.frame(ydata=model$y,agevar=model$model[,agevar])
-  agepred<-get_predictions(model,cond=list(Ageatvisit=derivages))
+  condlist <- list(a=ci$ages)
+  names(condlist) <- agevar
+  agepred<-get_predictions(model,cond=condlist)
   
   ageplot<-
      ggplot(agepred) +
@@ -271,9 +174,9 @@ plotgammfactorwithderiv<-function(df,model,derivs,agevar,yvar,idvar,plotsavename
      # solid bold line for fitted model
      geom_line(colour="black", size=2)+
      # individual points for actual data
-     geom_point(data=modeldata, aes(y=ydata), alpha=.2)+
+     geom_point(data=modeldata, aes(y=ydata, x=agevar), alpha=.2)+
      # connect individual with opaque lines 
-     geom_line(data=df, aes_string(y=yvar,group=idvar), alpha=.2) +
+     geom_line(data=d, aes_string(y=yvar,group=idvar), alpha=.2) +
      # label plot
      ylab(yplotname)+
      xlab(xplotname)
@@ -283,17 +186,15 @@ plotgammfactorwithderiv<-function(df,model,derivs,agevar,yvar,idvar,plotsavename
             axis.title.x=element_blank(),
             axis.text.x=element_blank())
 
-  library(grid)
-  library(gridExtra)
   tilegrob<-ggplotGrob(tile_luna)
   agegrob<-ggplotGrob(ageplot_luna)
   
   g<-rbind(agegrob,tilegrob,size="first")
   panels <- g$layout$t[grep("panel", g$layout$name)]
   g$heights[panels] <- unit(c(1,.1),"null")
-  pdf(plotsavename, height = 9, width = 12)
+  if(!is.null(plotsavename)) pdf(plotsavename, height = 9, width = 12)
   grid.draw(g)
-  dev.off()
+  if(!is.null(plotsavename)) dev.off()
 
 }
 
@@ -303,7 +204,6 @@ lunaize_geomraster<-function(x){
    theme(
     panel.grid.minor = element_blank(),
     panel.grid.major = element_blank(),
-    axis.ticks.y     = element_line(colour="white"),
     axis.title.y     = element_blank(),
     axis.ticks.y     = element_blank(),
     axis.text.y      = element_blank(),
