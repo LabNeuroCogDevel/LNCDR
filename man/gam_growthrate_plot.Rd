@@ -4,8 +4,9 @@
 \alias{gam_growthrate_plot}
 \title{plot gam factor with deriv}
 \usage{
-gam_growthrate_plot(d, model, ci, agevar, yvar, idvar,
-  plotsavename = NULL, xplotname = "Age", yplotname = yvar)
+gam_growthrate_plot(d, model, ci, agevar, idvar,
+  yvar = as.character(model$formula[2]), plotsavename = NULL,
+  xplotname = "Age", yplotname = yvar)
 }
 \arguments{
 \item{d}{dataframe model was built on (for actual points)}
@@ -16,15 +17,15 @@ gam_growthrate_plot(d, model, ci, agevar, yvar, idvar,
 
 \item{agevar}{column name of age var e.g. 'Ageatvisit'}
 
-\item{yvar}{model yvar e.g. 'f1score'}
-
 \item{idvar}{line grouping var e.g., 'lunaid'}
+
+\item{yvar}{model yvar e.g. 'f1score', default pulled from model formula}
 
 \item{plotsavename}{pdf output name e.g. 'growth.pdf', not saved when NULL}
 
 \item{xplotname}{'Age'}
 
-\item{yplotname}{'f1score'}
+\item{yplotname}{'f1score', default is yvar (model yvar)}
 }
 \description{
 plot output of growthrate_gam
@@ -33,5 +34,5 @@ plot output of growthrate_gam
  
  m <- gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
  ci <- gam_growthrate(m, 'Ageatvisit')
- gam_growthrate_plot(d, m, ci, 'Ageatvisit','f1score','id')
+ gam_growthrate_plot(d, m, ci, 'Ageatvisit', 'id')
 }

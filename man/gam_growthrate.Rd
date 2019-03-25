@@ -2,21 +2,23 @@
 % Please edit documentation in R/growthrate_gam.R
 \name{gam_growthrate}
 \alias{gam_growthrate}
-\title{growthrate_gam}
+\title{gam_growthrate}
 \usage{
-gam_growthrate(m, agevar, n = 10000, qnt = c(0.025, 0.975))
+gam_growthrate(m, agevar, idvar, n = 10000, qnt = c(0.025, 0.975))
 }
 \arguments{
 \item{m}{mgcv gam model object (only)}
 
 \item{agevar}{variable for growth rate}
 
+\item{idvar}{random effects/subject id variable}
+
 \item{nnumber}{of iterations to run (quick)}
 
 \item{qntquantiles}{to use for confidence interval}
 }
 \description{
-posterior simulation for confidence intervals of local slope/growth rate (deriv) of mgvc gam modeled variable (age) - random effects: intercepts only (not predicted)
+posterior simulation for confidence intervals of local slope/growth rate (deriv) of mgcv gam modeled variable (age) - random effects: intercepts only (not predicted)
 }
 \details{
 https://people.maths.bris.ac.uk/~sw15190/mgcv/tampere/mgcv-advanced.pdf
@@ -28,5 +30,5 @@ https://stats.stackexchange.com/questions/190348/can-i-use-bootstrapping-to-esti
    mutate(visit=rank(d8))
  f <- f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re")
  m <- gam(f, data=d)
- ci <- gam_growthrate(m, 'Ageatvisit')
+ ci <- gam_growthrate(m, 'Ageatvisit', 'id')
 }
