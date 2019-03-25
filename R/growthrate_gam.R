@@ -37,7 +37,7 @@ gam_growthrate <- function(m, agevar, idvar, n=10000, qnt=c(.025, .975)) {
 #' @param fml  formula to get covariates from 
 #' @param ...  covariates to ignore (like agevar)
 #' @export
-#' @example
+#' @examples
 #'  fml <- y ~ s(x) + x2 + s(x3, bs="re") + x4
 #'  covars <- find_covars_gam(fml, x4) # x, x2
 find_covars_gam <- function(fml, ...) {
