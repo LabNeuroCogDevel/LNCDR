@@ -5,10 +5,10 @@
 #'
 #' https://people.maths.bris.ac.uk/~sw15190/mgcv/tampere/mgcv-advanced.pdf
 #' https://stats.stackexchange.com/questions/190348/can-i-use-bootstrapping-to-estimate-the-uncertainty-in-a-maximum-value-of-a-gam
-#' @description posterior simulation for confidence intervals of local slope/growth rate (deriv) of mgcv gam modeled variable (age) - random effects: intercepts only (not predicted) 
+#' @description posterior simulation for confidence intervals of local slope/growth rate (deriv) of mgcv gam modeled variable (age) - random effects: intercepts only (not predicted)
 #' @param m            mgcv gam model object (only)
 #' @param agevar       variable for growth rate
-#' @param idvar        random effects/subject id variable
+#' @param idvar        random effects/subject id variable, set to NULL if none
 #' @param nnumber      of iterations to run (quick)
 #' @param qntquantiles to use for confidence interval
 #' @importFrom MASS mvrnorm
@@ -20,8 +20,8 @@
 #'  f <- f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re")
 #'  m <- gam(f, data=d)
 #'  ci <- gam_growthrate(m, 'Ageatvisit', 'id')
-gam_growthrate <- function(m, agevar, idvar, n=10000, qnt=c(.025, .975)) {
-  simdiff <- sim_diff1_from_gam(m, agevar, idvar, n.iterations=n)
+gam_growthrate <- function(m, agevar, idvar=NULL, n.iterations=10000, qnt=c(.025, .975)) {
+  simdiff <- sim_diff1_from_gam(m, agevar, idvar, n.iterations=n.iterations)
   ci <- ci_from_simdiff1(simdiff$pred, simdiff$ages, qnt=qnt)
 }
 
@@ -34,7 +34,7 @@ gam_growthrate <- function(m, agevar, idvar, n=10000, qnt=c(.025, .975)) {
 #' find_covars_gam
 #'
 #' @description pull out covariests from mgcv model formula
-#' @param fml  formula to get covariates from 
+#' @param fml  formula to get covariates from
 #' @param ...  covariates to ignore (like agevar)
 #' @export
 #' @examples
@@ -84,7 +84,7 @@ sim_diff1_from_gam <- function(m, agevar, id="id", n.iterations=10000) {
    # used as: a positive-definite symmetric matrix specifying
    #  the covariance matrix of the variables.
 
-   set.seed(10)
+   # set.seed(10)
    mrand <- MASS::mvrnorm(n.iterations, mu_beta, sigma_Vb)
 
    ilink <- family(m)$linkinv
@@ -135,23 +135,29 @@ ci_from_simdiff1 <- function(pred, ages, qnt=c(.025, .975)) {
 #'
 #' @description plot output of growthrate_gam
 #' @export
-#' @importFrom itsadug get_predictions 
+#' @importFrom itsadug get_predictions
 #' @param d      dataframe model was built on (for actual points)
 #' @param model  gam model (for predicted line)
 #' @param ci     growthrate_gam output (confidence interval and derivitive)
 #' @param agevar column name of age var e.g. 'Ageatvisit'
-#' @param idvar  line grouping var e.g., 'lunaid'
+#' @param idvar  line grouping var e.g., 'lunaid', set to NULL if no random effect in model
 #' @param yvar   model yvar e.g. 'f1score', default pulled from model formula
 #' @param plotsavename pdf output name e.g. 'growth.pdf', not saved when NULL
 #' @param xplotname 'Age'
 #' @param yplotname  'f1score', default is yvar (model yvar)
 #' @examples
-#'  
+#'
 #'  m <- gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
 #'  ci <- gam_growthrate(m, 'Ageatvisit')
 #'  gam_growthrate_plot(d, m, ci, 'Ageatvisit', 'id')
+#'
+#'  # need to explicity set id to NULL if no random effect
+#'  m <- gam(f1score ~ s(Ageatvisit), data=d)
+#'  ci <- gam_growthrate(m, 'Ageatvisit', idvar=NULL)
+#'  gam_growthrate_plot(d, m, ci, 'Ageatvisit', idvar=NULL)
 gam_growthrate_plot <-
-   function(d, model, ci, agevar, idvar,  yvar=as.character(model$formula[2]),
+   function(d, model, ci, agevar, idvar=NULL,
+            yvar=as.character(model$formula[2]),
             plotsavename=NULL, xplotname="Age", yplotname=yvar){
 
   require(ggplot2)
@@ -207,11 +213,15 @@ gam_growthrate_plot <-
      geom_line(colour="black", size=2)+
      # individual points for actual data
      geom_point(data=modeldata, aes(y=ydata, x=agevar), alpha=.2)+
-     # connect individual with opaque lines
-     geom_line(data=d, aes_string(y=yvar, group=idvar), alpha=.2) +
      # label plot
      ylab(yplotname)+
      xlab(xplotname)
+
+  # add connecting lines if we have an idvar
+  if (!is.null(idvar))
+     ageplot <- ageplot +
+        geom_line(data=d, aes_string(y=yvar, group=idvar), alpha=.2)
+
   # lunaize main plot
   ageplot_luna<-LNCDR::lunaize(ageplot)+
       theme(text = element_text(size=36),
