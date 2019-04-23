@@ -4,7 +4,7 @@
 \alias{gam_growthrate_plot}
 \title{plot gam factor with deriv}
 \usage{
-gam_growthrate_plot(d, model, ci, agevar, idvar,
+gam_growthrate_plot(d, model, ci, agevar, idvar = NULL,
   yvar = as.character(model$formula[2]), plotsavename = NULL,
   xplotname = "Age", yplotname = yvar)
 }
@@ -17,7 +17,7 @@ gam_growthrate_plot(d, model, ci, agevar, idvar,
 
 \item{agevar}{column name of age var e.g. 'Ageatvisit'}
 
-\item{idvar}{line grouping var e.g., 'lunaid'}
+\item{idvar}{line grouping var e.g., 'lunaid', set to NULL if no random effect in model}
 
 \item{yvar}{model yvar e.g. 'f1score', default pulled from model formula}
 
@@ -31,8 +31,13 @@ gam_growthrate_plot(d, model, ci, agevar, idvar,
 plot output of growthrate_gam
 }
 \examples{
- 
+
  m <- gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
  ci <- gam_growthrate(m, 'Ageatvisit')
  gam_growthrate_plot(d, m, ci, 'Ageatvisit', 'id')
+
+ # need to explicity set id to NULL if no random effect
+ m <- gam(f1score ~ s(Ageatvisit), data=d)
+ ci <- gam_growthrate(m, 'Ageatvisit', idvar=NULL)
+ gam_growthrate_plot(d, m, ci, 'Ageatvisit', idvar=NULL)
 }

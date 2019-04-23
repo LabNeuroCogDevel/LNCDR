@@ -4,14 +4,15 @@
 \alias{gam_growthrate}
 \title{gam_growthrate}
 \usage{
-gam_growthrate(m, agevar, idvar, n = 10000, qnt = c(0.025, 0.975))
+gam_growthrate(m, agevar, idvar = NULL, n.iterations = 10000,
+  qnt = c(0.025, 0.975))
 }
 \arguments{
 \item{m}{mgcv gam model object (only)}
 
 \item{agevar}{variable for growth rate}
 
-\item{idvar}{random effects/subject id variable}
+\item{idvar}{random effects/subject id variable, set to NULL if none}
 
 \item{nnumber}{of iterations to run (quick)}
 
