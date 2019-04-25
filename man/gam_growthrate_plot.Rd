@@ -6,7 +6,8 @@
 \usage{
 gam_growthrate_plot(d, model, ci, agevar, idvar = NULL,
   yvar = as.character(model$formula[2]), plotsavename = NULL,
-  xplotname = "Age", yplotname = yvar, draw_maturation = T)
+  xplotname = "Age", yplotname = yvar, draw_maturation = T,
+  draw_points = T)
 }
 \arguments{
 \item{d}{dataframe model was built on (for actual points)}
@@ -28,6 +29,8 @@ gam_growthrate_plot(d, model, ci, agevar, idvar = NULL,
 \item{yplotname}{'f1score', default is yvar (model yvar)}
 
 \item{draw_maturation}{T|F, show dotted line on first maturation point}
+
+\item{draw_points}{T|F, show individual points as scatter plot over gam fit line}
 }
 \description{
 plot output of growthrate_gam

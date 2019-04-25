@@ -146,6 +146,7 @@ ci_from_simdiff1 <- function(pred, ages, qnt=c(.025, .975)) {
 #' @param xplotname 'Age'
 #' @param yplotname  'f1score', default is yvar (model yvar)
 #' @param draw_maturation T|F, show dotted line on first maturation point
+#' @param draw_points T|F, show individual points as scatter plot over gam fit line
 #' @examples
 #'
 #'  m <- mgcv::gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
@@ -160,7 +161,7 @@ gam_growthrate_plot <-
    function(d, model, ci, agevar, idvar=NULL,
             yvar=as.character(model$formula[2]),
             plotsavename=NULL, xplotname="Age", yplotname=yvar,
-            draw_maturation=T){
+            draw_maturation=T, draw_points=T){
 
   require(ggplot2)
   require(itsadug)
@@ -215,15 +216,17 @@ gam_growthrate_plot <-
      ggplot(agepred) +
      aes_string(x=agevar, y="fit") +
      # solid bold line for fitted model
-     geom_line(colour="black", size=2)+
-     # individual points for actual data
-     geom_point(data=modeldata, aes(y=ydata, x=agevar), alpha=.2)+
+     geom_line(colour="black", size=2) +
      # label plot
-     ylab(yplotname)+
+     ylab(yplotname) +
      xlab(xplotname)
 
+  # individual points for actual data
+  if (draw_points) ageplot <- ageplot +
+     geom_point(data=modeldata, aes(y=ydata, x=agevar), alpha=.2)
+
   # add connecting lines if we have an idvar
-  if (!is.null(idvar))
+  if (!is.null(idvar) && draw_points)
      ageplot <- ageplot +
         geom_line(data=d, aes_string(y=yvar, group=idvar), alpha=.2)
 
