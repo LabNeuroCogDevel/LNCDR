@@ -30,6 +30,6 @@ https://stats.stackexchange.com/questions/190348/can-i-use-bootstrapping-to-esti
    group_by(id) \%>\%
    mutate(visit=rank(d8))
  f <- f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re")
- m <- gam(f, data=d)
+ m <- mgcv::gam(f, data=d)
  ci <- gam_growthrate(m, 'Ageatvisit', 'id')
 }

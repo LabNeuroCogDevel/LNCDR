@@ -21,7 +21,7 @@ gam_growthrate_plot(d, model, ci, agevar, idvar = NULL,
 
 \item{yvar}{model yvar e.g. 'f1score', default pulled from model formula}
 
-\item{plotsavename}{pdf output name e.g. 'growth.pdf', not saved when NULL}
+\item{plotsavename}{PDF output name e.g. 'growth.pdf', not saved when NULL}
 
 \item{xplotname}{'Age'}
 
@@ -34,12 +34,12 @@ plot output of growthrate_gam
 }
 \examples{
 
- m <- gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
+ m <- mgcv::gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
  ci <- gam_growthrate(m, 'Ageatvisit')
  gam_growthrate_plot(d, m, ci, 'Ageatvisit', 'id')
 
  # need to explicity set id to NULL if no random effect
- m <- gam(f1score ~ s(Ageatvisit), data=d)
+ m <- mgcv::gam(f1score ~ s(Ageatvisit), data=d)
  ci <- gam_growthrate(m, 'Ageatvisit', idvar=NULL)
  gam_growthrate_plot(d, m, ci, 'Ageatvisit', idvar=NULL)
 }

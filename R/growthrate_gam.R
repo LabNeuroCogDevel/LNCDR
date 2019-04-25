@@ -18,7 +18,7 @@
 #'    group_by(id) %>%
 #'    mutate(visit=rank(d8))
 #'  f <- f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re")
-#'  m <- gam(f, data=d)
+#'  m <- mgcv::gam(f, data=d)
 #'  ci <- gam_growthrate(m, 'Ageatvisit', 'id')
 gam_growthrate <- function(m, agevar, idvar=NULL, n.iterations=10000, qnt=c(.025, .975)) {
   simdiff <- sim_diff1_from_gam(m, agevar, idvar, n.iterations=n.iterations)
@@ -142,18 +142,18 @@ ci_from_simdiff1 <- function(pred, ages, qnt=c(.025, .975)) {
 #' @param agevar column name of age var e.g. 'Ageatvisit'
 #' @param idvar  line grouping var e.g., 'lunaid', set to NULL if no random effect in model
 #' @param yvar   model yvar e.g. 'f1score', default pulled from model formula
-#' @param plotsavename pdf output name e.g. 'growth.pdf', not saved when NULL
+#' @param plotsavename PDF output name e.g. 'growth.pdf', not saved when NULL
 #' @param xplotname 'Age'
 #' @param yplotname  'f1score', default is yvar (model yvar)
 #' @param draw_maturation T|F, show dotted line on first maturation point
 #' @examples
 #'
-#'  m <- gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
+#'  m <- mgcv::gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
 #'  ci <- gam_growthrate(m, 'Ageatvisit')
 #'  gam_growthrate_plot(d, m, ci, 'Ageatvisit', 'id')
 #'
 #'  # need to explicity set id to NULL if no random effect
-#'  m <- gam(f1score ~ s(Ageatvisit), data=d)
+#'  m <- mgcv::gam(f1score ~ s(Ageatvisit), data=d)
 #'  ci <- gam_growthrate(m, 'Ageatvisit', idvar=NULL)
 #'  gam_growthrate_plot(d, m, ci, 'Ageatvisit', idvar=NULL)
 gam_growthrate_plot <-
@@ -163,8 +163,6 @@ gam_growthrate_plot <-
             draw_maturation=T){
 
   require(ggplot2)
-  require(grid)
-  require(gridExtra)
   require(itsadug)
 
   # TODO:
@@ -235,16 +233,53 @@ gam_growthrate_plot <-
             axis.title.x=element_blank(),
             axis.text.x=element_blank())
 
+  # save to file if we have plotsavename
+  g <- gam_growthrate_plot_combine(ageplot_luna, tile_luna, plotsavename)
+
+  # give back everything we created
+  return(list(tile=tile_luna, ageplot=ageplot_luna, both=g))
+}
+
+
+#' combine age plot and tile slop heatmap into one figure (w/grob and grid)
+#'
+#' @description save two figures (only use if you need to mess with titles)
+#' @export
+#' @param ageplot_luna     ggplot plot of subject coef by age (top part of figure)
+#' @param tile_luna        tile heatmap of slope  (bottom part of figure)
+#' @param PDFout           PDF name to save output into
+#' @examples
+#'  data <- data.frame(age=1:100,fd_mean=1:100,subj=1:25, conn_ahpc_vmpfc=randu[1:100,1])
+#'  mod<-mgcv::gam(conn_ahpc_vmpfc~s(age)+s(fd_mean)+s(subj, bs="re"), data=data)
+#'  ci<-LNCDR::gam_growthrate(mod, 'age', n = 10000, qnt = c(0.025, 0.975), idvar='subj')
+#'  plist <- gam_growthrate_plot(data, mod, ci, 'age', idvar='subj')
+#'  plist$tile <- plist$tile + xlab('AGE')
+#'  g <- gam_growthrate_plot_combine(plist$ageplot, plist$tile, 'gammod.pdf')
+gam_growthrate_plot_combine <- function(ageplot_luna, tile_luna, PDFout=NULL) {
+  require(grid)
+  require(gridExtra)
+
   tilegrob<- ggplotGrob(tile_luna)
   agegrob <- ggplotGrob(ageplot_luna)
+
 
   g<-rbind(agegrob, tilegrob, size="first")
   panels <- g$layout$t[grep("panel", g$layout$name)]
   g$heights[panels] <- unit(c(1, .1), "null")
-  if (!is.null(plotsavename)) pdf(plotsavename, height = 9, width = 12)
-  grid.draw(g)
-  if (!is.null(plotsavename)) dev.off()
+  if (!is.null(PDFout))  {
 
+     # check we are saving pdf
+     ext <- rev(strsplit(PDFout, "\\.")[[1]])[1]
+     if (ext != "pdf") stop(PDFout, " must end in .pdf!")
+
+     # draw into pdf
+     pdf(PDFout, height = 9, width = 12)
+     grid.draw(g)
+     dev.off()
+  } else {
+     grid.draw(g)
+  }
+  return(g)
 }
 
 lunaize_geomraster<-function(x){
