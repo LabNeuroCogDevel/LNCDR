@@ -145,6 +145,7 @@ ci_from_simdiff1 <- function(pred, ages, qnt=c(.025, .975)) {
 #' @param plotsavename pdf output name e.g. 'growth.pdf', not saved when NULL
 #' @param xplotname 'Age'
 #' @param yplotname  'f1score', default is yvar (model yvar)
+#' @param draw_maturation T|F, show dotted line on first maturation point
 #' @examples
 #'
 #'  m <- gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
@@ -158,7 +159,8 @@ ci_from_simdiff1 <- function(pred, ages, qnt=c(.025, .975)) {
 gam_growthrate_plot <-
    function(d, model, ci, agevar, idvar=NULL,
             yvar=as.character(model$formula[2]),
-            plotsavename=NULL, xplotname="Age", yplotname=yvar){
+            plotsavename=NULL, xplotname="Age", yplotname=yvar,
+            draw_maturation=T){
 
   require(ggplot2)
   require(grid)
@@ -191,14 +193,19 @@ gam_growthrate_plot <-
         breaks=sort(c(0, deriv_range)), # assumes range covers 0
         limits=deriv_range
       ) +
-      # draw dotted line where maturation point is
+     xlab("\nAge")
+
+  # draw dotted line where maturation point is
+  if (draw_maturation)
+   tile <- tile +
       geom_segment(
           linetype=2, colour="black",
-          aes(x=maturation_pnt, xend=maturation_pnt, y=.5, yend=1.5)) +
-       xlab("\nAge")
+          aes(x=maturation_pnt, xend=maturation_pnt, y=.5, yend=1.5))
+
   # lunaize the figure
   tile_luna <- lunaize_geomraster(tile) +
       theme(text = element_text(size=36))
+
 
   # predictions
   modeldata<-data.frame(ydata=model$y, agevar=model$model[, agevar])
