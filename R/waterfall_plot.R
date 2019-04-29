@@ -4,6 +4,7 @@
 #' @param d   dataframe with columns id (repeated) and  age
 #' @import dplyr
 #' @import ggplot2
+#' @export
 #' @examples
 #'  d <- data.frame(age=c(10,20,25, 13,14), id=c(100,100,100, 200,200))
 #'  p <- waterfall_plot(d)
