@@ -178,8 +178,18 @@ gam_growthrate_plot <-
   not_sig <- sign(ci$ci_low)!=sign(ci$ci_high) # with(ci,ci_high*ci_low < 0)
   ci$mean_dff_clip[not_sig] <- 0
 
+  # find maturation point after the first signficant age
+  onset_sig <- ci$ages[ci$mean_dff_clip != 0]
+  if (length(onset_sig)<=0L) {
+    warning("No maturation point!")
+    draw_maturation <- F
+  } else {
+     mat_points_idx <- ci$mean_dff_clip==0 & ci$ages > onset_sig
+     maturation_pnt <- min(ci$ages[mat_points_idx], na.rm=T)
+  }
+
+
   ## setup derivitive raster plot
-  maturation_pnt <- min(ci$ages[ci$mean_dff_clip==0], na.rm=T)
   deriv_range <- range(ci$mean_dff, na.rm=T)
   tile <-
      ggplot(ci) +
