@@ -7,7 +7,7 @@
 gam_growthrate_plot(d, model, ci, agevar, idvar = NULL,
   yvar = as.character(model$formula[2]), plotsavename = NULL,
   xplotname = "Age", yplotname = yvar, draw_maturation = T,
-  draw_points = T)
+  draw_points = T, show_all_fill = F)
 }
 \arguments{
 \item{d}{dataframe model was built on (for actual points)}
@@ -31,11 +31,17 @@ gam_growthrate_plot(d, model, ci, agevar, idvar = NULL,
 \item{draw_maturation}{T|F, show dotted line on first maturation point}
 
 \item{draw_points}{T|F, show individual points as scatter plot over gam fit line}
+
+\item{show_all_fill}{T|F, should we clip the raster fill to only significant ages?}
 }
 \description{
 plot output of growthrate_gam
 }
 \examples{
+
+ mod <- mgcv::gam(conc~s(uptake), data=CO2)
+ ci <- LNCDR::gam_growthrate(mod, 'uptake', n = 10000, qnt = c(0.025, 0.975))
+ plist <- gam_growthrate_plot(cars, mod, ci, 'uptake', xplotname='uptake')
 
  m <- mgcv::gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
  ci <- gam_growthrate(m, 'Ageatvisit')

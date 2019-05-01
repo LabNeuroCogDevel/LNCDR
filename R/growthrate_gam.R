@@ -147,7 +147,12 @@ ci_from_simdiff1 <- function(pred, ages, qnt=c(.025, .975)) {
 #' @param yplotname  'f1score', default is yvar (model yvar)
 #' @param draw_maturation T|F, show dotted line on first maturation point
 #' @param draw_points T|F, show individual points as scatter plot over gam fit line
+#' @param show_all_fill T|F, should we clip the raster fill to only significant ages?
 #' @examples
+#'
+#'  mod <- mgcv::gam(conc~s(uptake), data=CO2)
+#'  ci <- LNCDR::gam_growthrate(mod, 'uptake', n = 10000, qnt = c(0.025, 0.975))
+#'  plist <- gam_growthrate_plot(cars, mod, ci, 'uptake', xplotname='uptake')
 #'
 #'  m <- mgcv::gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
 #'  ci <- gam_growthrate(m, 'Ageatvisit')
@@ -161,7 +166,7 @@ gam_growthrate_plot <-
    function(d, model, ci, agevar, idvar=NULL,
             yvar=as.character(model$formula[2]),
             plotsavename=NULL, xplotname="Age", yplotname=yvar,
-            draw_maturation=T, draw_points=T){
+            draw_maturation=T, draw_points=T, show_all_fill=F){
 
   require(ggplot2)
   require(itsadug)
@@ -180,20 +185,26 @@ gam_growthrate_plot <-
 
   # find maturation point after the first signficant age
   onset_sig <- ci$ages[ci$mean_dff_clip != 0]
-  if (length(onset_sig)<=0L) {
-    warning("No maturation point!")
-    draw_maturation <- F
-  } else {
-     mat_points_idx <- ci$mean_dff_clip==0 & ci$ages > onset_sig
-     maturation_pnt <- min(ci$ages[mat_points_idx], na.rm=T)
+  maturation_pnt <- NA
+  if (length(onset_sig)<=0L || all(is.na(onset_sig))) {
+     mat_points_idx <- ci$mean_dff_clip==0 & ci$ages > onset_sig[1]
+     if (any(mat_points_idx))
+        maturation_pnt <- min(ci$ages[mat_points_idx], na.rm=T)
+  }
+  # warn about no matruation point
+  if (is.na(maturation_pnt) && draw_maturation) {
+     warning("No maturation point!")
+     draw_maturation <- F
   }
 
+  # show even unsignficant change in raster if show_all_fill
+  fill_column <- ifelse(show_all_fill, "mean_dff", "mean_dff_clip")
 
   ## setup derivitive raster plot
   deriv_range <- range(ci$mean_dff, na.rm=T)
   tile <-
      ggplot(ci) +
-     aes(x=ages, y=1, fill=mean_dff_clip) +
+     aes_string(x="ages", y=1, fill=fill_column) +
      geom_raster(interpolate=TRUE) +
      scale_fill_gradient2(
         low = "blue", mid = "white", high = "red",
