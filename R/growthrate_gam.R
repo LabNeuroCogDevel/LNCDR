@@ -56,12 +56,20 @@ find_covars_gam <- function(fml, ...) {
    return(no_re)
 }
 
-sim_diff1_from_gam <- function(m, agevar, id="id", n.iterations=10000) {
+sim_diff1_from_gam <- function(m, agevar, id="id",
+                               n.iterations=10000, interval_inc=.1) {
    v <- m$model[, agevar]
-   cond_list <- list(seq(min(v), max(v), by=.1))
+   cond_list <- list(seq(min(v), max(v), by=interval_inc))
    pp <- data.frame(a=cond_list[[1]], b=Inf)
    # names should match what went into the model
    names(pp) <- c(agevar, id)
+
+   # what if idvar is factor (Inf wont work)
+   if (!is.null(id) && is.factor(m$model[, id])){
+         warning("gam w/factor idvar, setting all sim to the first!")
+         pp[, 2] <- m$model[1, id]
+         # TODO: maybe select random effect closest to mean?
+   }
 
    # for all covars, pick out the mean
    for (cv in find_covars_gam(m$formula, agevar)) {
