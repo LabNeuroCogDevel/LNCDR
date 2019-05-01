@@ -213,7 +213,7 @@ gam_growthrate_plot <-
         breaks=sort(c(0, deriv_range)), # assumes range covers 0
         limits=deriv_range
       ) +
-     xlab("\nAge")
+     xlab(sprintf("\n%s", xplotname))
 
   # draw dotted line where maturation point is
   if (draw_maturation)
