@@ -56,19 +56,32 @@ find_covars_gam <- function(fml, ...) {
    return(no_re)
 }
 
-sim_diff1_from_gam <- function(m, agevar, id="id",
+sim_diff1_from_gam <- function(m, agevar, idvar=NULL,
                                n.iterations=10000, interval_inc=.1) {
    v <- m$model[, agevar]
    cond_list <- list(seq(min(v), max(v), by=interval_inc))
    pp <- data.frame(a=cond_list[[1]], b=Inf)
    # names should match what went into the model
-   names(pp) <- c(agevar, id)
+   names(pp) <- c(agevar, idvar)
 
    # what if idvar is factor (Inf wont work)
-   if (!is.null(id) && is.factor(m$model[, id])){
-         warning("gam w/factor idvar, setting all sim to the first!")
-         pp[, 2] <- m$model[1, id]
-         # TODO: maybe select random effect closest to mean?
+   if (!is.null(idvar) && is.factor(m$model[, idvar])){
+      # select idvar with the middle most random effect
+      # random effects are coefficents like s(idvar).xxxxx
+      # where xxxx is the index of the specific idvar factor name
+      idvarpatt <- sprintf("s\\(%s\\)", idvar)
+      idvarpatt. <- sprintf("s\\(%s\\).", idvar)
+      randeff <- m$coefficients[ grep(idvarpatt, names(m$coefficients)) ]
+      med_re_name <- names(which(randeff == median(randeff)))
+      median_idx <- gsub(idvarpatt., "", med_re_name)
+      median_subj <- levels(m$model[, idvar])[as.numeric(median_idx)]
+      warning("gam w/factor idvar, ",
+              "setting the middle most random effect subject: ",
+              median_subj)
+      pp[, 2] <- median_subj
+
+      # alternatively, select the first
+      # pp[, 2] <- m$model[1, idvar]
    }
 
    # for all covars, pick out the mean
@@ -281,7 +294,7 @@ gam_growthrate_plot <-
 #' @param tile_luna        tile heatmap of slope  (bottom part of figure)
 #' @param PDFout           PDF name to save output into
 #' @examples
-#'  data <- data.frame(age=1:100,fd_mean=1:100,subj=1:25, conn_ahpc_vmpfc=randu[1:100,1])
+#'  data <- data.frame(age=1:100,fd_mean=1:100,subj=as.factor(letters[1:25]), conn_ahpc_vmpfc=randu[1:100,1])
 #'  mod<-mgcv::gam(conn_ahpc_vmpfc~s(age)+s(fd_mean)+s(subj, bs="re"), data=data)
 #'  ci<-LNCDR::gam_growthrate(mod, 'age', n = 10000, qnt = c(0.025, 0.975), idvar='subj')
 #'  plist <- gam_growthrate_plot(data, mod, ci, 'age', idvar='subj')
