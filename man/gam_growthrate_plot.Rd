@@ -5,9 +5,9 @@
 \title{plot gam factor with deriv}
 \usage{
 gam_growthrate_plot(d, model, ci, agevar, idvar = NULL,
-  yvar = as.character(model$formula[2]), plotsavename = NULL,
+  yvar = as.character(model$formula[2]), plotsavename = NA,
   xplotname = "Age", yplotname = yvar, draw_maturation = T,
-  draw_points = T, show_all_fill = F)
+  draw_points = T, show_all_fill = F, smooth_plot = T)
 }
 \arguments{
 \item{d}{dataframe model was built on (for actual points)}
@@ -22,7 +22,7 @@ gam_growthrate_plot(d, model, ci, agevar, idvar = NULL,
 
 \item{yvar}{model yvar e.g. 'f1score', default pulled from model formula}
 
-\item{plotsavename}{PDF output name e.g. 'growth.pdf', not saved when NULL}
+\item{plotsavename}{PDF output name e.g. 'growth.pdf', not saved when NA, not ploted when NULL}
 
 \item{xplotname}{'Age'}
 

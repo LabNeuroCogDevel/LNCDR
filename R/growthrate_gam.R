@@ -151,6 +151,37 @@ ci_from_simdiff1 <- function(pred, ages, qnt=c(.025, .975)) {
    for (i in 1:10) lines(ages, pred[[i]])
 }
 
+#' gam_maturation_point
+#' 
+#' @description get maturation point from confidence interval dataframe
+#' @param ci     growthrate_gam output (confidence interval and derivitive)
+#' @export
+gam_maturation_point <- function(ci) {
+
+  # when ci bounds include 0 (different sign), no longer signficant
+  # clip out insignificant derivitive
+  if (is.na(ci$ci_low[1])) ci <- ci[-1, ]
+
+  # if we need to make dff clip
+  # probably already made if plotting
+  if (! "mean_dff_clip" %in% names(ci)) {
+     ci$mean_dff_clip <- ci$mean_dff
+     not_sig <- sign(ci$ci_low)!=sign(ci$ci_high)
+     ci$mean_dff_clip[not_sig] <- 0
+  }
+
+  # find maturation point after the first signficant age
+  onset_sig <- ci$ages[ci$mean_dff_clip != 0]
+  maturation_pnt <- NA
+  if (length(onset_sig)>0L && !all(is.na(onset_sig))) {
+     mat_points_idx <- ci$mean_dff_clip==0 & ci$ages > onset_sig[1]
+     if (length(mat_points_idx) > 0L && any(mat_points_idx))
+        maturation_pnt <- min(ci$ages[mat_points_idx], na.rm=T)
+  }
+
+  return(maturation_pnt)
+}
+
 
 #' plot gam factor with deriv
 #'
@@ -163,7 +194,7 @@ ci_from_simdiff1 <- function(pred, ages, qnt=c(.025, .975)) {
 #' @param agevar column name of age var e.g. 'Ageatvisit'
 #' @param idvar  line grouping var e.g., 'lunaid', set to NULL if no random effect in model
 #' @param yvar   model yvar e.g. 'f1score', default pulled from model formula
-#' @param plotsavename PDF output name e.g. 'growth.pdf', not saved when NULL
+#' @param plotsavename PDF output name e.g. 'growth.pdf', not saved when NA, not ploted when NULL
 #' @param xplotname 'Age'
 #' @param yplotname  'f1score', default is yvar (model yvar)
 #' @param draw_maturation T|F, show dotted line on first maturation point
@@ -186,8 +217,9 @@ ci_from_simdiff1 <- function(pred, ages, qnt=c(.025, .975)) {
 gam_growthrate_plot <-
    function(d, model, ci, agevar, idvar=NULL,
             yvar=as.character(model$formula[2]),
-            plotsavename=NULL, xplotname="Age", yplotname=yvar,
-            draw_maturation=T, draw_points=T, show_all_fill=F){
+            plotsavename=NA, xplotname="Age", yplotname=yvar,
+            draw_maturation=T, draw_points=T, show_all_fill=F,
+            smooth_plot=T){
 
   require(ggplot2)
   require(itsadug)
@@ -197,6 +229,9 @@ gam_growthrate_plot <-
   #   NA draws weird first color on spectrum
 
   # make sure we have what we say we want
+  if (! "gam" %in% class(model) ) stop("model given must be a gam model!")
+  if (! "data.frame" %in% class(d) ) stop("d given must be a data.frame!")
+  if (! "data.frame" %in% class(ci) ) stop("ci is not growthrate_gam() output")
   if (! yvar %in% names(model$model) ) stop(yvar, "not in model dataframe!")
 
   ci$mean_dff_clip <- ci$mean_dff
@@ -204,14 +239,8 @@ gam_growthrate_plot <-
   not_sig <- sign(ci$ci_low)!=sign(ci$ci_high) # with(ci,ci_high*ci_low < 0)
   ci$mean_dff_clip[not_sig] <- 0
 
-  # find maturation point after the first signficant age
-  onset_sig <- ci$ages[ci$mean_dff_clip != 0]
-  maturation_pnt <- NA
-  if (length(onset_sig)<=0L || all(is.na(onset_sig))) {
-     mat_points_idx <- ci$mean_dff_clip==0 & ci$ages > onset_sig[1]
-     if (any(mat_points_idx))
-        maturation_pnt <- min(ci$ages[mat_points_idx], na.rm=T)
-  }
+  maturation_pnt <- gam_maturation_point(ci)
+
   # warn about no matruation point
   if (is.na(maturation_pnt) && draw_maturation) {
      warning("No maturation point!")
@@ -224,7 +253,7 @@ gam_growthrate_plot <-
   ## setup derivitive raster plot
   deriv_range <- range(ci$mean_dff, na.rm=T)
   tile <-
-     ggplot(ci) +
+     ggplot(ci[-1, ]) + # don't plot first row (is NA)
      aes_string(x="ages", y=1, fill=fill_column) +
      geom_raster(interpolate=TRUE) +
      scale_fill_gradient2(
@@ -263,6 +292,11 @@ gam_growthrate_plot <-
      ylab(yplotname) +
      xlab(xplotname)
 
+  if (smooth_plot) {
+     ageplot <- ageplot +
+       geom_ribbon(aes(ymin=fit - CI, ymax=fit + CI), alpha=.3)
+  }
+
   # individual points for actual data
   if (draw_points) ageplot <- ageplot +
      geom_point(data=modeldata, aes(y=ydata, x=agevar), alpha=.2)
@@ -292,7 +326,7 @@ gam_growthrate_plot <-
 #' @export
 #' @param ageplot_luna     ggplot plot of subject coef by age (top part of figure)
 #' @param tile_luna        tile heatmap of slope  (bottom part of figure)
-#' @param PDFout           PDF name to save output into
+#' @param PDFout           PDF name to save output into, NA no saved, NULL not plotted
 #' @examples
 #'  data <- data.frame(age=1:100,fd_mean=1:100,subj=as.factor(letters[1:25]), conn_ahpc_vmpfc=randu[1:100,1])
 #'  mod<-mgcv::gam(conn_ahpc_vmpfc~s(age)+s(fd_mean)+s(subj, bs="re"), data=data)
@@ -300,7 +334,7 @@ gam_growthrate_plot <-
 #'  plist <- gam_growthrate_plot(data, mod, ci, 'age', idvar='subj')
 #'  plist$tile <- plist$tile + xlab('AGE')
 #'  g <- gam_growthrate_plot_combine(plist$ageplot, plist$tile, 'gammod.pdf')
-gam_growthrate_plot_combine <- function(ageplot_luna, tile_luna, PDFout=NULL) {
+gam_growthrate_plot_combine <- function(ageplot_luna, tile_luna, PDFout=NA) {
   require(grid)
   require(gridExtra)
 
@@ -311,7 +345,15 @@ gam_growthrate_plot_combine <- function(ageplot_luna, tile_luna, PDFout=NULL) {
   g<-rbind(agegrob, tilegrob, size="first")
   panels <- g$layout$t[grep("panel", g$layout$name)]
   g$heights[panels] <- unit(c(1, .1), "null")
-  if (!is.null(PDFout))  {
+
+  # NULL is no draw
+  # NA is draw to screen
+  # filename is save to pdf
+  if (is.null(PDFout)){
+     return(g)
+  } else if (is.na(PDFout))  {
+     grid.draw(g)
+  } else {
 
      # check we are saving pdf
      ext <- rev(strsplit(PDFout, "\\.")[[1]])[1]
@@ -321,8 +363,6 @@ gam_growthrate_plot_combine <- function(ageplot_luna, tile_luna, PDFout=NULL) {
      pdf(PDFout, height = 9, width = 12)
      grid.draw(g)
      dev.off()
-  } else {
-     grid.draw(g)
   }
   return(g)
 }
