@@ -1,6 +1,6 @@
 Package: LNCDR
 Title: Laboratory of Neuro-Cognitive Development R Functions
-Version: 1.21
+Version: 1.30
 Authors@R: c(person("Will", "Foran", email = "willforan+R@gmail.com", role = c("aut", "cre")), person("Brenden", "Tervo-Clemmens", email = "btc16@pitt.edu", role = c("aut", "cre")))
 Author: Will Foran [aut,cre],
    Brenden Tervo=Clemmens [aut,cre]
@@ -10,14 +10,14 @@ Depends:
   dplyr (>= 0.7.0),
   R (>= 3.0)
 Imports:
-  XML,
-  easyPubMed,
-  RPostgreSQL,
+  XML (>= 3.98),
+  easyPubMed (>= 2.13),
+  RPostgreSQL (>= 0.6),
   DBI,
-  oro.nifti,
-  itsadug,
-  ggplot2,
-  gridExtra
+  oro.nifti (>= 0.9.1),
+  itsadug (>= 2.3),
+  ggplot2 (>= 3.1.1),
+  gridExtra (>= 2.3)
 License: GPL3
 LazyData: true
 RoxygenNote: 6.1.1
