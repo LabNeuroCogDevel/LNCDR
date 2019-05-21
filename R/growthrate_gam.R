@@ -72,7 +72,8 @@ sim_diff1_from_gam <- function(m, agevar, idvar=NULL,
       idvarpatt <- sprintf("s\\(%s\\)", idvar)
       idvarpatt. <- sprintf("s\\(%s\\).", idvar)
       randeff <- m$coefficients[ grep(idvarpatt, names(m$coefficients)) ]
-      med_re_name <- names(which(randeff == median(randeff)))
+      medval <- sort(randeff)[floor(length(randeff)/2)]
+      med_re_name <- names(which(randeff == medval))
       median_idx <- gsub(idvarpatt., "", med_re_name)
       median_subj <- levels(m$model[, idvar])[as.numeric(median_idx)]
       warning("gam w/factor idvar, ",
@@ -151,6 +152,18 @@ ci_from_simdiff1 <- function(pred, ages, qnt=c(.025, .975)) {
    for (i in 1:10) lines(ages, pred[[i]])
 }
 
+too_small <- function(x) abs(x) < 10^-15
+clip_on_sig <- function(ci){
+  # if confidence interval includes zero
+  # signs of x and y will be different, -x * +y  < 0
+  # or if both high and low are extremly close to zero
+  not_sig <- ci$ci_low * ci$ci_high < 0 |
+             (too_small(ci$ci_low) & too_small(ci$ci_high))
+  ci$mean_dff_clip <- ci$mean_dff
+  ci$mean_dff_clip[not_sig] <- 0
+  return(ci)
+}
+
 #' gam_maturation_point
 #' 
 #' @description get maturation point from confidence interval dataframe
@@ -162,13 +175,8 @@ gam_maturation_point <- function(ci) {
   # clip out insignificant derivitive
   if (is.na(ci$ci_low[1])) ci <- ci[-1, ]
 
-  # if we need to make dff clip
-  # probably already made if plotting
-  if (! "mean_dff_clip" %in% names(ci)) {
-     ci$mean_dff_clip <- ci$mean_dff
-     not_sig <- sign(ci$ci_low)!=sign(ci$ci_high)
-     ci$mean_dff_clip[not_sig] <- 0
-  }
+  # get mean_df_clip column
+  if (! "mean_dff_clip" %in% names(ci)) ci <- clip_on_sig(ci)
 
   # find maturation point after the first signficant age
   onset_sig <- ci$ages[ci$mean_dff_clip != 0]
@@ -185,7 +193,8 @@ gam_maturation_point <- function(ci) {
 
 #' plot gam factor with deriv
 #'
-#' @description plot output of growthrate_gam
+#' @description plot output of growthrate_gam, returns list of plots
+#'     which can be modifed and sent again to gam_growthrate_plot_combine
 #' @export
 #' @importFrom itsadug get_predictions
 #' @param d      dataframe model was built on (for actual points)
@@ -200,26 +209,31 @@ gam_maturation_point <- function(ci) {
 #' @param draw_maturation T|F, show dotted line on first maturation point
 #' @param draw_points T|F, show individual points as scatter plot over gam fit line
 #' @param show_all_fill T|F, should we clip the raster fill to only significant ages?
+#' @param ci_plot T|F, plot 95% confidence interval with geom_ribbon?
 #' @examples
 #'
-#'  mod <- mgcv::gam(conc~s(uptake), data=CO2)
-#'  ci <- LNCDR::gam_growthrate(mod, 'uptake', n = 10000, qnt = c(0.025, 0.975))
-#'  plist <- gam_growthrate_plot(cars, mod, ci, 'uptake', xplotname='uptake')
+#'  # no random effects
+#'  m <- mgcv::gam(f1score ~ s(Ageatvisit), data=d)
+#'  ci <- gam_growthrate(m, 'Ageatvisit')
+#'  gam_growthrate_plot(d, m, ci, 'Ageatvisit')
 #'
+#'  # w/random effects 'id'
 #'  m <- mgcv::gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
 #'  ci <- gam_growthrate(m, 'Ageatvisit')
 #'  gam_growthrate_plot(d, m, ci, 'Ageatvisit', 'id')
 #'
-#'  # need to explicity set id to NULL if no random effect
-#'  m <- mgcv::gam(f1score ~ s(Ageatvisit), data=d)
-#'  ci <- gam_growthrate(m, 'Ageatvisit', idvar=NULL)
-#'  gam_growthrate_plot(d, m, ci, 'Ageatvisit', idvar=NULL)
+#'  # replot example, see gam_growthrate_plot_combine
+#'  mod <- mgcv::gam(conc~s(uptake), data=CO2)
+#'  ci <- LNCDR::gam_growthrate(mod, 'uptake', n = 10000, qnt = c(0.025, 0.975))
+#'  plist <- gam_growthrate_plot(cars, mod, ci, 'uptake', xplotname='uptake')
+#'  plist$ageplot <- plist$ageplot + xlab('foobar')
+#'  gam_growthrate_plot_combine(plist$ageplot, plist$tile)
 gam_growthrate_plot <-
    function(d, model, ci, agevar, idvar=NULL,
             yvar=as.character(model$formula[2]),
             plotsavename=NA, xplotname="Age", yplotname=yvar,
             draw_maturation=T, draw_points=T, show_all_fill=F,
-            smooth_plot=T){
+            ci_plot=T){
 
   require(ggplot2)
   require(itsadug)
@@ -236,9 +250,7 @@ gam_growthrate_plot <-
 
   ci$mean_dff_clip <- ci$mean_dff
   # when ci bounds include 0 (different sign), no longer signficant
-  not_sig <- sign(ci$ci_low)!=sign(ci$ci_high) # with(ci,ci_high*ci_low < 0)
-  ci$mean_dff_clip[not_sig] <- 0
-
+  ci <- clip_on_sig(ci)
   maturation_pnt <- gam_maturation_point(ci)
 
   # warn about no matruation point
@@ -292,7 +304,7 @@ gam_growthrate_plot <-
      ylab(yplotname) +
      xlab(xplotname)
 
-  if (smooth_plot) {
+  if (ci_plot) {
      ageplot <- ageplot +
        geom_ribbon(aes(ymin=fit - CI, ymax=fit + CI), alpha=.3)
   }
@@ -315,8 +327,9 @@ gam_growthrate_plot <-
   # save to file if we have plotsavename
   g <- gam_growthrate_plot_combine(ageplot_luna, tile_luna, plotsavename)
 
+  list_of_plots <- list(tile=tile_luna, ageplot=ageplot_luna, both=g)
   # give back everything we created
-  return(list(tile=tile_luna, ageplot=ageplot_luna, both=g))
+  return(list_of_plots)
 }
 
 
