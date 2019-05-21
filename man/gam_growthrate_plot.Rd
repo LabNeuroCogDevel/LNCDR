@@ -7,7 +7,7 @@
 gam_growthrate_plot(d, model, ci, agevar, idvar = NULL,
   yvar = as.character(model$formula[2]), plotsavename = NA,
   xplotname = "Age", yplotname = yvar, draw_maturation = T,
-  draw_points = T, show_all_fill = F, smooth_plot = T)
+  draw_points = T, show_all_fill = F, ci_plot = T)
 }
 \arguments{
 \item{d}{dataframe model was built on (for actual points)}
@@ -33,22 +33,29 @@ gam_growthrate_plot(d, model, ci, agevar, idvar = NULL,
 \item{draw_points}{T|F, show individual points as scatter plot over gam fit line}
 
 \item{show_all_fill}{T|F, should we clip the raster fill to only significant ages?}
+
+\item{ci_plot}{T|F, plot 95% confidence interval with geom_ribbon?}
 }
 \description{
-plot output of growthrate_gam
+plot output of growthrate_gam, returns list of plots
+    which can be modifed and sent again to gam_growthrate_plot_combine
 }
 \examples{
 
- mod <- mgcv::gam(conc~s(uptake), data=CO2)
- ci <- LNCDR::gam_growthrate(mod, 'uptake', n = 10000, qnt = c(0.025, 0.975))
- plist <- gam_growthrate_plot(cars, mod, ci, 'uptake', xplotname='uptake')
+ # no random effects
+ m <- mgcv::gam(f1score ~ s(Ageatvisit), data=d)
+ ci <- gam_growthrate(m, 'Ageatvisit')
+ gam_growthrate_plot(d, m, ci, 'Ageatvisit')
 
+ # w/random effects 'id'
  m <- mgcv::gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
  ci <- gam_growthrate(m, 'Ageatvisit')
  gam_growthrate_plot(d, m, ci, 'Ageatvisit', 'id')
 
- # need to explicity set id to NULL if no random effect
- m <- mgcv::gam(f1score ~ s(Ageatvisit), data=d)
- ci <- gam_growthrate(m, 'Ageatvisit', idvar=NULL)
- gam_growthrate_plot(d, m, ci, 'Ageatvisit', idvar=NULL)
+ # replot example, see gam_growthrate_plot_combine
+ mod <- mgcv::gam(conc~s(uptake), data=CO2)
+ ci <- LNCDR::gam_growthrate(mod, 'uptake', n = 10000, qnt = c(0.025, 0.975))
+ plist <- gam_growthrate_plot(cars, mod, ci, 'uptake', xplotname='uptake')
+ plist$ageplot <- plist$ageplot + xlab('foobar')
+ gam_growthrate_plot_combine(plist$ageplot, plist$tile)
 }

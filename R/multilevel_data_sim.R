@@ -68,7 +68,7 @@ sim_multilevel_bivariatenormal_randintercept <-
 #' @param  slopeintcorbetween slope between subject correlation
 #' @param  slopeintcorwithin  slope within subject correlation
 #' @param  ICCs               inter class correlation
-#' @importFrom Mass mvrnorm
+#' @importFrom MASS mvrnorm
 #' @export
 #' @examples
 #'  sim_multilevel_bivariatenormal_randinterceptandslope(100,2,.1,.5,.6,.3,.4)
