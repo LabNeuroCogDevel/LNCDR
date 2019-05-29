@@ -193,9 +193,7 @@ gam_maturation_point <- function(ci) {
 
 #' plot gam factor with deriv
 #'
-#' @description plot output of growthrate_gam, returns list of plots  which can be modifed and sent again to gam_growthrate_plot_combine
-#' @export
-#' @importFrom itsadug get_predictions
+#' @description plot output of growthrate_gam and list for gam_growthrate_plot_combine
 #' @param d      dataframe model was built on (for actual points)
 #' @param model  gam model (for predicted line)
 #' @param ci     growthrate_gam output (confidence interval and derivitive)
@@ -208,7 +206,9 @@ gam_maturation_point <- function(ci) {
 #' @param draw_maturation T|F, show dotted line on first maturation point
 #' @param draw_points T|F, show individual points as scatter plot over gam fit line
 #' @param show_all_fill T|F, should we clip the raster fill to only significant ages?
-#' @param ci_plot T|F, plot 95% confidence interval with geom_ribbon?
+#' @param ci_plot T|F, plot 95 percent confidence interval with geom_ribbon?
+#' @export
+#' @importFrom itsadug get_predictions
 #' @examples
 #'  # no random effects
 #'  m <- mgcv::gam(f1score ~ s(Ageatvisit), data=d)

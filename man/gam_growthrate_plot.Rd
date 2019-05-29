@@ -34,10 +34,10 @@ gam_growthrate_plot(d, model, ci, agevar, idvar = NULL,
 
 \item{show_all_fill}{T|F, should we clip the raster fill to only significant ages?}
 
-\item{ci_plot}{T|F, plot 95% confidence interval with geom_ribbon?}
+\item{ci_plot}{T|F, plot 95 percent confidence interval with geom_ribbon?}
 }
 \description{
-plot output of growthrate_gam, returns list of plots  which can be modifed and sent again to gam_growthrate_plot_combine
+plot output of growthrate_gam and list for gam_growthrate_plot_combine
 }
 \examples{
  # no random effects
