@@ -7,6 +7,8 @@ Convenience functions for the LNCD
 if (!'devtools' %in% installed.packages()) install.packages('devtools')
 # install with devtools
 devtools::install_github('LabNeuroCogDevel/LNCDR')
+# if reinstalling, also run
+detach("package:LNCDR", unload=TRUE)
 ```
 
 ## Functions
