@@ -37,11 +37,9 @@ gam_growthrate_plot(d, model, ci, agevar, idvar = NULL,
 \item{ci_plot}{T|F, plot 95% confidence interval with geom_ribbon?}
 }
 \description{
-plot output of growthrate_gam, returns list of plots
-    which can be modifed and sent again to gam_growthrate_plot_combine
+plot output of growthrate_gam, returns list of plots  which can be modifed and sent again to gam_growthrate_plot_combine
 }
 \examples{
-
  # no random effects
  m <- mgcv::gam(f1score ~ s(Ageatvisit), data=d)
  ci <- gam_growthrate(m, 'Ageatvisit')
