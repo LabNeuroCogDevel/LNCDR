@@ -35,7 +35,7 @@ waterfall_group <- function(d) {
 #'  print(p)
 waterfall_plot <- function(d, ...) {
 
-   age_ranged <- waterfall_group(d)
+   age_ranked <- waterfall_group(d)
 
    p <-
       ggplot(age_ranked) +
