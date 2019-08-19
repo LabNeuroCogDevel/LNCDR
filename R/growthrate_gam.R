@@ -23,6 +23,8 @@
 gam_growthrate <- function(m, agevar, idvar=NULL, n.iterations=10000, qnt=c(.025, .975)) {
   simdiff <- sim_diff1_from_gam(m, agevar, idvar, n.iterations=n.iterations)
   ci <- ci_from_simdiff1(simdiff$pred, simdiff$ages, qnt=qnt)
+  ci$fit <- simdiff$fit
+  return(ci)
 }
 
 
@@ -117,13 +119,13 @@ sim_diff1_from_gam <- function(m, agevar, idvar=NULL,
    mrand_agevar <- mrand[, keep_cols]
 
    # generate a whole bunch of plausable values, get the diff
-   pred <- lapply(seq_len(n.iterations), function(i)  {
-                  pred <- ilink(Xp_agevar %*% mrand_agevar[i, ])
-                  dff <- c(NA, diff(pred))
+   diffs <- lapply(seq_len(n.iterations), function(i)  {
+                  fit <- ilink(Xp_agevar %*% mrand_agevar[i, ])
+                  dff <- c(NA, diff(fit))
                   return(dff)
                  })
 
-   return(list(pred=pred, ages=pp[, 1]))
+   return(list(pred=diffs, ages=pp[, 1], fit=predict(m, pp)))
 }
 
 ci_from_simdiff1 <- function(pred, ages, qnt=c(.025, .975)) {
