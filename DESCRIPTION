@@ -1,6 +1,6 @@
 Package: LNCDR
 Title: Laboratory of Neuro-Cognitive Development R Functions
-Version: 1.30
+Version: 1.31
 Authors@R: c(person("Will", "Foran", email = "willforan+R@gmail.com", role = c("aut", "cre")), person("Brenden", "Tervo-Clemmens", email = "btc16@pitt.edu", role = c("aut", "cre")))
 Author: Will Foran [aut,cre],
    Brenden Tervo=Clemmens [aut,cre]

@@ -67,7 +67,9 @@ sim_diff1_from_gam <- function(m, agevar, idvar=NULL,
    names(pp) <- c(agevar, idvar)
 
    # what if idvar is factor (Inf wont work)
-   if (!is.null(idvar) && is.factor(m$model[, idvar])){
+   if (is.null(idvar)) {
+      # do nothing. no idvar
+   } else if (is.factor(m$model[, idvar])){
       # select idvar with the middle most random effect
       # random effects are coefficents like s(idvar).xxxxx
       # where xxxx is the index of the specific idvar factor name
@@ -85,6 +87,10 @@ sim_diff1_from_gam <- function(m, agevar, idvar=NULL,
 
       # alternatively, select the first
       # pp[, 2] <- m$model[1, idvar]
+   } else {
+     warning("predition with continous (non-factor) idvar will give 'Inf' fit")
+     # maybe pick middle value instead?
+     # pp[, 2] <- mean(m$model[, idvar], na.rm=T)
    }
 
    # for all covars, pick out the mean
@@ -293,7 +299,8 @@ gam_growthrate_plot <-
   modeldata<-data.frame(ydata=model$y, agevar=model$model[, agevar])
   condlist <- list(a=ci$ages)
   names(condlist) <- agevar
-  agepred <- itsadug::get_predictions(model, cond=condlist)
+  # 20190826 BTC - remove random effects (bug fix)
+  agepred <- itsadug::get_predictions(model, cond = condlist, rm.ranef=TRUE)
 
   ageplot<-
      ggplot(agepred) +
