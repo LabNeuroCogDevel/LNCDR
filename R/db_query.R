@@ -77,7 +77,21 @@ lncd_pgconn <- function(info=pgpassread()) {
 #' @examples 
 #'  v   <- db_query('select * from visit limit 2')
 #'  meg <- db_query(readr::read_file('/Volumes/Zeus/DB_SQL/queries/allMEG2016.sql'))
-db_query <-function(query, conn=lncd_pgconn())  d<-DBI::dbGetQuery(conn, query)
+db_query <-function(query, conn=NULL) {
+   # open a connection if we werent given one
+   # will need to close it afterward too
+   close_con <- F
+   if (is.null(conn)) {
+      conn <- lncd_pgconn()
+      close_con <- T
+   }
+
+   # run the query
+   d<-DBI::dbGetQuery(conn, query)
+
+   if (close_con) DBI::dbDisconnect(conn)
+   return(d)
+}
 
 ### unnest jsonb
 # some table have jsonb objects
