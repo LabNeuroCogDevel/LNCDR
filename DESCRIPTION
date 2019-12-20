@@ -17,7 +17,8 @@ Imports:
   oro.nifti (>= 0.9.1),
   itsadug (>= 2.3),
   ggplot2 (>= 3.1.1),
-  gridExtra (>= 2.3)
+  gridExtra (>= 2.3),
+  psych
 License: GPL3
 LazyData: true
 RoxygenNote: 6.1.1
