@@ -10,39 +10,24 @@ devtools::install_github('LabNeuroCogDevel/LNCDR')
 # if reinstalling, also run
 detach("package:LNCDR", unload=TRUE)
 ```
+## Help
+For help on all functions, in an R console, see `?LNCDR::`<kbd>tab</kbd>
 
 ## Functions
 
-For help on all functions, in an R console, see `?LNCDR::`<kbd>tab</kbd>
+### Data Wrangling
 
-### `gam_growthrate`
+#### `save1D`
+Dataframe to 1D file:
 
-![gam_growthrate_plot](img/gam_deriv_btc.png?raw=true)
+Given a data frame with a `block` column and a specified onset column, generate a 1D file for use in afni's `3dDeconvolve`.
 
-```R
- m <- gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
- ci <- gam_growthrate(m, 'Ageatvisit')
- gam_growthrate_plot(d, m, ci, 'Ageatvisit','f1score','id')
-```
+#### `date_match`
+Match behavioral visit to scan visit.
 
-### `pubmed_search`
-For meta analysis, get a dataframe of pubmed search results (doi, title, authors, journal, year, abstract)
-```R
-  btc_papers <- pubmed_search("Tervo-Clemmens[Author]", "tmp_xml/authsearch")
+Given two dataframes, both with a column of near matching dates, find the best match between the two.
 
-  #  journal  title   year  abstract                                doi   authors
-  #  Biologi… Early … 2018  Retrospective neuroimaging studies hav… 10.1… Tervo-C…
-  #  NeuroIm… Adoles… 2018  Given prior reports of adverse effects… 10.1… Tervo-C…
-  #  Frontie… Neural… 2017  Risk for substance use disorder (SUD) … 10.3… Tervo-C…
-  #  Annual … An int… 2015  "Brains systems undergo unique and spe… 10.1… Luna, B…
-  #  Journal… Explor… 2013  Comorbid depression and anxiety disord… 10.4… Boyd, R…
-```
-
-### `to_nii`
-write a nifti file from a voxelwise dataframe
-### `zscore` `zscorecols` `zscorewithinfactor`
-zscore dataframes
-### `col_ungroup`
+#### `col_ungroup`
 extract variable grouped columns into rows
 ```
 a.mean b.mean c.mean a.std b.std c.std
@@ -56,14 +41,69 @@ b    2     .5
 c    3     .4
 
 ```
-### `save1D`
-given a dataframe with a `block` column and a specified onset column, generate a 1D file for use in afni's `3dDeconvolve`.
 
-### `date_match`
-Given two dataframes, both with a column of near matching dates, find the best match between the two.
+#### `db_query`
+use `.pg_pass` to make quick queries to central database.
 
-### `vox_cor`
-given a seed region (mask) and target region (mask), give voxelwise correlations from a 4d nifti.
+#### `interactive_label_match`
+match labels from one string vector with another
+
+#### `uppsp_scoring`
+scores uppsp 59-item 
+
+### Stats
+
+#### `gam_growthrate`
+
+![gam_growthrate_plot](img/gam_deriv_btc.png?raw=true)
+
+```R
+ m <- gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
+ ci <- gam_growthrate(m, 'Ageatvisit')
+ gam_growthrate_plot(d, m, ci, 'Ageatvisit','f1score','id')
+```
+
+#### `zscore` `zscorecols` `zscorewithinfactor`
+zscore dataframes
+
+#### `lmer_extract`
+get values (t, chisq, p) from a single variable in a model
+
+### Misc
+
+#### `waterfall_plot`
+
+Plot age at each visit for each participant.
+
+#### `pubmed_search`
+For meta analysis, get a dataframe of pubmed search results (doi, title, authors, journal, year, abstract)
+```R
+  btc_papers <- pubmed_search("Tervo-Clemmens[Author]", "tmp_xml/authsearch")
+
+  #  journal  title   year  abstract                                doi   authors
+  #  Biologi… Early … 2018  Retrospective neuroimaging studies hav… 10.1… Tervo-C…
+  #  NeuroIm… Adoles… 2018  Given prior reports of adverse effects… 10.1… Tervo-C…
+  #  Frontie… Neural… 2017  Risk for substance use disorder (SUD) … 10.3… Tervo-C…
+  #  Annual … An int… 2015  "Brains systems undergo unique and spe… 10.1… Luna, B…
+  #  Journal… Explor… 2013  Comorbid depression and anxiety disord… 10.4… Boyd, R…
+```
+
+#### `lunaize`
+A better alternative is probably [`cowplot::theme_cowplot()`](https://github.com/wilkelab/cowplot).
+
+Apply Dr. Luna's style to a ggplot. See `?lunaize` for usage.
+
+![lunastyle](img/lunaize-plotcomp.png?raw=true)
+
+
+
+### Imaging
+
+#### `to_nii`
+write a nifti file from a voxelwise dataframe
+
+#### `vox_cor`
+Given a seed region (mask) and target region (mask), return voxelwise correlations from a 4d nifti.
 
 ```R
 seed <- read_mask("striatum_mask.nii.gz")
@@ -72,13 +112,9 @@ target <- target & ! seed
 allcors <- vox_cor("subj_ts.nii.gz",seed,target)
 ```
 
-### `lunaize`
-apply Dr. Luna's style to a ggplot. See `?lunaize` for usage.
 
-![lunastyle](img/lunaize-plotcomp.png?raw=true)
-
-### ijk functions
-convert ijk indexes between afni and oro MNI(LPI) data matrix.
+#### ijk functions
+Convert ijk indexes between afni and oro MNI(LPI) data matrix.
 
 ![afni_ijk](img/afni_ijk.png?raw=true)
 
@@ -89,7 +125,7 @@ mx <- arrayind(which.max(d),dm)
 ijk.oro2afni(mx[1:3], dm )
 ```
 
-### spectrum functions
+#### spectrum functions
 
 
 ![afni](img/afni_shot.png?raw=true)
