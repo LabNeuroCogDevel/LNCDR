@@ -43,10 +43,14 @@ save1D <- function(d,colname=1,fname=NULL,dur=NULL,amp=NULL,nblocks=NULL){
    if(!is.null(fname)) sink(fname)
 
 
-   linePerblock(d,colname,dur=dur,amp=amp,nblocks=nblocks) 
+   linePerblock(d,colname,dur=dur,amp=amp,nblocks=nblocks)
    cat("\n")
    # turn of sink if we had it on
    if(!is.null(fname)) sink()
+
+   # dplyr doesn't like null return values
+   if (is.null(fname)) fname <- NA
+   return(fname)
 }
 
 p0fmt <- function(fmt,...){
