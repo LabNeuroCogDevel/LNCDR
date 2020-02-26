@@ -34,3 +34,11 @@ test_that("read write save with charater indexies", {
    file.remove('test.nii.gz')
   
 })
+
+test_that("reset afni min/max", {
+   skip_if(system("which 3dNotes",intern=T)<=0L)
+   d <- data.frame(i=20:30, j=20:30, k=20:30, v=100)
+   to_nii("../HarOx-sub-2mm.striatumplusthalamus.nii.gz", d, "test")
+   expect_equal(system("3dBrickStat test.nii.gz", intern=T), max(nd))
+   file.remove("test.nii.gz")
+})
