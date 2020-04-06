@@ -163,8 +163,8 @@ Rscript -e "devtools::document(); setwd('..'); devtools::install('LNCDR')"
 
 Tests follow Hadley Wickham's testthat [description](http://r-pkgs.had.co.nz/tests.html).
 ### Adding functions
-1. create a new or edit an exist .R file in R/. 
-    - make sure `#' @export` is above a function definition you want exported. See [roxygen primer](https://kbroman.org/pkg_primer/pages/docs.html).
-    - Other functions (esp. [`R/ld8.R`](blob/master/R/ld8.R) ) are a good starting place.
+1. create a new or edit an existing `*.R` file within `R/`. 
+    - make sure `#' @export` is above a function definition you want exported. See [roxygen primer](https://kbroman.org/pkg_primer/pages/docs.html). You can got to any function using 3 colons:  `LNCDR:::function_without_export`
+    - Other functions (esp. [`R/ld8.R`](R/ld8.R)) are a good starting place.
 2. run` make`
     - or, in an R console, run: `devtools::document(); devtools::install('./')`
