@@ -164,10 +164,11 @@ task_query <- function(task, columns="measures"){
 #' ld8_age - merge input dataframe with ages calc from db
 #' @param  d -- dataframe with an lunaid_yyyymmdd column
 #' @param  colname -- column containing ld8
+#' @param  selectquery -- what columns to select from db
 #' @export
 #' @examples 
 #'  rist  <- ld8_age(data.frame(ld8=c("11654_20180602","11671_20180723")),"ld8")
-ld8_age <- function(d, colname="ld8") {
+ld8_age <- function(d, colname="ld8", selectquery="dob, sex") {
    if (any(names(d) %in% c("id", "ymd")))
       warning("id or ymd column will be changed")
 
@@ -190,10 +191,10 @@ ld8_age <- function(d, colname="ld8") {
       gsub("$", "'", .) %>%           # add ending quote
       paste(collapse=",")             # commas between ids
    query <- sprintf("
-            select *
+            select %s
             from person
             natural join enroll
-            where id in (%s)", l_in)
+            where id in (%s)",selectquery, l_in)
   r <- LNCDR::db_query(query)
   f <-
      merge(r, d, by="id", all=T) %>%
