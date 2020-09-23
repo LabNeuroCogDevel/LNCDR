@@ -191,7 +191,7 @@ ld8_age <- function(d, colname="ld8", selectquery="dob, sex") {
       gsub("$", "'", .) %>%           # add ending quote
       paste(collapse=",")             # commas between ids
    query <- sprintf("
-            select %s
+            select id, %s
             from person
             natural join enroll
             where id in (%s)",selectquery, l_in)
