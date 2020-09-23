@@ -4,8 +4,7 @@
 \alias{to_nii}
 \title{to_nii: give a mask and a dataframe (row per voxel: i j k value), write out a nifti file}
 \usage{
-to_nii(examplenii, d, fileout, valcol = 4, icol = "i", jcol = "j",
-  kcol = "k")
+to_nii(examplenii, d, fileout, valcol = 4, icol = "i", jcol = "j", kcol = "k")
 }
 \arguments{
 \item{examplenii}{an oro.nifti object with the header (orientation, pixdim, etc) representing voxel data}

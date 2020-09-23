@@ -4,8 +4,15 @@
 \alias{afni_save_spectrum}
 \title{wrapper for optionally creating a pdf of plot_colorspectrum(afni.spectrum(...)))}
 \usage{
-afni_save_spectrum(volumemax, savename = NA, threshold = NA,
-  ispos = F, posonly = F, img = NULL, ...)
+afni_save_spectrum(
+  volumemax,
+  savename = NA,
+  threshold = NA,
+  ispos = F,
+  posonly = F,
+  img = NULL,
+  ...
+)
 }
 \arguments{
 \item{volumemax}{- maximum value for spectrum}

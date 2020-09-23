@@ -4,8 +4,17 @@
 \alias{date_match}
 \title{match dates in a data frame by one-to-many merge and rank. Useful to match behavioral to brain over multiple timepoints.}
 \usage{
-date_match(d1, d2, idcol, datecol1, datecol2 = datecol1, all.x = F,
-  suffix.y = ".y", maxdatediff = 180, maxrank = 2 - 0.001)
+date_match(
+  d1,
+  d2,
+  idcol,
+  datecol1,
+  datecol2 = datecol1,
+  all.x = F,
+  suffix.y = ".y",
+  maxdatediff = 180,
+  maxrank = 2 - 0.001
+)
 }
 \arguments{
 \item{d1}{-- main dataframe (has the "true" date. one part of one-to-many)}

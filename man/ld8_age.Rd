@@ -4,12 +4,14 @@
 \alias{ld8_age}
 \title{ld8_age - merge input dataframe with ages calc from db}
 \usage{
-ld8_age(d, colname = "ld8")
+ld8_age(d, colname = "ld8", selectquery = "dob, sex")
 }
 \arguments{
 \item{d}{-- dataframe with an lunaid_yyyymmdd column}
 
 \item{colname}{-- column containing ld8}
+
+\item{selectquery}{-- what columns to select from db}
 }
 \description{
 ld8_age - merge input dataframe with ages calc from db

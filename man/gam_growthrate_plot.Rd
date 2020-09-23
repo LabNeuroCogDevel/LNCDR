@@ -4,10 +4,21 @@
 \alias{gam_growthrate_plot}
 \title{plot gam factor with deriv}
 \usage{
-gam_growthrate_plot(d, model, ci, agevar, idvar = NULL,
-  yvar = as.character(model$formula[2]), plotsavename = NA,
-  xplotname = "Age", yplotname = yvar, draw_maturation = T,
-  draw_points = T, show_all_fill = F, ci_plot = T)
+gam_growthrate_plot(
+  d,
+  model,
+  ci,
+  agevar,
+  idvar = NULL,
+  yvar = as.character(model$formula[2]),
+  plotsavename = NA,
+  xplotname = "Age",
+  yplotname = yvar,
+  draw_maturation = T,
+  draw_points = T,
+  show_all_fill = F,
+  ci_plot = T
+)
 }
 \arguments{
 \item{d}{dataframe model was built on (for actual points)}

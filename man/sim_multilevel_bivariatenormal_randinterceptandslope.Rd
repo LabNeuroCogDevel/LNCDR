@@ -4,8 +4,15 @@
 \alias{sim_multilevel_bivariatenormal_randinterceptandslope}
 \title{sim_multilevel_bivariatenormal_randinterceptandslope}
 \usage{
-sim_multilevel_bivariatenormal_randinterceptandslope(nsubject, nvisits,
-  interceptcor, slopecor, slopeintcorbetween, slopeintcorwithin, ICCs)
+sim_multilevel_bivariatenormal_randinterceptandslope(
+  nsubject,
+  nvisits,
+  interceptcor,
+  slopecor,
+  slopeintcorbetween,
+  slopeintcorwithin,
+  ICCs
+)
 }
 \arguments{
 \item{nsubject}{how many subjects}

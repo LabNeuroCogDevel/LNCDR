@@ -4,7 +4,7 @@ context("lmer_extract")
 # cd ../; Rscript testthat.R
 
 test_that("simple cars", {
- m <- lm(data = cars, dist ~ speed)
+ m <- lm(data = datasets::cars, dist ~ speed)
  p <- lmer_extract(m, "speed")
  expect_equal(unname(p),
               summary(m)$coefficients["speed","t value"])
@@ -12,7 +12,7 @@ test_that("simple cars", {
 })
 
 test_that("mixed effects", {
- m <- lme4::lmer(uptake ~ conc + Type + (1 | Treatment), CO2)
+ m <- lme4::lmer(uptake ~ conc + Type + (1 | Treatment), datasets::CO2)
  p <- lmer_extract(m, "conc")
 
  expect_equal(unname(p[1]),
@@ -21,7 +21,7 @@ test_that("mixed effects", {
 })
 
 test_that("mixed effects w/factor", {
- m <- lme4::lmer(uptake ~ conc + Type + (1 | Treatment), CO2)
+ m <- lme4::lmer(uptake ~ conc + Type + (1 | Treatment), datasets::CO2)
  p <- lmer_extract(m, "conc", "TypeMississippi")
  # TODO: CHECK ME! this is weird? no?
  expect_equal(unname(p["conc.tval"]),

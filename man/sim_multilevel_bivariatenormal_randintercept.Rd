@@ -4,8 +4,12 @@
 \alias{sim_multilevel_bivariatenormal_randintercept}
 \title{sim_multilevel_bivariatenormal_randintercept}
 \usage{
-sim_multilevel_bivariatenormal_randintercept(nsubject, nvisits,
-  interceptcor, ICCs)
+sim_multilevel_bivariatenormal_randintercept(
+  nsubject,
+  nvisits,
+  interceptcor,
+  ICCs
+)
 }
 \arguments{
 \item{nsubject}{how many subjects}

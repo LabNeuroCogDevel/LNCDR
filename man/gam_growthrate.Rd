@@ -4,8 +4,13 @@
 \alias{gam_growthrate}
 \title{gam_growthrate}
 \usage{
-gam_growthrate(m, agevar, idvar = NULL, n.iterations = 10000,
-  qnt = c(0.025, 0.975))
+gam_growthrate(
+  m,
+  agevar,
+  idvar = NULL,
+  n.iterations = 10000,
+  qnt = c(0.025, 0.975)
+)
 }
 \arguments{
 \item{m}{mgcv gam model object (only)}
