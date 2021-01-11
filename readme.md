@@ -65,6 +65,8 @@ scores uppsp 59-item
 
 #### `gam_growthrate`
 
+for better/more plotting facilities, see  and [`tidymv`](https://github.com/stefanocoretta/tidymv) (`predict_gam` and [`plot_smooths`](https://cran.r-project.org/web/packages/tidymv/vignettes/plot-smooths.html)) and/or [`ggeffects`](https://strengejacke.github.io/ggeffects/)
+
 ![gam_growthrate_plot](img/gam_deriv_btc.png?raw=true)
 
 ```R
