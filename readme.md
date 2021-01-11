@@ -4,7 +4,7 @@ Convenience functions for the LNCD
 ## Install
 ```R
 # install devtools if needed
-if (!'devtools' %in% installed.packages()) install.packages('remotes')
+if (!'remotes' %in% installed.packages()) install.packages('remotes')
 # if reinstalling, also run
 detach("package:LNCDR", unload=TRUE)
 # (re)install with devtools

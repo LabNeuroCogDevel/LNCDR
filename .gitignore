@@ -1,3 +1,4 @@
 .Rhistory
 .RData
 .*.swp
+tests/testthat/Rplots.pdf
