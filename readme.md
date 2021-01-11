@@ -4,12 +4,15 @@ Convenience functions for the LNCD
 ## Install
 ```R
 # install devtools if needed
-if (!'devtools' %in% installed.packages()) install.packages('devtools')
-# install with devtools
-devtools::install_github('LabNeuroCogDevel/LNCDR')
+if (!'devtools' %in% installed.packages()) install.packages('remotes')
 # if reinstalling, also run
 detach("package:LNCDR", unload=TRUE)
+# (re)install with devtools
+remotes::install_github('LabNeuroCogDevel/LNCDR')
+# load it
+library(LNCDR)
 ```
+
 ## Help
 For help on all functions, in an R console, see `?LNCDR::`<kbd>tab</kbd>
 
@@ -27,8 +30,18 @@ Match behavioral visit to scan visit.
 
 Given two dataframes, both with a column of near matching dates, find the best match between the two.
 
+#### `parseROItempcor`
+read  [`ROI_TempCorr`](LNCDR/blob/master/tests/testthat/roitempcorr.R) `*.rac1.adj_pearson.txt` outputs into per subject rows.
+
+#### `roicormat_wide`
+extract unique pairs from a correlation matrix into a single row.
+
+#### `db_query`
+use `.pg_pass` to make quick queries to central database.
+
+
 #### `col_ungroup`
-extract variable grouped columns into rows
+extract variable grouped columns into rows. DEPRICATED. see `tidyr::pivot_longer` and https://mgimond.github.io/ES218/Week03b.html
 ```
 a.mean b.mean c.mean a.std b.std c.std
      1      2      3    .6    .5   .4
@@ -41,9 +54,6 @@ b    2     .5
 c    3     .4
 
 ```
-
-#### `db_query`
-use `.pg_pass` to make quick queries to central database.
 
 #### `interactive_label_match`
 match labels from one string vector with another
