@@ -5,6 +5,8 @@ qualtrics_fetch <- function(sid, root_url) {
   # is.character(x) is not TRUE
   # Input Q2 is readr::parse_factor(...)
   tryCatch({
+    # config has a bug somehwere that is duplicating https:// at the start of the url
+    root_url <- gsub('^https://https://', 'https://', root_url)
     d <- qualtRics::fetch_survey(sid, root_url=root_url, force=T, convert=F)
     d <- tryCatch(qualtRics:::infer_data_types(d, sid),
                   error=function(e){

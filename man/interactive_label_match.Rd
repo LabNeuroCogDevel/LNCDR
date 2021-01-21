@@ -4,12 +4,19 @@
 \alias{interactive_label_match}
 \title{interactive_label_match:  match labels from one string vector with another}
 \usage{
-interactive_label_match(labels1, labels2)
+interactive_label_match(
+  labels1,
+  labels2,
+  prompt_equal = FALSE,
+  diffprint = TRUE
+)
 }
 \arguments{
 \item{labels1}{are the set of labels to match}
 
 \item{labels2}{are where to pull potential matches from}
+
+\item{prompt_equal}{default FALSE, set to true if you want to confirm all matches}
 }
 \description{
 interactive_label_match:  match labels from one string vector with another
