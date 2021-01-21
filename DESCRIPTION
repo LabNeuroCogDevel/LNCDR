@@ -5,7 +5,7 @@ Authors@R: c(person("Will", "Foran", email = "willforan+R@gmail.com", role = c("
 Author: Will Foran [aut,cre],
    Brenden Tervo=Clemmens [aut,cre]
 Maintainer: Will Foran <willforan+R@gmail.com>
-Description: Exposes functions useful in creating and displaying neuroimaging data, with a focus on interfacing with AFNI tools. Stats and database helpers are included too.
+Description: Exposes functions useful in creating, analysing, and visualizing neuroimaging data. Helper functions used in the Laboratory for NeuroCognitive Development (P.I. Dr. Luna).
 Depends:
   dplyr (>= 0.7.0),
   R (>= 3.0)
