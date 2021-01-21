@@ -7,6 +7,7 @@
 interactive_label_match(
   labels1,
   labels2,
+  accept_single = FALSE,
   prompt_equal = FALSE,
   diffprint = TRUE
 )
@@ -16,7 +17,11 @@ interactive_label_match(
 
 \item{labels2}{are where to pull potential matches from}
 
-\item{prompt_equal}{default FALSE, set to true if you want to confirm all matches}
+\item{accept_single}{default FALSE. if only one match, accept it.}
+
+\item{prompt_equal}{default FALSE. set to true if you want to confirm all matches}
+
+\item{diffprint}{default TRUE. show colored diff. only useful in terminal}
 }
 \description{
 interactive_label_match:  match labels from one string vector with another
