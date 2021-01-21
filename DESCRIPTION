@@ -19,10 +19,13 @@ Imports:
   ggplot2 (>= 3.1.1),
   gridExtra (>= 2.3),
   neuroCombat,
+  car,
+  qualtRics,
+  reshape2,
   psych
 Remotes:
  github::Jfortin1/ComBatHarmonization/R/neuroCombat
 License: GPL3
 LazyData: true
-RoxygenNote: 7.1.0
-Suggests: testthat
+RoxygenNote: 7.1.1
+Suggests: testthat, devtools
