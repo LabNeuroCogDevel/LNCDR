@@ -78,7 +78,14 @@ linePerblock <- function(d,colname=1,nblocks=NULL,dur=NULL,amp=NULL) {
             else
               return(p0fmt('%0.2f:%0.2f*%0.2f',bd[,colname],bd[,dur],bd[,amp]))
           } else {
-            return(sprintf('*'))
+             # empty run is * (when no dur or amp)
+             if(is.null(amp) && is.null(dur)) return('*')
+
+             # otherwise marry time '-1' with 0 for dur and/or amp
+             nullout <- '-1'
+             if(!is.null(dur)) nullout <- paste0(nullout, ':0')
+             if(!is.null(amp)) nullout <- paste0(nullout, '*0')
+             return(nullout)
           }
         }
       )

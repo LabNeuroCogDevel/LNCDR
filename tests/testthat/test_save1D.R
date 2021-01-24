@@ -30,6 +30,28 @@ test_that("emptydf all *", {
  expect_equal(length(nums), 3)
  expect_true(all(sapply(res, grepl, pattern="^\\*$")))
 })
+test_that("emptydf dur -1:0", {
+ dn <- d[d$block>Inf, ] # empyt df but with correct names
+ res <- capture.output(x<-save1D(dn, "onsets",dur="dur", nblocks=3))
+
+ nums <- strsplit(res, "\n")
+ expect_equal(length(nums), 3)
+ expect_true(all(sapply(res, grepl, pattern="^-1:0$")))
+})
+test_that("emptydf amp -1*0", {
+ dn <- d[d$block>Inf, ] # empyt df but with correct names
+ res <- capture.output(x<-save1D(dn, "onsets", amp="dur", nblocks=3))
+ nums <- strsplit(res, "\n")
+ expect_equal(length(nums), 3)
+ expect_true(all(sapply(res, grepl, pattern="^-1\\*0$")))
+})
+test_that("emptydf amp+dur -1:0*0", {
+ dn <- d[d$block>Inf, ] # empyt df but with correct names
+ res <- capture.output(x<-save1D(dn, "onsets", dur="dur", amp="dur", nblocks=3))
+ nums <- strsplit(res, "\n")
+ expect_equal(length(nums), 3)
+ expect_true(all(sapply(res, grepl, pattern="^-1:0\\*0$")))
+})
 
 # TODO: test middle '*' if remove block 2
 # TODO: test end '*' if nblocks=4
