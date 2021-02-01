@@ -18,7 +18,7 @@ qualtrics_fetch <- function(sid, root_url) {
 #' @name qualtrics_surveys
 #' @title pull surveys matching a pattern into a list of dataframes
 #' @descrption
-#' qualtircs.ini looks like
+#' qualtrics.ini looks like
 #'   [api]
 #'   api_token= 67dfRZ2ibBRPxbLmbxxxxxxxxxxxxxxxxxxxxxxx
 #'   root_url = https://pitt.co1.qualtrics.com
@@ -30,7 +30,7 @@ qualtrics_fetch <- function(sid, root_url) {
 #' @import qualtRics
 #' @export
 qualtrics_surveys <- function(name_pattern, active=T, config="qualtrics.ini") {
-  ini <- ini::read.ini("qualtircs.ini")
+  ini <- ini::read.ini(config)
   # config has a bug somehwere that is duplicating https:// at the start of the url
   root_url <- gsub('^https://https://', 'https://', ini$api$root_url)
   qualtRics::qualtrics_api_credentials(api_key=ini$api$api_token, base_url=root_url)
