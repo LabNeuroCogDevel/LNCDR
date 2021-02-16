@@ -16,22 +16,13 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        r-version: [4.0]
-
+    runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up R ${{ matrix.r-version }}
-        uses: r-lib/actions/setup-r@ffe45a39586f073cc2e9af79c4ba563b657dc6e3
-        with:
-          r-version: ${{ matrix.r-version }}
-      - name: Install dependencies
+      - name: Set up R
         run: |
-          install.packages(c("remotes","testthat"))
-          remotes::install_local("./", force=T)
-        shell: Rscript {0}
+         echo deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/| sudo tee -a /etc/apt/sources.list 
+         sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+         sudo apt update
+         sudo apt install r-base r-base-core r-recommended r-base-dev libcurl4-openssl-dev libssl-dev libxml2-dev
       - name: Check
         run: make test
-        shell: bash
