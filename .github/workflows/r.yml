@@ -25,4 +25,8 @@ jobs:
          sudo apt update
          sudo apt install r-base r-base-core r-recommended r-base-dev libcurl4-openssl-dev libssl-dev libxml2-dev
       - name: Check
-        run: make test
+        run: |
+          pwd
+          ls
+          cat Makefile
+          make test
