@@ -18,6 +18,7 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
+      - uses: actions/checkout@v2
       - name: Set up R
         run: |
          echo deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/| sudo tee -a /etc/apt/sources.list 
@@ -26,7 +27,6 @@ jobs:
          sudo apt install r-base r-base-core r-recommended r-base-dev libcurl4-openssl-dev libssl-dev libxml2-dev
       - name: Check
         run: |
-          cd ..
           pwd
           ls
           cat Makefile
