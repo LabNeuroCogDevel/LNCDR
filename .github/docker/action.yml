@@ -6,5 +6,5 @@ outputs:
     description: 'did we past the test'
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: '../../Dockerfile'
   entrypoint: "Rscript -e \"setwd('/lncdr/tests/'); source('testthat.R')\""
