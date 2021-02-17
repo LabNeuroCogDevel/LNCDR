@@ -67,8 +67,12 @@ to_nii <- function(examplenii, d, fileout,
 add_note <- function(fname, note) {
  if (grepl("'", note))
     stop("note cannot contain single quote: ", note)
- if (length(system("which 3dNotes", intern=T)) == 0L)
-    stop("3dNotes is not installed!")
+
+ if (length(system("which 3dNotes", intern=T)) == 0L){
+    warning("3dNotes is not installed!")
+    return()
+ }
+
  system(sprintf("3dNotes -h '%s' '%s'", note, fname))
 }
 
