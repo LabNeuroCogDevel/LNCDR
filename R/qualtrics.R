@@ -31,10 +31,12 @@ qualtrics_fetch <- function(sid, root_url) {
 #' @export
 qualtrics_surveys <- function(name_pattern, active=T, config="qualtrics.ini") {
   ini <- ini::read.ini(config)
-  # config has a bug somehwere that is duplicating https:// at the start of the url
-  root_url <- gsub('^https://https://', 'https://', ini$api$root_url)
-  qualtRics::qualtrics_api_credentials(api_key=ini$api$api_token, base_url=root_url)
+  # qualtRics doesn't want the protocol in base_url
+  root_url <- gsub('^https?://', '', ini$api$root_url)
+
+  # qualtRics::qualtrics_api_credentials(api_key=ini$api$api_token, base_url=root_url)
   # readRenviron("~/.Renviron")
+  Sys.setenv(QUALTRICS_API_KEY = ini$api$api_token, QUALTRICS_BASE_URL = root_url)
   survey_list <- qualtRics::all_surveys()
   keep <- grepl(name_pattern, survey_list$name, ignore.case=T, perl=T) 
   if(active) keep <- keep & survey_list$isActive == T
