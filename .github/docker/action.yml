@@ -7,4 +7,4 @@ outputs:
 runs:
   using: 'docker'
   image: '../../Dockerfile'
-  entrypoint: "Rscript -e \\\"setwd('/lncdr/tests/'); source('testthat.R')\\\""
+  entrypoint: "['Rscript', '-e', \"setwd('/lncdr/tests/'); source('testthat.R')\"]"
