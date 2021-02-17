@@ -7,4 +7,5 @@ outputs:
 runs:
   using: 'docker'
   image: '../../Dockerfile'
-  entrypoint: "['Rscript', '-e', \"setwd('/lncdr/tests/'); source('testthat.R')\"]"
+  workdir: '/lncdr'
+  entrypoint: "make"
