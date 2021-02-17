@@ -1,0 +1,10 @@
+# action.yml
+name: 'Build Docker'
+description: 'build rocker docker for running test'
+outputs:
+  testresults: # id of output
+    description: 'did we past the test'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  entrypoint: ["Rscript", "-e", "setwd('/lncdr/tests/'); source('testthat.R')"]
