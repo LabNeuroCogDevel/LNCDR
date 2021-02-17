@@ -7,5 +7,4 @@ outputs:
 runs:
   using: 'docker'
   image: '../../Dockerfile'
-  workdir: '/lncdr'
   entrypoint: "make"
