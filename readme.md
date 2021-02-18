@@ -1,6 +1,8 @@
 # LNCDR
 Convenience functions for the LNCD
 
+![Test_LNCDR](https://github.com/LabNeuroCogDevel/LNCDR/workflows/Test_LNCDR/badge.svg)
+
 ## Install
 ```R
 # install devtools if needed
@@ -65,7 +67,7 @@ scores uppsp 59-item
 
 #### `gam_growthrate`
 
-for better/more plotting facilities, see  and [`tidymv`](https://github.com/stefanocoretta/tidymv) (`predict_gam` and [`plot_smooths`](https://cran.r-project.org/web/packages/tidymv/vignettes/plot-smooths.html)) and/or [`ggeffects`](https://strengejacke.github.io/ggeffects/)
+for better/more plotting facilities, see  and [`tidymv`](https://github.com/stefanocoretta/tidymv) (`predict_gam` and [`plot_smooths`](https://cran.r-project.org/web/packages/tidymv/vignettes/plot-smooths.html)), [`gratia`](https://fromthebottomoftheheap.net/2018/10/23/introducing-gratia/), and/or [`ggeffects`](https://strengejacke.github.io/ggeffects/)
 
 ![gam_growthrate_plot](img/gam_deriv_btc.png?raw=true)
 
