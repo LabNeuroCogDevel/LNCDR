@@ -32,6 +32,11 @@ date_match <-function(d1, d2, idcol, datecol1, datecol2=datecol1, all.x=F,
       names(d2)[ which(names(d2)==datecol1) ] <- datecol2
    }
 
+   if(length(unique(d1[[datecol1]])) < nrow(d1))
+      stop(sprintf("datecol1 '%s' repeats. consider double merge:\n", datecol1),
+           "  d1 %>% select(idcol, datecol1) %>%\n",
+           "    unique %>% date_merge(d2, 'idcol', 'datecol1') %>% inner_join(d1)")
+
    # check data time.
    # we dont _need_ columns to be Date type, but it'll probably be an issue
    ctypes <- c(class(d1[1, datecol1]), class(d2[1, datecol2]))
@@ -43,12 +48,11 @@ date_match <-function(d1, d2, idcol, datecol1, datecol2=datecol1, all.x=F,
    }
 
    # merge all the d2 onto each potential d1 match
-   diffstr <- sprintf("%s-%s", datecol1, datecol2)
    onetomany <-
       merge(d1, d2, by=idcol, all.x=all.x, suffixes=c("", suffix.y)) %>%
-      group_by_(idcol, datecol1) %>%
-      mutate_(datediff=diffstr)  %>%
-      mutate(r= datediff %>% abs %>% rank )
+      group_by(.data[[idcol]], .data[[datecol1]]) %>%
+      mutate(datediff = .data[[datecol1]] - .data[[datecol2]])  %>%
+      mutate(r = rank(abs(datediff)))
 
    # todo: report ties with warning??
 

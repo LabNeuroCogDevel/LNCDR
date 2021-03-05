@@ -55,4 +55,10 @@ test_that("same matching date, nanmax ", {
  expect_true(all(!is.na(d$ymd.y[d$id==2])))
 })
 
+test_that("error if d1$datecol1 repeats", {
+ reps <- rbind(d.o,d.o)
+ expect_error(date_match(reps, dm2, "id", "ymd", all.x=T),
+              regexp="repeat")
+})
+
 # tooo: only one dm date matching 2 do dates
