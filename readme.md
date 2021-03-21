@@ -4,14 +4,23 @@ Convenience functions for the LNCD
 ![Test_LNCDR](https://github.com/LabNeuroCogDevel/LNCDR/workflows/Test_LNCDR/badge.svg)
 
 ## Install
+Succinctly, you can install with the command
 ```R
-# install devtools if needed
-if (!'remotes' %in% installed.packages()) install.packages('remotes')
-# if reinstalling, also run
-detach("package:LNCDR", unload=TRUE)
-# (re)install with devtools
 remotes::install_github('LabNeuroCogDevel/LNCDR')
-# load it
+```
+
+In more detail:
+```R
+# install the package that handles installing if we haven't already
+if (!'remotes' %in% installed.packages()) install.packages('remotes')
+
+# if reinstalling, remove the old package from this workspace
+detach("package:LNCDR", unload=TRUE)
+
+# (re)install from most recent online source
+remotes::install_github('LabNeuroCogDevel/LNCDR')
+
+# load package
 library(LNCDR)
 ```
 

@@ -7,26 +7,29 @@ Author: Will Foran [aut,cre],
 Maintainer: Will Foran <willforan+R@gmail.com>
 Description: Exposes functions useful in creating, analysing, and visualizing neuroimaging data. Helper functions used in the Laboratory for NeuroCognitive Development (P.I. Dr. Luna).
 Depends:
-  dplyr (>= 0.7.0),
+  dplyr (>= 1.0.0),
   R (>= 4.0)
 Imports:
-  XML (>= 3.98),
-  easyPubMed (>= 2.13),
-  RPostgreSQL (>= 0.6),
-  DBI (>= 1.1.0),
-  oro.nifti (>= 0.9.1),
   itsadug (>= 2.3),
   ggplot2 (>= 3.1.1),
   gridExtra (>= 2.3),
-  neuroCombat (>= 1.0.5),
-  car (>= 3.0),
   qualtRics (>= 3.1.4),
   reshape2 (>= 1.4.4),
   psych (>= 2.0.12)
 Remotes:
+ bioc::release/BiocParallel,
  github::Jfortin1/ComBatHarmonization/R/neuroCombat
 License: GPL3
 LazyData: true
 RoxygenNote: 7.1.1
-Suggests: testthat, devtools
+Suggests:
+  car (>= 3.0),
+  DBI (>= 1.1.0),
+  devtools,
+  easyPubMed (>= 2.13),
+  neuroCombat (>= 1.0.5),
+  oro.nifti (>= 0.9.1),
+  RPostgreSQL (>= 0.6),
+  testthat,
+  XML (>= 3.98)
 Encoding: UTF-8
