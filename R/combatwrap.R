@@ -3,18 +3,20 @@
 # Packager: Will Foran
 # 
 # 20201218WF - init upload
+# 20210321WF - small cleanup
 
 #' haromize: wrap around neuroCombat
 #' @param d dataframe
 #' @param combatcols columns to use from d
-#' @param batchvar columns TODO: describe
-#' @param covars   columns TODO: describe
+#' @param batchvar str column name TODO: describe
+#' @param covars   str column names TODO: describe
 #' @param eb  TODO: describe
-#' @import neuroCombat
+#' @importFrom neuroCombat neuroCombat
 #' @export
 #' @examples 
 #' # TODO: provide example
 combatwrap <- function(d, combatcols, batchvar, covars, eb){
+  require(neuroCombat)
   # cannot run with NAs
   d <- d[complete.cases(d[, c(combatcols, batchvar, covars)]), ]
   dati <- t(as.matrix(d[, combatcols]))
@@ -22,9 +24,7 @@ combatwrap <- function(d, combatcols, batchvar, covars, eb){
 
   # model matrix wants a formula like
   #   ~sex+covar2+....
-  covarchars <- paste(unlist(lapply(covars, function(ci){
-    return(as.character(ci))
-  })), collapse="+")
+  covarchars <- paste(unlist(lapply(covars, as.character)), collapse="+")
   fml <- as.formula(sprintf("~%s", covarchars))
   modi <- model.matrix(fml, data=d)
 

@@ -8,7 +8,7 @@
 #' @param model is a lm model
 #' @param varname is the variable of interest (string). ie. rowname in car::Anova to extract Chisq and Pr>Chisq
 #' @param factorname is optional. factor of var (string) as named by summary(model), e.g. 'Female01female'.  ie. rowname in summary to extract tvalue
-#' @import car
+#' @importFrom car Anova
 #' @export
 #' @examples
 #'   m <- lme4::lmer(uptake ~ conc + Type + (1 | Treatment), CO2)

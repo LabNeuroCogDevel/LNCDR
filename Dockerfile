@@ -6,4 +6,4 @@ BiocManager::install('BiocParallel');\
 remotes::install_github('Jfortin1/ComBatHarmonization/R/neuroCombat');\
 "
 COPY . /lncdr
-RUN R -e "remotes::install_local('lncdr')"
+RUN R -e "remotes::install_local('lncdr', upgrade=F)"

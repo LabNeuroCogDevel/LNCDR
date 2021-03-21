@@ -10,26 +10,25 @@ Depends:
   dplyr (>= 1.0.0),
   R (>= 4.0)
 Imports:
-  itsadug (>= 2.3),
+  car (>= 3.0),
+  DBI (>= 1.1.0),
+  easyPubMed (>= 2.13),
   ggplot2 (>= 3.1.1),
   gridExtra (>= 2.3),
+  itsadug (>= 2.3),
+  neuroCombat (>= 1.0.5),
+  oro.nifti (>= 0.9.1),
+  psych (>= 2.0.12),
   qualtRics (>= 3.1.4),
   reshape2 (>= 1.4.4),
-  psych (>= 2.0.12)
+  RPostgreSQL (>= 0.6),
+  XML (>= 3.98)
 Remotes:
- bioc::release/BiocParallel,
  github::Jfortin1/ComBatHarmonization/R/neuroCombat
 License: GPL3
 LazyData: true
 RoxygenNote: 7.1.1
 Suggests:
-  car (>= 3.0),
-  DBI (>= 1.1.0),
   devtools,
-  easyPubMed (>= 2.13),
-  neuroCombat (>= 1.0.5),
-  oro.nifti (>= 0.9.1),
-  RPostgreSQL (>= 0.6),
-  testthat,
-  XML (>= 3.98)
+  testthat
 Encoding: UTF-8

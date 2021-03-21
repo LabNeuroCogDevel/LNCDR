@@ -11,9 +11,9 @@ combatwrap(d, combatcols, batchvar, covars, eb)
 
 \item{combatcols}{columns to use from d}
 
-\item{batchvar}{columns TODO: describe}
+\item{batchvar}{str column name TODO: describe}
 
-\item{covars}{columns TODO: describe}
+\item{covars}{str column names TODO: describe}
 
 \item{eb}{TODO: describe}
 }

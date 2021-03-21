@@ -12,7 +12,7 @@
 #' @return dataframe with columns title, authors, year, journal, abstract, doi
 #' @import dplyr
 #' @import easyPubMed
-#' @import XML
+#' @importFrom XML xpathApply
 #' @export
 #' @examples 
 #'   sub_use <- pubmed_search('"substance use" risk nueroimaging', 'tmp/fmri_substance')
@@ -63,6 +63,7 @@ idvAuthor<-function(s){
 
 ## how to take a pubmed xml output and turn it into a dataframe
 qxml2df <- function(xml_in){
+ require(XML)
  xl <- XML::xpathApply(xml_in, "//PubmedArticle", saveXML)
  l <- list(
    journal     = l_xqry(xl, "//Journal/Title"),
