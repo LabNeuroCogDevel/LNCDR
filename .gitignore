@@ -3,3 +3,4 @@
 .*.swp
 tests/testthat/Rplots.pdf
 *.ini
+.Rproj.user
