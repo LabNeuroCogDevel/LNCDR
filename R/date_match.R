@@ -25,6 +25,10 @@ date_match <-function(d1, d2, idcol, datecol1, datecol2=datecol1, all.x=F,
                       suffix.y=".y", maxdatediff=180, maxrank=2-1e-3){
    require(dplyr)
 
+   # for error messages
+   df_names <- c(substitute(d1), substitute(d2))
+   date_col_names <- c(datecol1, datecol2)
+
    # change name if datecolumns are the same
    # changing now saves us from having .x and .y
    if (datecol1==datecol2) {
@@ -40,11 +44,18 @@ date_match <-function(d1, d2, idcol, datecol1, datecol2=datecol1, all.x=F,
    # check data time.
    # we dont _need_ columns to be Date type, but it'll probably be an issue
    ctypes <- c(class(d1[1, datecol1]), class(d2[1, datecol2]))
-   if (!all(grepl("Date", ctypes))) {
-        warning('not all specified date columns are "Date" type: ',
-                paste(collapse=" ", ctypes),
-                ". maxdatediff will be weird.\n",
-                "\t** consider e.g. d$datecol <- lubridate::ymd(datecol)  **")
+   ctype_matches_date <- grepl("Date", ctypes)
+   if (!all(ctype_matches_date)) {
+      # very verbose warning
+      not_a_date <- date_col_names[!ctype_matches_date]
+      df_col_not_date <- c('d1','d2')[!ctype_matches_date]
+      instead_is <- ctypes[!ctype_matches_date]
+      wrong_types <- paste(not_a_date, instead_is, sep=": ", collapse=", ")
+      fixme <- paste0(df_names, '$', date_col_names, ' <- lubridate::ymd(', df_names, '$', date_col_names, ')') 
+      warning("column(s) not of type 'Date': ", paste(collapse=", ", sep="$", df_col_not_date, not_a_date),
+                '. Instead have: ', wrong_types,
+                ".\noutput 'maxdatediff' column could be weird.  consider \n",
+                "\t", paste(collapse='; ', fixme[!ctype_matches_date]))
    }
 
    # merge all the d2 onto each potential d1 match

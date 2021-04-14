@@ -61,4 +61,11 @@ test_that("error if d1$datecol1 repeats", {
               regexp="repeat")
 })
 
+test_that("warn about nondates", {
+ d.o$notadate <- 1:nrow(d.o)
+ dm$notadate2  <- 1:nrow(dm)
+ expect_warning(date_match(d.o, dm, "id", "notadate", "notadate2"),
+              regexp="notadate: integer.*notadate2: integer")
+})
+
 # tooo: only one dm date matching 2 do dates
