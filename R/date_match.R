@@ -43,7 +43,7 @@ date_match <-function(d1, d2, idcol, datecol1, datecol2=datecol1, all.x=F,
 
    # check data time.
    # we dont _need_ columns to be Date type, but it'll probably be an issue
-   ctypes <- c(class(d1[1, datecol1]), class(d2[1, datecol2]))
+   ctypes <- c(class(d1[[datecol1]]), class(d2[[datecol2]]))
    ctype_matches_date <- grepl("Date", ctypes)
    if (!all(ctype_matches_date)) {
       # very verbose warning
