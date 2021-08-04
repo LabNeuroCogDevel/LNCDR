@@ -1,6 +1,6 @@
 Package: LNCDR
 Title: Laboratory of Neuro-Cognitive Development R Functions
-Version: 1.4.4
+Version: 1.4.5
 Authors@R: c(person("Will", "Foran", email = "willforan+R@gmail.com", role = c("aut", "cre")), person("Brenden", "Tervo-Clemmens", email = "btc16@pitt.edu", role = c("aut", "cre")))
 Author: Will Foran [aut,cre],
    Brenden Tervo=Clemmens [aut,cre]
@@ -24,7 +24,7 @@ Imports:
   RPostgreSQL (>= 0.6),
   XML (>= 3.98)
 Remotes:
- github::Jfortin1/ComBatHarmonization/R/neuroCombat
+ github::Jfortin1/neuroCombat_Rpackage
 License: GPL3
 LazyData: true
 RoxygenNote: 7.1.1
