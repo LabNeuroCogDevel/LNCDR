@@ -6,7 +6,15 @@
  * works on a dataframe with 'block' column
  * cats a 1D file, optionally sink'ed to a specified file}
 \usage{
-save1D(d, colname = 1, fname = NULL, dur = NULL, amp = NULL, nblocks = NULL)
+save1D(
+  d,
+  colname = 1,
+  fname = NULL,
+  dur = NULL,
+  amp = NULL,
+  nblocks = NULL,
+  createdirs = FALSE
+)
 }
 \arguments{
 \item{d}{dataframe with manditory 'block' column}

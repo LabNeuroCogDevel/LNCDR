@@ -29,6 +29,9 @@ save1D <- function(d,colname=1,fname=NULL,dur=NULL,amp=NULL,nblocks=NULL){
    if(!is.null(dur) && ! dur %in% names(d)) stop('cannot find ', dur, ' in dataframe')
    if(!is.null(amp) && ! amp %in% names(d)) stop('cannot find ', amp, ' in dataframe')
 
+   # set nblocks before we remove NAs
+   if(is.null(nblocks)) nblocks=max(d$block)
+
    ## remove NA and -1
    badidx <- is.na(d[,colname]) | d[,colname]<0                        # colname (onsettime)
    if(!is.null(dur)) { badidx <- badidx | is.na(d[,dur]) | d[,dur]<0 } # duration  if specified
