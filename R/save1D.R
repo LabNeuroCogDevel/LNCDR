@@ -15,9 +15,9 @@
 #' @export
 #' @examples 
 #' save1D( data.frame(onset=1:9,durcol=1,block=1:3), 'onset',dur='durcol') 
-save1D <- function(d,colname=1,fname=NULL,dur=NULL,amp=NULL,nblocks=NULL){
-   # make sure we dont have a data.table
-   d<- as.data.frame(d)
+save1D <- function(d,colname=1,fname=NULL,dur=NULL,amp=NULL,nblocks=NULL, createdirs=FALSE){
+   # make sure we dont have a data.table or tibble
+   d <- as.data.frame(d)
   
    # we require a block column 
    # this could also have been call 'run' or 'run.number'
@@ -43,7 +43,12 @@ save1D <- function(d,colname=1,fname=NULL,dur=NULL,amp=NULL,nblocks=NULL){
    d <- d[order(d$block,d[,colname]),]
 
    # where to write stimetimes (filename or stdout)
-   if(!is.null(fname)) sink(fname)
+   # fname could be a vector (esp. a column of a dataframe used as the grouping variable)
+   if(!is.null(fname)) {
+      fname <- fname[[1]]
+      if(createdirs) dir.create(dirname(fname),showWarnings=F, recursive=T)
+      sink(fname)
+   }
 
 
    linePerblock(d,colname,dur=dur,amp=amp,nblocks=nblocks)
