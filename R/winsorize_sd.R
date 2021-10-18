@@ -2,11 +2,11 @@
 # Packager: Will Foran
 
 #' winsozrize_sd - set above/below devation range to range max/min
-
+#'
+#' dev depending on which type of deviation should be used to winsorize
 #' @param x vector to be winsorized
 #' @param devno number of deviations to winsorize
 #' @param dev "sd" (standard deviation) or "mad" (median absolute deviation)
-#' dev depending on which type of deviation should be used to winsorize
 #' @examples
 #' w <- winsorize_sd(c(1:10), 1, "sd")
 #' @export
