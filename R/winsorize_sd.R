@@ -8,17 +8,20 @@
 #' @param devno number of deviations to winsorize
 #' @param dev "sd" (standard deviation) or "mad" (median absolute deviation)
 #' @examples
-#' w <- winsorize_sd(c(1:10), 1, "sd")
+#' w <- winsorize_sd(c(1:10), devno=1, dev="sd")
 #' @export
-winsorize_sd <- function(x, devno, dev="sd") {
-  # TODO: dev could be givne as a function instead
-  if (dev=="sd")  devrange <- sd(x, na.rm=TRUE) * devno
-  else if (dev=="mad") devrange <- stats::mad(x, na.rm=TRUE) * devno
-  else stop("dev only supports 'sd' or 'mad'")
-
-  avg <- mean(x, na.rm=TRUE)
-  topval <- avg + devrange
-  bottomval <- avg - devrange
+winsorize_sd <- function(x, devno=3, dev="sd") {
+  if (dev=="sd") {
+    devrange <- sd(x, na.rm=TRUE) * devno
+    mid <- mean(x, na.rm=TRUE)
+  } else if (dev=="mad") {
+    devrange <- stats::mad(x, na.rm=TRUE) * devno
+    mid <- median(x, na.rm=TRUE)
+  } else {
+     stop("dev only supports 'sd' or 'mad'")
+  }
+  topval <- mid + devrange
+  bottomval <- mid - devrange
   x[x > topval] <- topval
   x[x < bottomval] <- bottomval
   return(x)

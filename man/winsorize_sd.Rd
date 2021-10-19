@@ -4,7 +4,7 @@
 \alias{winsorize_sd}
 \title{winsozrize_sd - set above/below devation range to range max/min}
 \usage{
-winsorize_sd(x, devno, dev = "sd")
+winsorize_sd(x, devno = 3, dev = "sd")
 }
 \arguments{
 \item{x}{vector to be winsorized}
@@ -17,5 +17,5 @@ winsorize_sd(x, devno, dev = "sd")
 dev depending on which type of deviation should be used to winsorize
 }
 \examples{
-w <- winsorize_sd(c(1:10), 1, "sd")
+w <- winsorize_sd(c(1:10), devno=1, dev="sd")
 }
