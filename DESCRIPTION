@@ -25,7 +25,7 @@ Imports:
   RPostgreSQL (>= 0.6),
   XML (>= 3.98)
 Remotes:
- github::jfortin1/neuroCombatData
+ github::jfortin1/neuroCombatData,
  github::jfortin1/neuroCombat_Rpackage
 License: GPL3
 LazyData: true
