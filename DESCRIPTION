@@ -29,7 +29,7 @@ Remotes:
  github::jfortin1/neuroCombat_Rpackage
 License: GPL3
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests:
   devtools,
   testthat

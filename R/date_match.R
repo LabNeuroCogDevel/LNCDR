@@ -1,6 +1,6 @@
 #
 # Author:  Will Foran
-#   
+#
 #' match dates in a data frame by one-to-many merge and rank. Useful to match behavioral to brain over multiple timepoints.
 #' @param d1 -- main dataframe (has the "true" date. one part of one-to-many)
 #' @param d2 -- supplimental dataframe with dates to match (many part of one-to-many)
@@ -12,14 +12,12 @@
 #' @param maxdatediff -- maximum time between matches (default 180 days)
 #' @param maxrank -- highest index value of datediff ranked. set to 1 to ingore ties (deafult is 1.999)
 #' @export
-#' @examples 
+#' @examples
 #'   dummy1 <- data.frame(id=c(1,2,3,3),d=c(20120302,20120302,20120302,20150302),j=1)
 #'   dummy2 <- data.frame(id=c(1,2,3,3,3),d=c(20120202,20120402,20120902,20130902,20150102),j2=2)
 #'   dummy1$d <- lubridate::ymd(dummy1$d)
 #'   dummy2$d <- lubridate::ymd(dummy2$d)
 #'   date_match(dummy1,dummy2,'id','d')
-#' 
-#' 
 
 date_match <-function(d1, d2, idcol, datecol1, datecol2=datecol1, all.x=F,
                       suffix.y=".y", maxdatediff=180, maxrank=2-1e-3){
@@ -36,10 +34,14 @@ date_match <-function(d1, d2, idcol, datecol1, datecol2=datecol1, all.x=F,
       names(d2)[ which(names(d2)==datecol1) ] <- datecol2
    }
 
-   if(length(unique(d1[[datecol1]])) < nrow(d1))
-      stop(sprintf("datecol1 '%s' repeats. consider double merge:\n", datecol1),
-           "  d1 %>% select(idcol, datecol1) %>%\n",
-           "    unique %>% date_merge(d2, 'idcol', 'datecol1') %>% inner_join(d1)")
+   n_uniq_iddate <- length(unique(paste(d1[[idcol]], d1[[datecol1]])))
+   n_d1 <- nrow(d1)
+   if (n_uniq_iddate < n_d1)
+       stop(sprintf("datecol1 '%s' repeats within id(%d uniue of %d total rows)
+conider double merge:\n",
+                    n_uniq_iddate, n_d1, datecol1),
+            "  d1 %>% select(idcol, datecol1) %>%\n",
+            "   unique %>% date_merge(d2, 'idcol', 'datecol1') %>% inner_join(d1)")
 
    # check data time.
    # we dont _need_ columns to be Date type, but it'll probably be an issue
@@ -51,7 +53,7 @@ date_match <-function(d1, d2, idcol, datecol1, datecol2=datecol1, all.x=F,
       df_col_not_date <- c('d1','d2')[!ctype_matches_date]
       instead_is <- ctypes[!ctype_matches_date]
       wrong_types <- paste(not_a_date, instead_is, sep=": ", collapse=", ")
-      fixme <- paste0(df_names, '$', date_col_names, ' <- lubridate::ymd(', df_names, '$', date_col_names, ')') 
+      fixme <- paste0(df_names, '$', date_col_names, ' <- lubridate::ymd(', df_names, '$', date_col_names, ')')
       warning("column(s) not of type 'Date': ", paste(collapse=", ", sep="$", df_col_not_date, not_a_date),
                 '. Instead have: ', wrong_types,
                 ".\noutput 'maxdatediff' column could be weird.  consider \n",
