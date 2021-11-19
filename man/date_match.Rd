@@ -44,6 +44,4 @@ match dates in a data frame by one-to-many merge and rank. Useful to match behav
   dummy1$d <- lubridate::ymd(dummy1$d)
   dummy2$d <- lubridate::ymd(dummy2$d)
   date_match(dummy1,dummy2,'id','d')
-
-
 }

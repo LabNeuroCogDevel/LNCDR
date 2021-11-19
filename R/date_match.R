@@ -37,9 +37,9 @@ date_match <-function(d1, d2, idcol, datecol1, datecol2=datecol1, all.x=F,
    n_uniq_iddate <- length(unique(paste(d1[[idcol]], d1[[datecol1]])))
    n_d1 <- nrow(d1)
    if (n_uniq_iddate < n_d1)
-       stop(sprintf("datecol1 '%s' repeats within id(%d uniue of %d total rows)
+       stop(sprintf("datecol1 '%s' repeats within id (%d unique id+date pairs in %d total rows)
 conider double merge:\n",
-                    n_uniq_iddate, n_d1, datecol1),
+                    datecol1, n_uniq_iddate, n_d1),
             "  d1 %>% select(idcol, datecol1) %>%\n",
             "   unique %>% date_merge(d2, 'idcol', 'datecol1') %>% inner_join(d1)")
 
