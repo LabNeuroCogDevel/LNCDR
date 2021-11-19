@@ -17,7 +17,7 @@ qualtrics_fetch <- function(sid, root_url) {
 
 #' @name qualtrics_surveys
 #' @title pull surveys matching a pattern into a list of dataframes
-#' @descrption
+#' @description
 #' qualtrics.ini looks like
 #'   [api]
 #'   api_token= 67dfRZ2ibBRPxbLmbxxxxxxxxxxxxxxxxxxxxxxx

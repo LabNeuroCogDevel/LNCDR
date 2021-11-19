@@ -14,5 +14,8 @@ qualtrics_surveys(name_pattern, active = T, config = "qualtrics.ini")
 \item{config}{- where to read qualtrics settings}
 }
 \description{
-pull surveys matching a pattern into a list of dataframes
+qualtrics.ini looks like
+  [api]
+  api_token= 67dfRZ2ibBRPxbLmbxxxxxxxxxxxxxxxxxxxxxxx
+  root_url = https://pitt.co1.qualtrics.com
 }
