@@ -3,6 +3,8 @@ Convenience functions for the LNCD
 
 ![Test_LNCDR](https://github.com/LabNeuroCogDevel/LNCDR/workflows/Test_LNCDR/badge.svg)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6470999.svg)](https://doi.org/10.5281/zenodo.6470999)
+
 ## Install
 Succinctly, you can install with the command
 ```R
