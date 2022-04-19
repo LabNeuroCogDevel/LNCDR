@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Tervo-Clemmens"
+  given-names: "Brenden"
+  orcid: "https://orcid.org/0000-0002-9557-1126"
+- family-names: "Foran"
+  given-names: "William"
+  orcid: "https://orcid.org/0000-0001-7491-9798"
+title: "LNCDR"
+version: 0.0.0
+doi: 
+date-released: 2022-04-19
+url: "https://github.com/LabNeuroCogDevel/LNCDR"
