@@ -8,7 +8,7 @@ authors:
   given-names: "William"
   orcid: "https://orcid.org/0000-0001-7491-9798"
 title: "LNCDR"
-version: 0.0.0
-doi: 
+version: 0.0.1
+doi: 10.5281/zenodo.6470999
 date-released: 2022-04-19
 url: "https://github.com/LabNeuroCogDevel/LNCDR"
