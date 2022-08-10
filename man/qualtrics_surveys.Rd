@@ -4,7 +4,12 @@
 \alias{qualtrics_surveys}
 \title{pull surveys matching a pattern into a list of dataframes}
 \usage{
-qualtrics_surveys(name_pattern, active = T, config = "qualtrics.ini")
+qualtrics_surveys(
+  name_pattern = ".*",
+  active = T,
+  config = "~/.qualtrics.ini",
+  cautious_infer = FALSE
+)
 }
 \arguments{
 \item{name_pattern}{- grep pattern to match against survey names (e.g. 'Covid')}
@@ -12,10 +17,11 @@ qualtrics_surveys(name_pattern, active = T, config = "qualtrics.ini")
 \item{active}{- include only active surveys (default = T)}
 
 \item{config}{- where to read qualtrics settings}
+
+\item{cautious_infer}{- tryCatch qualtRics:::infer_data_types. lose metadata but read in when there are errors. NULL for no covert}
 }
 \description{
-qualtrics.ini looks like
-  [api]
-  api_token= 67dfRZ2ibBRPxbLmbxxxxxxxxxxxxxxxxxxxxxxx
-  root_url = https://pitt.co1.qualtrics.com
+read all surveys from qualtrics accessible to api key provided in config
+ see help(qualtircs_auth) for more on config format
+ consider combining returned list with data.table::rbindlist or dplyr::bind_rows
 }
