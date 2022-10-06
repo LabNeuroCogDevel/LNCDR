@@ -37,12 +37,12 @@ date_match <-function(d1, d2, idcol, datecol1, datecol2=datecol1, all.x=F,
    n_uniq_iddate <- length(unique(paste(d1[[idcol]], d1[[datecol1]])))
    n_d1 <- nrow(d1)
    if (n_uniq_iddate < n_d1)
-      stop(sprintf("datecol1 '%s' repeats within id (%d unique id+date pairs in %d total rows)\n",
-                   datecol1, n_uniq_iddate, n_d1)
+      stop(paste0(sprintf("datecol1 '%s' repeats within id (%d unique id+date pairs in %d total rows)\n",
+                   datecol1, n_uniq_iddate, n_d1),
            "cannot find a match for every row in first dataframe if id+date not all unique.\n",
            "To resolve, consider merging after date_match on subset of unique id+date:\n",
            "  d1 %>% select(idcol, datecol1) %>%\n",
-           "    unique %>% date_merge(d2, 'idcol', 'datecol1') %>% inner_join(d1)")
+           "    unique %>% date_merge(d2, 'idcol', 'datecol1') %>% inner_join(d1)"))
 
    # check data time.
    # we dont _need_ columns to be Date type, but it'll probably be an issue
