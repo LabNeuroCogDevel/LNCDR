@@ -62,3 +62,17 @@ test_that("rand effects factor w/mat", {
      p <- gam_growthrate_plot(d, m, ci, "x", "id", plotsavename=NULL),
      NA)
 })
+
+test_that("with gamm", {
+  # also try
+  #  x <-  LNCDR:::sim_diff1_from_gam( mgcv::gamm(data=mtcars, cyl ~ mpg + s(wt) )$gam, 'wt')
+
+  d <- data.frame(y=c(seq(1, 700, by=10), rep(700, 10)),
+                  x=1:80,
+                  x2=1:2,
+                  id=as.factor(sample(letters[1:20])),
+                  f=as.factor(c("M", "F")))
+  m <- mgcv::gamm(y ~ s(x) + f + s(id, bs="re"), data=d)$gam
+  # even number, picking near median id = p
+  ci <- gam_growthrate(m, "x", "id", n.iterations=10)
+})

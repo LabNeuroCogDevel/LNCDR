@@ -117,7 +117,16 @@ sim_diff1_from_gam <- function(m, agevar, idvar=NULL,
    # set.seed(10)
    mrand <- MASS::mvrnorm(n.iterations, mu_beta, sigma_Vb)
 
-   ilink <- family(m)$linkinv
+   # gamm$gam doesn't support 'family'
+   # class( mgcv::gamm(data=mtcars, cyl ~ mpg + s(wt) )$gam)
+   # [1] "gam"
+   # class( mgcv::gam(data=mtcars, cyl ~ mpg + s(wt) ))
+   # [1] "gam" "glm" "lm"
+   if("glm" %in% class(m)){
+      ilink <- family(m)$linkinv
+   } else {
+      ilink <- m$family$linkinv
+   }
 
    # only want inetercept and agevar
    keep_cols <- grep(paste0("Intercept|", agevar), dimnames(Xp)[[2]], value=T)
