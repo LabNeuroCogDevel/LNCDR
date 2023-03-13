@@ -96,6 +96,17 @@ get values (t, chisq, p) from a single variable in a model
 
 ### Misc
 
+#### [`age_animate`](R/age_animated.R)
+
+![age_animate](img/example_animate.gif?raw=true)
+
+```R
+p  <- age_animate(d) + aes(x=x, y=y)
+lunaize(p)
+```
+
+
+
 #### `waterfall_plot`
 
 Plot age at each visit for each participant.
@@ -138,17 +149,6 @@ allcors <- vox_cor("subj_ts.nii.gz",seed,target)
 ```
 
 
-#### ijk functions
-Convert ijk indexes between afni and oro MNI(LPI) data matrix.
-
-![afni_ijk](img/afni_ijk.png?raw=true)
-
-```R
-x <- oro.nifti::readNIfTI('betas.nii.gz')
-dm <- dim(x)
-mx <- arrayind(which.max(d),dm)
-ijk.oro2afni(mx[1:3], dm )
-```
 
 #### spectrum functions
 
@@ -170,6 +170,18 @@ You can also load a custom spectrum by right clicking Olay and saving the spectr
 #### custumn color scale
 cv <- afni.spectrum(0:5,img='custom_spec.jpg')
 plot_colorspectrum(cv,'',side=1)
+```
+
+#### ijk functions
+Convert ijk indexes between afni and oro MNI(LPI) data matrix.
+
+![afni_ijk](img/afni_ijk.png?raw=true)
+
+```R
+x <- oro.nifti::readNIfTI('betas.nii.gz')
+dm <- dim(x)
+mx <- arrayind(which.max(d),dm)
+ijk.oro2afni(mx[1:3], dm )
 ```
 
 ## Building the package and documentation
