@@ -1,6 +1,6 @@
 Package: LNCDR
 Title: Laboratory of Neuro-Cognitive Development R Functions
-Version: 1.5.1
+Version: 1.5.2
 Authors@R: c(person("Will", "Foran", email = "willforan+R@gmail.com", role = c("aut", "cre")), person("Brenden", "Tervo-Clemmens", email = "btc16@pitt.edu", role = c("aut", "cre")))
 Author: Will Foran [aut,cre],
    Brenden Tervo=Clemmens [aut,cre]
@@ -13,7 +13,6 @@ Imports:
   ini (>= 0.3.1),
   car (>= 3.0),
   DBI (>= 1.1.0),
-  easyPubMed (>= 2.13),
   ggplot2 (>= 3.1.1),
   gridExtra (>= 2.3),
   itsadug (>= 2.3),
@@ -22,16 +21,19 @@ Imports:
   psych (>= 2.0.12),
   qualtRics (>= 3.1.4),
   reshape2 (>= 1.4.4),
-  RPostgreSQL (>= 0.6),
-  XML (>= 3.98)
 Remotes:
  github::jfortin1/neuroCombatData,
  github::jfortin1/neuroCombat_Rpackage
 License: GPL3
 LazyData: true
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Suggests:
-  devtools,
   checkmate,
-  testthat
+  devtools,
+  gganimate,
+  testthat,
+  viridis,
+  easyPubMed (>= 2.13),
+  RPostgreSQL (>= 0.6),
+  XML (>= 3.98)
 Encoding: UTF-8
