@@ -98,11 +98,16 @@ get values (t, chisq, p) from a single variable in a model
 
 #### [`age_animate`](R/age_animated.R)
 
+[gganimate](https://gganimate.com/) for dataframes with an `age` column.
 ![age_animate](img/example_animate.gif?raw=true)
 
 ```R
-p  <- age_animate(d) + aes(x=x, y=y)
-lunaize(p)
+p  <- age_animate(d, rep_steps=16) +
+      aes(x=x, y=y) +
+      labs(title = 'Age: {frameage}')
+
+gif <- p %>% lunaize %>% animate(fps=4, nframes=16, width = 480, height = 480)
+anim_save("img/example_animate.gif", gif)
 ```
 
 
@@ -110,6 +115,14 @@ lunaize(p)
 #### `waterfall_plot`
 
 Plot age at each visit for each participant.
+![waterfall plot](img/waterfall_example.png?raw=true)
+```R
+data.frame(id=rep(c(1:10),2),
+           age=rep(c(11:20),each=2)+runif(20),
+           sex=sample(rep(c('M','F'),5))) %>%
+  waterfall_plot() +
+  aes(color=sex)
+```
 
 #### `pubmed_search`
 For meta analysis, get a dataframe of pubmed search results (doi, title, authors, journal, year, abstract)
