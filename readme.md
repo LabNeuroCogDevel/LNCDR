@@ -31,6 +31,86 @@ For help on all functions, in an R console, see `?LNCDR::`<kbd>tab</kbd>
 
 ## Functions
 
+### Stats
+
+#### `gam_growthrate`
+
+for better/more plotting facilities, see  and [`tidymv`](https://github.com/stefanocoretta/tidymv) (`predict_gam` and [`plot_smooths`](https://cran.r-project.org/web/packages/tidymv/vignettes/plot-smooths.html)), [`gratia`](https://fromthebottomoftheheap.net/2018/10/23/introducing-gratia/), and/or [`ggeffects`](https://strengejacke.github.io/ggeffects/)
+
+![gam_growthrate_plot](img/gam_deriv_btc.png?raw=true)
+
+```R
+ m <- gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
+ ci <- gam_growthrate(m, 'Ageatvisit')
+ gam_growthrate_plot(d, m, ci, 'Ageatvisit','f1score','id')
+```
+
+#### `zscore` `zscorecols` `zscorewithinfactor`
+zscore dataframes
+
+#### `lmer_extract`
+get values (t, chisq, p) from a single variable in a model
+
+### Plotting
+
+#### [`age_animate`](R/age_animated.R)
+
+
+[gganimate](https://gganimate.com/) for data frames with an `age` column.
+
+
+
+
+```R
+p  <- age_animate(d, rep_steps=16) +
+      aes(x=x, y=y) +
+      labs(title = 'Age: {frameage}')
+
+gif <- p %>% lunaize %>% animate(fps=4, nframes=16, width = 480, height = 480)
+anim_save("img/example_animate.gif", gif)
+```
+
+![age_animate](img/example_animate.gif?raw=true)
+
+
+#### `waterfall_plot`
+
+Plot age at each visit for each participant (`id` and `age` column).
+
+```R
+data.frame(id=rep(c(1:10),2),
+           age=rep(c(11:20),each=2)+runif(20),
+           sex=sample(rep(c('M','F'),5))) %>%
+  waterfall_plot() +
+  aes(color=sex) + 
+  see::theme_modern()
+
+ggsave("img/waterfall_example.png",dpi=90, units='px', width=600, height=300)
+```
+
+![waterfall plot](img/waterfall_example.png?raw=true)
+
+#### `pubmed_search`
+For meta analysis, get a dataframe of pubmed search results (doi, title, authors, journal, year, abstract)
+```R
+  btc_papers <- pubmed_search("Tervo-Clemmens[Author]", "tmp_xml/authsearch")
+
+  #  journal  title   year  abstract                                doi   authors
+  #  Biologi… Early … 2018  Retrospective neuroimaging studies hav… 10.1… Tervo-C…
+  #  NeuroIm… Adoles… 2018  Given prior reports of adverse effects… 10.1… Tervo-C…
+  #  Frontie… Neural… 2017  Risk for substance use disorder (SUD) … 10.3… Tervo-C…
+  #  Annual … An int… 2015  "Brains systems undergo unique and spe… 10.1… Luna, B…
+  #  Journal… Explor… 2013  Comorbid depression and anxiety disord… 10.4… Boyd, R…
+```
+
+#### `lunaize`
+A better alternative is probably [`cowplot::theme_cowplot()`](https://github.com/wilkelab/cowplot) or [`see::theme_modern()`](https://easystats.github.io/see/#modern)
+
+Apply Dr. Luna's style to a ggplot. See `?lunaize` for usage.
+
+![lunastyle](img/lunaize-plotcomp.png?raw=true)
+
+
 ### Data Wrangling
 
 #### `save1D`
@@ -73,77 +153,6 @@ match labels from one string vector with another
 
 #### `uppsp_scoring`
 scores uppsp 59-item 
-
-### Stats
-
-#### `gam_growthrate`
-
-for better/more plotting facilities, see  and [`tidymv`](https://github.com/stefanocoretta/tidymv) (`predict_gam` and [`plot_smooths`](https://cran.r-project.org/web/packages/tidymv/vignettes/plot-smooths.html)), [`gratia`](https://fromthebottomoftheheap.net/2018/10/23/introducing-gratia/), and/or [`ggeffects`](https://strengejacke.github.io/ggeffects/)
-
-![gam_growthrate_plot](img/gam_deriv_btc.png?raw=true)
-
-```R
- m <- gam(f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re"), data=d)
- ci <- gam_growthrate(m, 'Ageatvisit')
- gam_growthrate_plot(d, m, ci, 'Ageatvisit','f1score','id')
-```
-
-#### `zscore` `zscorecols` `zscorewithinfactor`
-zscore dataframes
-
-#### `lmer_extract`
-get values (t, chisq, p) from a single variable in a model
-
-### Misc
-
-#### [`age_animate`](R/age_animated.R)
-
-[gganimate](https://gganimate.com/) for dataframes with an `age` column.
-![age_animate](img/example_animate.gif?raw=true)
-
-```R
-p  <- age_animate(d, rep_steps=16) +
-      aes(x=x, y=y) +
-      labs(title = 'Age: {frameage}')
-
-gif <- p %>% lunaize %>% animate(fps=4, nframes=16, width = 480, height = 480)
-anim_save("img/example_animate.gif", gif)
-```
-
-
-
-#### `waterfall_plot`
-
-Plot age at each visit for each participant.
-![waterfall plot](img/waterfall_example.png?raw=true)
-```R
-data.frame(id=rep(c(1:10),2),
-           age=rep(c(11:20),each=2)+runif(20),
-           sex=sample(rep(c('M','F'),5))) %>%
-  waterfall_plot() +
-  aes(color=sex)
-```
-
-#### `pubmed_search`
-For meta analysis, get a dataframe of pubmed search results (doi, title, authors, journal, year, abstract)
-```R
-  btc_papers <- pubmed_search("Tervo-Clemmens[Author]", "tmp_xml/authsearch")
-
-  #  journal  title   year  abstract                                doi   authors
-  #  Biologi… Early … 2018  Retrospective neuroimaging studies hav… 10.1… Tervo-C…
-  #  NeuroIm… Adoles… 2018  Given prior reports of adverse effects… 10.1… Tervo-C…
-  #  Frontie… Neural… 2017  Risk for substance use disorder (SUD) … 10.3… Tervo-C…
-  #  Annual … An int… 2015  "Brains systems undergo unique and spe… 10.1… Luna, B…
-  #  Journal… Explor… 2013  Comorbid depression and anxiety disord… 10.4… Boyd, R…
-```
-
-#### `lunaize`
-A better alternative is probably [`cowplot::theme_cowplot()`](https://github.com/wilkelab/cowplot).
-
-Apply Dr. Luna's style to a ggplot. See `?lunaize` for usage.
-
-![lunastyle](img/lunaize-plotcomp.png?raw=true)
-
 
 
 ### Imaging
