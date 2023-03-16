@@ -62,6 +62,7 @@ get values (t, chisq, p) from a single variable in a model
 
 
 ```R
+d <- data.frame(age=seq(10,30, length.out=8), x=runif(8), y=runif(8))
 p  <- age_animate(d, rep_steps=16) +
       aes(x=x, y=y) +
       labs(title = 'Age: {frameage}')
@@ -82,7 +83,7 @@ data.frame(id=rep(c(1:10),2),
            age=rep(c(11:20),each=2)+runif(20),
            sex=sample(rep(c('M','F'),5))) %>%
   waterfall_plot() +
-  aes(color=sex) + 
+  aes(color=sex) +
   see::theme_modern()
 
 ggsave("img/waterfall_example.png",dpi=90, units='px', width=600, height=300)
@@ -152,7 +153,7 @@ c    3     .4
 match labels from one string vector with another
 
 #### `uppsp_scoring`
-scores uppsp 59-item 
+scores uppsp 59-item
 
 
 ### Imaging
@@ -222,7 +223,7 @@ Rscript -e "devtools::document(); setwd('..'); devtools::install('LNCDR')"
 
 Tests follow Hadley Wickham's testthat [description](http://r-pkgs.had.co.nz/tests.html).
 ### Adding functions
-1. create a new or edit an existing `*.R` file within `R/`. 
+1. create a new or edit an existing `*.R` file within `R/`.
     - make sure `#' @export` is above a function definition you want exported. See [roxygen primer](https://kbroman.org/pkg_primer/pages/docs.html). You can got to any function using 3 colons:  `LNCDR:::function_without_export`
     - Other functions (esp. [`R/ld8.R`](R/ld8.R)) are a good starting place.
 2. run` make`
