@@ -4,16 +4,18 @@
 \alias{waterfall_plot}
 \title{waterfall plot}
 \usage{
-waterfall_plot(d, ...)
+waterfall_plot(d, na.rm = T, ...)
 }
 \arguments{
 \item{d}{dataframe with columns id (repeated) and  age}
+
+\item{...}{additional aesthetics}
 }
 \description{
 subj x age plot: line-per-subject dot-per-age ordered by age at first visit
 }
 \examples{
- d <- data.frame(age=c(10,20,25, 13,14), id=c(100,100,100, 200,200))
+ d <- data.frame(age=c(10,20,25,13,14,NA), id=c(100,100,100, 200,200,100))
  p <- waterfall_plot(d)
  print(p)
 }
