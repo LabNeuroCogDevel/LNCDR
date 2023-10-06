@@ -26,14 +26,16 @@ waterfall_group <- function(d) {
 #'
 #' @description subj x age plot: line-per-subject dot-per-age ordered by age at first visit
 #' @param d   dataframe with columns id (repeated) and  age
+#' @param ...  additional aesthetics
 #' @import dplyr
 #' @import ggplot2
 #' @export
 #' @examples
-#'  d <- data.frame(age=c(10,20,25, 13,14), id=c(100,100,100, 200,200))
+#'  d <- data.frame(age=c(10,20,25,13,14,NA), id=c(100,100,100, 200,200,100))
 #'  p <- waterfall_plot(d)
 #'  print(p)
 waterfall_plot <- function(d, ...) {
+   d <- d[!is.na(d$age),]
 
    age_ranked <- waterfall_group(d)
 
