@@ -11,19 +11,20 @@
 #' @param  prefix -- xml file prefix: what to search/call temporary output
 #' @return dataframe with columns title, authors, year, journal, abstract, doi
 #' @import dplyr
-#' @import easyPubMed
-#' @importFrom XML xpathApply
 #' @export
 #' @examples 
 #'   sub_use <- pubmed_search('"substance use" risk nueroimaging', 'tmp/fmri_substance')
 pubmed_search <- function(query, prefix){
-  require(easyPubMed)
+  if (!requireNamespace("easyPubMed", quietly = TRUE)) {
+     warning("pubmed_search requires 'easyPubMed'")
+     return(NULL)
+  }
   xmls <- prefix_xml(prefix)
   pdir <- dirname(prefix)
   if (!dir.exists(pdir)) dir.create(pdir, recursive=T)
   if (length(xmls) == 0L){
       cat("saving query results into ", prefix, "*.txt ...\n")
-      batch_pubmed_download(query,
+      easyPubMed::batch_pubmed_download(query,
                             format = "xml",
                             batch_size = 400,
                             dest_file_prefix = prefix)
@@ -41,7 +42,13 @@ pubmed_search <- function(query, prefix){
 
 ### supporting functions for extracting fields from xml
 #   particular attention for returning NA if tree is missing a field
-xqry <- function(tx, q) unlist(XML::xpathApply(tx, q, xmlValue))
+xqry <- function(tx, q){
+  if (!requireNamespace("XML", quietly = TRUE)) {
+     warning("LNCDR::xqry requires the 'XML' package")
+     return(NULL)
+  }
+  unlist(XML::xpathApply(tx, q, xmlValue))
+}
 l_xqry <- function(lx, q) {
     l <- lapply(lx, function(x) xqry(xmlParse(x), q))
     l[sapply(l, is.null)] <- NA

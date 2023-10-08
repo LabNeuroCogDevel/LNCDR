@@ -5,5 +5,6 @@ install.packages(c('itsadug','XML','oro.nifti', 'qualtRics','RPostgreSQL', 'grid
 BiocManager::install('BiocParallel');\
 remotes::install_github('Jfortin1/neuroCombatData');\
 remotes::install_github('Jfortin1/neuroCombat_Rpackage');"
+RUN bash -c "cpan install URI::Encode<<<yes"
 COPY . /lncdr
 RUN R -e "remotes::install_local('lncdr', upgrade=F)"
