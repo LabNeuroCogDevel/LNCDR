@@ -281,7 +281,7 @@ gam_growthrate_plot <-
   deriv_range <- range(ci$mean_dff, na.rm=T)
   tile <-
      ggplot(ci[-1, ]) + # don't plot first row (is NA)
-     aes_string(x="ages", y=1, fill=fill_column) +
+     aes(x=ages, y=1, fill=!!sym(fill_column)) +
      geom_raster(interpolate=TRUE) +
      scale_fill_gradient2(
         low = "blue", mid = "white", high = "red",
@@ -313,9 +313,9 @@ gam_growthrate_plot <-
 
   ageplot<-
      ggplot(agepred) +
-     aes_string(x=agevar, y="fit") +
+     aes(x=!!sym(agevar), y=fit) +
      # solid bold line for fitted model
-     geom_line(colour="black", size=2) +
+     geom_line(colour="black", linewidth=2) +
      # label plot
      ylab(yplotname) +
      xlab(xplotname)
@@ -332,7 +332,7 @@ gam_growthrate_plot <-
   # add connecting lines if we have an idvar
   if (!is.null(idvar) && draw_points)
      ageplot <- ageplot +
-        geom_line(data=d, aes_string(y=yvar, group=idvar), alpha=.2)
+        geom_line(data=d, aes(y=!!sym(yvar), group=!!sym(idvar)), alpha=.2)
 
   # lunaize main plot
   ageplot_luna<-LNCDR::lunaize(ageplot)+
