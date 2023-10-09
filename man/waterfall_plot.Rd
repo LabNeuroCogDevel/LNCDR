@@ -4,7 +4,7 @@
 \alias{waterfall_plot}
 \title{waterfall plot}
 \usage{
-waterfall_plot(d, na.rm = T, ...)
+waterfall_plot(d, ...)
 }
 \arguments{
 \item{d}{dataframe with columns id (repeated) and  age}
