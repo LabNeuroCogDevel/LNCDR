@@ -36,6 +36,7 @@ qassertm <- function(...) {
 #' if none provided, uses all variables in local scope
 #' @return See \code{\link{qassert}}.
 #' @seealso \code{\link{qassertm}}
+#' @importFrom checkmate qassert
 #' @export
 #' @examples
 #' x <- TRUE; y <- FALSE
