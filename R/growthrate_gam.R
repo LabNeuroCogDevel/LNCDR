@@ -12,6 +12,7 @@
 #' @param nnumber      of iterations to run (quick)
 #' @param qntquantiles to use for confidence interval
 #' @importFrom MASS mvrnorm
+#' @importFrom gratia derivatives
 #' @export
 #' @examples
 #'  d <- read.csv("/Volumes/Phillips/R03_BehavioralBTC/data/btc_R03scoredmeasures_20190313.csv") %>%
@@ -20,11 +21,75 @@
 #'  f <- f1score ~ s(Ageatvisit) + s(visit) + s(id, bs="re")
 #'  m <- mgcv::gam(f, data=d)
 #'  ci <- gam_growthrate(m, 'Ageatvisit', 'id')
-gam_growthrate <- function(m, agevar, idvar=NULL, n.iterations=10000, qnt=c(.025, .975)) {
-  simdiff <- sim_diff1_from_gam(m, agevar, idvar, n.iterations=n.iterations)
-  ci <- ci_from_simdiff1(simdiff$pred, simdiff$ages, qnt=qnt)
-  ci$fit <- simdiff$fit
-  return(ci)
+#'  m <- gamm4::gamm4(f, data=d)
+#'  ci <- gam_growthrate(m, 'Ageatvisit', 'id')
+gam_growthrate <- function(m, agevar, idvar=NULL, qnt=.975) { # TODO: interval_inc
+  m <- gam_extract_model(m) # gam in list, mgcv not
+
+  varying_list <- list(.1); names(varying_list) <- agevar # eg. list(age=.1)
+  age_step_df <- gen_predict_df(m, varying_list)
+
+  # gamm4  'from' must be a finite number; mgcv: random effect lunaid not found
+  f1deriv <- gratia::derivatives(m,
+                               term=agevar,
+                               partial_match=TRUE, # BTC: agrep?, doesn't matter here
+                               interval="simultaneous",
+                               level=qnt,
+                               type="backward", # NA was first in original code
+                               data=age_step_df)
+  #names(f1deriv) <- c("smooth","term","ages","mean_dff","se","crit","ci_low","ci_high")
+                   # c("smooth", "var", "by_var", "fs_var", "data", "derivative","se", "crit", "lower", "upper")
+  return(f1deriv)
+}
+
+#' gen_predict_df dataframe of model with variable(s) in fixed steps. use for prediction or model plotting
+#' @param m gam model
+#' @param varying list(coluname=stepsize, col2=step2, ...) default list(age=.1)
+#' @export
+gen_predict_df <- function(m, varying=list(age=.1)){
+   have_varying <- names(varying) %in% names(m$model)
+   if(!all(have_varying)) {
+      cat("MISSING: not in model but want to vary ",
+          paste(collapse=", ", names(varying)[have_varying]),
+          "\n")
+      stop('creating prediciton df: all columns to vary must be in model!')
+   }
+
+   # create dataframe with each step of each predition needed
+   # can get very large if many varying columns with small interval
+   vars_list <-
+      mapply(function(colname,interval)
+                seq(min(m$model[,colname],na.rm=T),
+                    max(m$model[,colname],na.rm=T),
+                    by=interval),
+             names(varying), varying, SIMPLIFY=F)
+   pred_at_df <- do.call(expand.grid,vars_list)
+
+   # add missing
+   lhs_terms <- labels(terms(m))
+   center_terms <- setdiff(lhs_terms, names(varying))
+
+   # for factors, use the row closest to the median of the first varying column
+   # TODO: euclidian distand of each varying median?
+   median_of <- names(varying)[1]
+   first_var_vals <- m$model[,median_of]
+   median_of_first <- median(first_var_vals)
+   middle_idx <- which.min(abs(median_of_first -first_var_vals))
+
+   # intertiavely build each column by mean
+   for(colname in center_terms){
+      if(is.null(colname)) next
+      #colclass <- attr(terms(m),'dataClass')[colname])
+      colclass <- class(m$model[,colname])
+      if("numeric" %in% colclass) {
+          center <- mean(m$model[,colname],na.rm=T)
+      } else {
+         center <- m$model[middle_idx,colname]
+         warning(sprintf("set all %s=%s (center %s@%.2f of '%s' type)",
+                         colname, center, median_of,median_of_first, colclass))
+      }
+      pred_at_df[,colname] <- center
+   }
 }
 
 
@@ -170,16 +235,27 @@ ci_from_simdiff1 <- function(pred, ages, qnt=c(.025, .975)) {
 }
 
 too_small <- function(x) abs(x) < 10^-15
-clip_on_sig <- function(ci){
+clip_on_sig_old <- function(ci){
   # if confidence interval includes zero
   # signs of x and y will be different, -x * +y  < 0
   # or if both high and low are extremly close to zero
   not_sig <- ci$ci_low * ci$ci_high < 0 |
              (too_small(ci$ci_low) & too_small(ci$ci_high))
-  ci$mean_dff_clip <- ci$mean_dff
+  ci$mean_dff_clip <- ci$mean_dff # TODO MATCH DERIVE NAME HERE
   ci$mean_dff_clip[not_sig] <- 0
   return(ci)
 }
+clip_on_sig <- function(ci){ # 20231205 now for gratia
+  # if confidence interval includes zero
+  # signs of x and y will be different, -x * +y  < 0
+  # or if both high and low are extremly close to zero
+  not_sig <- ci$lower * ci$upper < 0 |
+    (too_small(ci$lower) & too_small(ci$upper))
+  ci$sig <- 1
+  ci$sig[not_sig] <- 0
+  return(ci)
+}
+
 
 #' gam_maturation_point
 #' 
@@ -224,6 +300,8 @@ gam_maturation_point <- function(ci) {
 #' @param draw_points T|F, show individual points as scatter plot over gam fit line
 #' @param show_all_fill T|F, should we clip the raster fill to only significant ages?
 #' @param ci_plot T|F, plot 95 percent confidence interval with geom_ribbon?
+#' @param theme_func what theme to apply, default theme_bw. also see 'gam_plot_raster_theme'
+#' @param font_size, size of 
 #' @export
 #' @importFrom itsadug get_predictions
 #' @examples
@@ -248,7 +326,7 @@ gam_growthrate_plot <-
             yvar=as.character(model$formula[2]),
             plotsavename=NA, xplotname="Age", yplotname=yvar,
             draw_maturation=T, draw_points=T, show_all_fill=F,
-            ci_plot=T){
+            ci_plot=T, theme_func=theme_bw, fontsize=36){
 
   require(ggplot2)
   require(itsadug)
@@ -263,7 +341,7 @@ gam_growthrate_plot <-
   if (! "data.frame" %in% class(ci) ) stop("ci is not growthrate_gam() output")
   if (! yvar %in% names(model$model) ) stop(yvar, "not in model dataframe!")
 
-  ci$mean_dff_clip <- ci$mean_dff
+  ci$mean_dff_clip <- ci$mean_dff # derivative # CHANGE HERE
   # when ci bounds include 0 (different sign), no longer signficant
   ci <- clip_on_sig(ci)
   maturation_pnt <- gam_maturation_point(ci)
@@ -295,14 +373,12 @@ gam_growthrate_plot <-
   # draw dotted line where maturation point is
   if (draw_maturation)
    tile <- tile +
-      geom_segment(
+      geom_segment( # TODO: modify NA to clear grey as option
           linetype=2, colour="black",
           aes(x=maturation_pnt, xend=maturation_pnt, y=.5, yend=1.5))
 
-  # lunaize the figure
-  tile_luna <- lunaize_geomraster(tile) +
-      theme(text = element_text(size=36))
-
+  # styleize theme
+  tile_themed <- tile + theme_func() + gam_plot_raster_theme(text = element_text(size=fontsize))
 
   # predictions
   modeldata<-data.frame(ydata=model$y, agevar=model$model[, agevar])
@@ -315,7 +391,7 @@ gam_growthrate_plot <-
      ggplot(agepred) +
      aes(x=!!sym(agevar), y=fit) +
      # solid bold line for fitted model
-     geom_line(colour="black", linewidth=2) +
+     geom_line(colour="black", linewidth=2) +  # TODO: change me
      # label plot
      ylab(yplotname) +
      xlab(xplotname)
@@ -335,15 +411,15 @@ gam_growthrate_plot <-
         geom_line(data=d, aes(y=!!sym(yvar), group=!!sym(idvar)), alpha=.2)
 
   # lunaize main plot
-  ageplot_luna<-LNCDR::lunaize(ageplot)+
-      theme(text = element_text(size=36),
+  ageplot_luna<- ageplot + theme_func() + theme(
+            text = element_text(size=fontsize),
             axis.title.x=element_blank(),
             axis.text.x=element_blank())
 
   # save to file if we have plotsavename
-  g <- gam_growthrate_plot_combine(ageplot_luna, tile_luna, plotsavename)
+  g <- gam_growthrate_plot_combine(ageplot_luna, tile_themed, plotsavename)
 
-  list_of_plots <- list(tile=tile_luna, ageplot=ageplot_luna, both=g)
+  list_of_plots <- list(tile=tile_themed, ageplot=ageplot_luna, both=g)
   # give back everything we created
   return(list_of_plots)
 }
@@ -396,14 +472,86 @@ gam_growthrate_plot_combine <- function(ageplot_luna, tile_luna, PDFout=NA) {
   return(g)
 }
 
-lunaize_geomraster<-function(x){
-  x+
-   theme_bw()+
-   theme(
+#' gam_plot_raster_theme removes panel and axis ticks and legend
+#' @export
+gam_plot_raster_theme <- function(...) {
+  theme(
     panel.grid.minor = element_blank(),
     panel.grid.major = element_blank(),
     axis.title.y     = element_blank(),
     axis.ticks.y     = element_blank(),
     axis.text.y      = element_blank(),
-    legend.position  = "none")
+    legend.position  = "none", ...)
+}
+
+#' gam_extract_model papers over gamm4 and mgcv gam models
+#' @param m  either a mgcv::gam or a gamm4::gamm4 model
+#' @return model componet (gamm4$gam) or pass through
+gam_extract_model <- function(m) {
+   # class(mgcv::gam(...)) # "gam" "glm" "lm"
+   if("gam" %in% class(m)) return(m)
+
+   # m <- gamm4::gamm4(data=d, random=~(1|lunaid), value ~ s(age,k=5) + hemi)
+   # class(gamm4::gamm4(...)) # 
+   if("list" %in% class(m) && "gam" %in% names(m)) return(m$gam)
+
+   if(! "model" %in% names(m)) stop("input model not gam, does not have model, cannot use!")
+   return(m)
+}
+
+mgcvgampreddata<-function(model,predvar,idvar=NULL,interval_inc=.1,varycovarsname=NULL,varycovarlevels=NULL){
+ # if (class(model)[1]=="gamm" || (class(model)=="list" && "gam" %in% class(model[['gam']]))){
+ #   model<-model$gam
+ # }
+  # TODO:gamm4 vs mgcv
+  modeldata<-data.frame(ydata=model$y, predvar=model$model[, predvar])
+  preddata<-data.frame(var=seq(min(modeldata$predvar,na.rm=T),
+                               max(modeldata$predvar,na.rm=T),
+                               by=interval_inc))
+  names(preddata)[1]<-predvar
+  if (!identical(find_covars_gam(model$formula, predvar),character(0))){
+   # if (!(length(find_covars_gam(model$formula, predvar))==1 && find_covars_gam(model$formula, predvar)[1]==varycovarsname)){
+    for (cv in find_covars_gam(model$formula,predvar)){
+      x <- model$model[, cv]
+      if (is.character(x) || is.factor(x)){
+        warning("gam w/character or factor covar, setting all sim to the first obs for character/first level if factor")
+        y <- x[1]
+        if (class(x)=="factor"){y<-levels(x)[1]}
+        print(sprintf("covar % set to level %s",cv,y))
+      } else {
+        y <- mean(x, na.rm=T)
+      }
+      preddata[, cv] <- y
+    }
+    #}
+  }else if(is.null(varycovarsname)){
+    preddata$cov<-"no cov"
+  }
+
+  #if (!(length(find_covars_gam(model$formula, predvar))==1 && find_covars_gam(model$formula, predvar)[1]==varycovarsname)){
+  names(preddata)<-c(predvar,find_covars_gam(model$formula, predvar))
+  #}
+  if (identical(find_covars_gam(model$formula, predvar),character(0)) && is.null(varycovarsname)){
+    names(preddata)<-c(predvar,"nullcovar")
+  }
+
+  if (!is.null(varycovarsname)){
+    require(reshape)
+    orignameorder<-names(preddata)
+    preddata[,varycovarsname]<-NULL
+    preddata<-reshape::expand.grid.df(preddata,data.frame(varycovar=varycovarlevels))
+    names(preddata)[names(preddata)=="varycovar"]<-varycovarsname
+    #preddata<-preddata[,orignameorder]
+  }
+
+  yhats <- predict(model,preddata,se.fit=TRUE)
+  preddata<-cbind(preddata,yhats$fit,yhats$se.fit)
+  names(preddata)<-c(predvar,find_covars_gam(model$formula, predvar),"fit","se")
+  if (identical(find_covars_gam(model$formula, predvar),character(0)) && is.null(varycovarsname)){
+    names(preddata)<-c(predvar,"nullcovar","fit","se")
+  }else if(identical(find_covars_gam(model$formula, predvar),character(0)) && !is.null(varycovarsname)){
+    names(preddata)<-c(predvar,varycovarsname,"fit","se")
+  }
+  preddata$CI<-2*preddata$se
+  return(preddata)
 }
