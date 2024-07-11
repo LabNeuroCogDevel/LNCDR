@@ -33,9 +33,9 @@ For help on all functions, in an R console, see `?LNCDR::`<kbd>tab</kbd>
 
 ### Stats
 
-#### `gam_growthrate`
+#### [`gam_growthrate`](R/growthrate_gam.R)
 
-for better/more plotting facilities, see  and [`tidymv`](https://github.com/stefanocoretta/tidymv) (`predict_gam` and [`plot_smooths`](https://cran.r-project.org/web/packages/tidymv/vignettes/plot-smooths.html)), [`gratia`](https://fromthebottomoftheheap.net/2018/10/23/introducing-gratia/), and/or [`ggeffects`](https://strengejacke.github.io/ggeffects/)
+For better/more plotting facilities, see [`tidygam`](https://cloud.r-project.org/web/packages/tidygam/vignettes/get-started.html) and [`tidymv`](https://github.com/stefanocoretta/tidymv) (`predict_gam` and [`plot_smooths`](https://cran.r-project.org/web/packages/tidymv/vignettes/plot-smooths.html)), [`gratia`](https://fromthebottomoftheheap.net/2018/10/23/introducing-gratia/), and/or [`ggeffects`](https://strengejacke.github.io/ggeffects/). There's also a nice tutorial by [Bart Larsen](https://github.com/bart-larsen/GAMM-Tutorial/).
 
 ![gam_growthrate_plot](img/gam_deriv_btc.png?raw=true)
 
